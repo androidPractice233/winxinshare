@@ -4,9 +4,9 @@
 
 * 网络请求分为三层，Activity层，NetworkManager层，retrofit Service接口层
 
-​           Activity中：
+          Activity中：
 
-    ```java
+```java
 public class MainActivity extends AppCompatActivity {
 Button button;
     @Override
@@ -32,7 +32,7 @@ Button button;
         });
     }
 }
-    ```
+```
 
 其中callback为回调方法，onResponse为网络连接成功时的逻辑，onFailure为网络失败（连接超时等）的逻辑
 
