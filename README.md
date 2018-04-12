@@ -23,7 +23,6 @@ Button button;
                         ResultBean resultBean=  response.body();
                         Toast.makeText(MainActivity.this,			(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
                    }
-
                     @Override
                     public void onFailure(Call<ResultBean> call, Throwable t) {
                         Log.e("MainActivity", t.getMessage()  );
