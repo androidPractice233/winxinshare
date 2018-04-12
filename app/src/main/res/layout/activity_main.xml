@@ -16,4 +16,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="测试加密"
+        android:id="@+id/testButton"
+        />
 </android.support.constraint.ConstraintLayout>
