@@ -6,8 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.scut.weixinshare.MainActivity">
+<android.support.v7.widget.LinearLayoutCompat
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <Button android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="测试加密"
+        android:id="@+id/testButton"
+        />
 
+    <Button
+        android:id="@+id/btn_loca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试地理位置"
+ />
+</android.support.v7.widget.LinearLayoutCompat>
     <TextView
+        android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
@@ -16,9 +32,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="测试加密"
-        android:id="@+id/testButton"
-        />
+
 </android.support.constraint.ConstraintLayout>
