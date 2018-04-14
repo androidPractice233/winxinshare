@@ -21,6 +21,11 @@
         android:layout_height="wrap_content"
         android:text="测试地理位置"
  />
+    <Button android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="图片上传"
+        android:id="@+id/btnPopPhoto"
+        />
 </android.support.v7.widget.LinearLayoutCompat>
     <TextView
         android:id="@+id/text"
@@ -32,18 +37,4 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<<<<<<< HEAD
-    <Button android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="测试加密"
-        android:id="@+id/testButton"
-        />
-    <Button android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="图片上传"
-        android:id="@+id/btnPopPhoto"
-        />
-=======
-
->>>>>>> 3f045c1b48f24e5be0212f97badae80ccb951f1d
 </android.support.constraint.ConstraintLayout>
