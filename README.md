@@ -122,6 +122,32 @@ NetworkManager中
 
 
 
+**注意！！！！这里是使用multipartRetrofit构建api接口！！**
+
+**是这样！！**
+
+` MultipartService multipartService=multipartRetrofit.create(MultipartService.class);`
+
+**不是这样！！！**
+
+`TestService testService= retrofit.create(MultipartService.class);`
+
+retrofit用于加密传输，但是multipart/form-data我实在想不出如何加密，只能使用原生的不加密的方法。
+
+multipartRetrofit是没有使用加密传输的！！
+
+**文件上传用multipartRetrofit，正常无文件上传请求用retrofit！！！**
+
+**文件上传用multipartRetrofit，正常无文件上传请求用retrofit！！！**
+
+**文件上传用multipartRetrofit，正常无文件上传请求用retrofit！！！**
+
+**重要事情说三遍**
+
+
+
+****
+
 ```java
 public class NetworkUtils {
     /**
