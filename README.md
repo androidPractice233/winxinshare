@@ -238,3 +238,24 @@ public class NetworkUtils {
 
 该回调方法用于用户选择完图片回调，获得图片File.
 
+# 获取地理位置
+* 在 MainActivity 中已经尽力向用户申请获取地理位置权限，因此正常允许读取位置的情况下不需要再申请
+
+1. 获取Location 单例，传入参数为context
+2. 使用location对象获取经纬度，类型为double
+```java
+ Location location = LocationUtils.getInstance( MainActivity.this ).returnLocation();
+ String address = "纬度：" + location.getLatitude() + "经度：" + location.getLongitude();
+
+```
+
+3. 重写该Activity的onDestroy函数，移除定位监听
+
+```java
+ @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocationUtils.getInstance(this).removeLocationUpdatesListener();
+
+    }
+```
