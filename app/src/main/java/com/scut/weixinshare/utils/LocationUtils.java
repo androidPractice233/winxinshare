@@ -1,4 +1,4 @@
-package com.scut.weixinshare;
+package com.scut.weixinshare.utils;
 
 import android.Manifest;
 import android.content.Context;
@@ -6,13 +6,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-
-import java.util.List;
-
 
 
 public class LocationUtils {

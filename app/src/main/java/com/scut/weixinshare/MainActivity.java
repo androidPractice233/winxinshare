@@ -13,8 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +23,7 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
-import com.scut.weixinshare.service.MultipartService;
+import com.scut.weixinshare.utils.LocationUtils;
 
 import java.io.File;
 import java.io.IOException;
