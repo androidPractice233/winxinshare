@@ -8,21 +8,28 @@ import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.service.KeyInitService;
+import com.scut.weixinshare.service.MultipartService;
 import com.scut.weixinshare.service.TestService;
 import com.scut.weixinshare.utils.AES;
+import com.scut.weixinshare.utils.NetworkUtils;
 import com.scut.weixinshare.utils.RSA;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Multipart;
 
 
 /**
@@ -32,13 +39,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkManager {
     private static NetworkManager networkManager;
     private   Retrofit retrofit;
+    private   Retrofit multipartRetrofit;
     private  String AESkey;
-
+    private OkHttpClient okHttpClient;
     public String getAESkey() {
         return AESkey;
     }
-
-    public static NetworkManager getInstance() {
+   // 懒汉式，线程安全
+    public static synchronized  NetworkManager getInstance() {
      if(networkManager==null) {
          networkManager = new NetworkManager();
          networkManager.init();
@@ -87,11 +95,17 @@ public class NetworkManager {
     }
 
     public  void init(){
-        OkHttpClient client=genericClient();
+        this.okHttpClient=genericClient();
         retrofit = new Retrofit.Builder()
                 .baseUrl(IConst.URL_BASE)
-                .client(genericClient())
+                .client(okHttpClient)
                 .addConverterFactory(EncryptConverterFactory.create())
+                .build();//增加返回值为实体类的支持
+        //专门进行multipart请求的retrofit,不进行加解密！
+        multipartRetrofit=new Retrofit.Builder()
+                .baseUrl(IConst.URL_BASE)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();//增加返回值为实体类的支持
         return;
 
@@ -99,6 +113,11 @@ public class NetworkManager {
     public  void test(Callback<ResultBean> callback){
         TestService testService= retrofit.create(TestService.class);
         Call<ResultBean> call=testService.test("我不想写代码！");
+        call.enqueue(callback);
+    }
+    public  void MutiprtTest(Callback<ResultBean> callback, List<File> fileList) throws IOException {
+        MultipartService multipartService=multipartRetrofit.create(MultipartService.class);
+        Call<ResultBean> call=multipartService.test("卧槽", NetworkUtils.filesToMultipartBodyParts(fileList,"fileList"));
         call.enqueue(callback);
     }
 }

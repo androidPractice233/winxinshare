@@ -1,4 +1,4 @@
-package com.scut.weixinshare;
+package com.scut.weixinshare.service;
 
 import java.util.Map;
 

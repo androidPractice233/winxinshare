@@ -1,4 +1,4 @@
-package com.scut.weixinshare.Exception;
+package com.scut.weixinshare.exception;
 
 import java.io.IOException;
 
