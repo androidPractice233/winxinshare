@@ -54,8 +54,6 @@ public class MyApplication extends MultiDexApplication
 
 	}
 
-
-
 	//	public static Context getAppContext(){
 //		return context;
 //	}

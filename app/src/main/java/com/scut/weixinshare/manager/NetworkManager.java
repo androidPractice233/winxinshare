@@ -7,6 +7,7 @@ import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
+import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
 import com.scut.weixinshare.service.MultipartService;
 import com.scut.weixinshare.service.TestService;
@@ -89,6 +90,7 @@ public class NetworkManager {
         CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(MyApplication.getInstance().getApplicationContext()));
 
         OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new TokenInterceptor())
                 .cookieJar(cookieJar)
                 .build();
         return httpClient;

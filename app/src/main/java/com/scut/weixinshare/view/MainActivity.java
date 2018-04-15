@@ -1,4 +1,4 @@
-package com.scut.weixinshare;
+package com.scut.weixinshare.view;
 
 import android.content.Intent;
 import android.Manifest;
@@ -21,8 +21,11 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.scut.weixinshare.IConst;
+import com.scut.weixinshare.R;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.utils.LocationUtils;
 
 import java.io.File;
@@ -58,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkManager.getInstance().test(new Callback<ResultBean>() {
+                NetworkManager.getInstance().test(new BaseCallback() {
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                         ResultBean resultBean=  response.body();
-                        Toast.makeText(MainActivity.this,(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+                        if(this.checkResult(MainActivity.this,resultBean)) {
+                            Toast.makeText(MainActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
@@ -106,11 +111,14 @@ public class MainActivity extends AppCompatActivity {
                     fileList.add( new File(p.getPath()));
                 }
                 try {
-                    NetworkManager.getInstance().MutiprtTest(new Callback<ResultBean>() {
+                    NetworkManager.getInstance().MutiprtTest(new BaseCallback() {
                         @Override
                         public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+
                             ResultBean resultBean=  response.body();
-                            Toast.makeText(MainActivity.this,(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+                            if(this.checkResult(MainActivity.this,resultBean)) {
+                                Toast.makeText(MainActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override

@@ -1,5 +1,61 @@
 # 安卓端开发说明
 
+注意：更新网络请求方法！！Retrofit Callback上面再封装了一个BaseCallBack,现在网络请求写法改为这样：
+
+```java
+ button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkManager.getInstance().test(new BaseCallback() {
+                    @Override
+                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                        ResultBean resultBean=  response.body();
+                        if(this.checkResult(MainActivity.this,resultBean)) {
+                            Toast.makeText(MainActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResultBean> call, Throwable t) {
+                        Log.e("MainActivity", t.getMessage()  );
+                    }
+                });
+            }
+        });
+```
+
+
+
+注意`NetworkManager.getInstance().test(new BaseCallback() {...}`
+
+和``if(this.checkResult(MainActivity.this,resultBean)) {正常逻辑。。。。}``
+
+## 包结构说明
+
+----com.scut.weinxinshare
+
+​                 ----exception |异常类放这儿
+
+ 		  ----manager|流程管理类，应该不需要怎么加类
+
+ 		  ----model |所有实体类放这里
+
+ 		  ----retrofit  |retrofit网络请求相关配置类，无特殊情况不需要加类
+
+ 		  ----service |retrofit api接口
+
+ 		  ----utils| 工具类放这里
+
+ 		  ----view| 视图类
+
+​                                ----fragment  |碎片放这里
+
+​				xxxActivity  |Activity直接放view目录下
+
+ 		IConst 静态常量放这里
+
+​		MyApplication 运行的程序首先第一个运行的东西
+
 ## 网络请求
 
 * 网络请求分为三层，Activity层，NetworkManager层，retrofit Service接口层
