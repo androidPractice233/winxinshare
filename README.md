@@ -31,10 +31,10 @@
 和``if(this.checkResult(MainActivity.this,resultBean)) {正常逻辑。。。。}``
 
 ## 包结构说明
-
+```
 ----com.scut.weinxinshare
 
-​                 ----exception |异常类放这儿
+ 		  ----exception |异常类放这儿
 
  		  ----manager|流程管理类，应该不需要怎么加类
 
@@ -47,14 +47,14 @@
  		  ----utils| 工具类放这里
 
  		  ----view| 视图类
+ 		   		  ----fragment  |碎片放这里
 
-​                                ----fragment  |碎片放这里
-
-​				xxxActivity  |Activity直接放view目录下
+ 		   		  xxxActivity  |Activity直接放view目录下
 
  		IConst 静态常量放这里
 
-​		MyApplication 运行的程序首先第一个运行的东西
+ 		MyApplication 运行的程序首先第一个运行的东西
+   ```
 
 ## 网络请求
 
