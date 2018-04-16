@@ -37,6 +37,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.zhy:okhttputils:2.6.2'
     compile 'com.github.LuckSiege.PictureSelector:picture_library:v2.1.5'
+    compile 'devlight.io:navigationtabbar:1.2.5'
     testCompile 'junit:junit:4.12'
 
 }
