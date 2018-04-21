@@ -28,6 +28,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    //WCDB数据库
+    compile 'com.tencent.wcdb:wcdb-android:1.0.6'
     // Retrofit库
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     // Okhttp库

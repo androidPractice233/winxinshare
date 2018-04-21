@@ -1,5 +1,44 @@
 # 安卓端开发说明
 
+##数据库操作
+* 数据表对应User、Moment、Comment三个类。
+* 对数据库的增删改查都封装在DBOperator类中，所以可以数据库操作这样写：
+
+```java
+DBOperator dbOperator = new DBOperator();
+User user = new User("1234","4515@qq,com","zhanp");
+dbOperator.insertUser(user);
+List<Moment> moments = dbOperator.selectMomentsRecent();
+dbOperator.close();
+```
+*目前数据库操作方法有
+```java
+//插入用户
+boolean insertUser(User user)
+//更新用户头像
+boolean updateUserPortrait(User user)
+//更新用户其他信息
+boolean updateUser(User user)
+//查找用户
+User selectUser(String userId)
+//插入动态
+boolean insertMoment(Moment moment)
+//删除动态
+boolean deleteMoment(String momentId)
+//查找某个动态
+Moment selectMoment(String momentId)
+//查找最近插入的动态
+List<Moment> selectMomentsRecent()
+//查找某个用户发布的动态
+List<Moment> selectMomentByUser(String userId)
+//插入留言
+boolean insertComment(Comment comment)
+//查找和某个用户有关的所有留言
+Comment selectCommentById(String commentId)
+//查找某个动态的所有留言
+List<Comment> selectCommentByMoment(String momentId,String userId)
+```
+
 注意：更新网络请求方法！！Retrofit Callback上面再封装了一个BaseCallBack,现在网络请求写法改为这样：
 
 ```java
