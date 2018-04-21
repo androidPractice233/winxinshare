@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#423752"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <android.support.v4.view.ViewPager
@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
 
     <devlight.io.library.ntb.NavigationTabBar
         android:id="@+id/ntb_horizontal"
@@ -25,6 +26,8 @@
         app:ntb_tinted="true"
         app:ntb_title_mode="all"
         app:ntb_titled="true"
-        app:ntb_swiped="true"/>
+        app:ntb_swiped="true"
+       app:ntb_bg_color="#FFFFFF"
+        />
 
 </LinearLayout>

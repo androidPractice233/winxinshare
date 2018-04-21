@@ -20,12 +20,12 @@ public abstract class BaseCallback implements Callback<ResultBean> {
      * @return
      */
     protected boolean checkResult(Context context, ResultBean resultBean){
-        if(resultBean.getStatus()==401){
-            Toast.makeText(context,"Token失效，请重新登陆",Toast.LENGTH_SHORT);
-            LoginActivity.actionStart(context);
+        if(resultBean.getCode()==401){
+            Toast.makeText(context,"Token失效，请重新登陆",Toast.LENGTH_SHORT).show();
+//            LoginActivity.actionStart(context);
             return false;
         }
-        if(resultBean.getStatus()==200){
+        if(resultBean.getCode()==200){
            return true;
         }
         else return false;
