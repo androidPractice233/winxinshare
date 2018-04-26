@@ -30,6 +30,9 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.R;
+import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.db.MyDBHelper;
+import com.scut.weixinshare.db.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.BaseCallback;
@@ -64,6 +67,20 @@ public class MainActivity extends AppCompatActivity {
                 && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             handleLocationPermi();
         }
+
+        //创建数据库
+        //数据库以用户userName命名，由于还没有登录,测试阶段先用test.db
+        MyDBHelper.DB_NAME = "test.db";
+        MyDBHelper myDBHelper = new MyDBHelper(this,1);
+        Log.d("dbPath",DBOperator.db_path);
+        myDBHelper.close();
+
+        //数据库操作
+        DBOperator dbOperator = new DBOperator();
+        dbOperator.insertUser(new User("2015","12","213"));
+        User user = dbOperator.selectUser("2015");
+        Toast.makeText(this,user.getNickName(),Toast.LENGTH_LONG).show();
+        dbOperator.close();
 
 
 //        button= (Button) findViewById(R.id.testButton);
