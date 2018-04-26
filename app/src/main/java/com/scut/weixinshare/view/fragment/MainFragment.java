@@ -39,7 +39,7 @@ public class MainFragment  extends Fragment{
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                         ResultBean resultBean=  response.body();
                         if(this.checkResult(getContext(),resultBean)) {
-                            Toast.makeText(getContext(), (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
+//                           Toast.makeText(getContext(), (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
                         }
                     }
 

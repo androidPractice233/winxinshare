@@ -3,6 +3,7 @@ package com.scut.weixinshare.manager;
 import android.util.Log;
 
 
+import com.google.gson.Gson;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.ResultBean;
@@ -21,10 +22,13 @@ import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 import java.io.File;
 import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -113,10 +117,24 @@ public class NetworkManager {
 
     }
     public  void test(Callback<ResultBean> callback){
+//        TestService testService= retrofit.create(TestService.class);
+//        Call<ResultBean> call=testService.test("我不想写代码！");
+//        call.enqueue(callback);
         TestService testService= retrofit.create(TestService.class);
-        Call<ResultBean> call=testService.test("我不想写代码！");
+        Map<String, Object> params = new HashMap<>();
+        params.put("userName", "devin");
+        params.put("nickName", "devin");
+        params.put("userPwd", "123");
+        params.put("location", "beijing");
+        params.put("sex", "1");
+        params.put("birthday", "20011010");
+        Call<ResultBean> call=testService.register(params);
         call.enqueue(callback);
     }
+
+
+
+
     public  void MutiprtTest(Callback<ResultBean> callback, List<File> fileList) throws IOException {
         MultipartService multipartService=multipartRetrofit.create(MultipartService.class);
         Call<ResultBean> call=multipartService.test("卧槽", NetworkUtils.filesToMultipartBodyParts(fileList,"fileList"));

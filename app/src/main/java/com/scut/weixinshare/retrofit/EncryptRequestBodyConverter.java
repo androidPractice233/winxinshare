@@ -31,10 +31,10 @@ public class EncryptRequestBodyConverter <T> implements Converter<T, RequestBody
 
     @Override
     public RequestBody convert(T value) throws IOException {
-        gson.toJson(value,type);
-        Log.i("xiaozhang", "request中传递的json数据：" + value.toString());
+       String requestjson= gson.toJson(value,type);
+        Log.i("xiaozhang", "request中传递的json数据：" + requestjson);
         String AesKey= NetworkManager.getInstance().getAESkey();
-        String encryptData= AES.encrypt(value.toString(),AesKey);
+        String encryptData= AES.encrypt(requestjson,AesKey);
         Log.i("xiaozhang", "转化后的数据：" + encryptData);
         return RequestBody.create(MediaType.parse("application/json"), encryptData);
     }
