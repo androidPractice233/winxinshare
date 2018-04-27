@@ -86,7 +86,7 @@ public class NetworkManager {
 
 
     }
-    public  OkHttpClient genericClient() {
+    public OkHttpClient genericClient() {
         CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(MyApplication.getInstance().getApplicationContext()));
 
         OkHttpClient httpClient = new OkHttpClient.Builder()

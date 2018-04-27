@@ -1,18 +1,20 @@
 package com.scut.weixinshare.view;
 
-import android.content.Intent;
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import android.util.Log;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,22 +44,26 @@ public class MainActivity extends AppCompatActivity {
     Button btnPopPhoto;
     Button button;
     Button locationBtn;
+    Button toHome;
 
-    String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //启动时检查权限
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            handleLocationPermi();
-        }
+        handleLocationPermission();
 
+        toHome = findViewById(R.id.button_to_home_activity);
+        toHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        button= (Button) findViewById(R.id.testButton);
-        btnPopPhoto= (Button) findViewById(R.id.btnPopPhoto);
+        button = findViewById(R.id.testButton);
+        btnPopPhoto = findViewById(R.id.btnPopPhoto);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,6 +100,22 @@ public class MainActivity extends AppCompatActivity {
                         .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
             }
         });
+
+        locationBtn=(Button)findViewById(R.id.btn_loca);
+        final TextView text = (TextView) findViewById( R.id.text );
+        locationBtn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Location location = LocationUtils.getInstance( MainActivity.this ).returnLocation();
+                if (location != null) {
+                    String address = "纬度：" + location.getLatitude() + "经度：" + location.getLongitude();
+                    Log.d( "LocationUtils", address );
+                    text.setText( address );
+                }
+                else
+                    Log.d("LocationUtils", "无法获得位置类");
+            }
+        } );
     }
 
     @Override
@@ -132,79 +154,76 @@ public class MainActivity extends AppCompatActivity {
                 //yjPublishEdit.setText(sb.toString());
             }
         }
-
-        locationBtn=(Button)findViewById(R.id.btn_loca);
-        final TextView text = (TextView) findViewById( R.id.text );
-        locationBtn.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Location location = LocationUtils.getInstance( MainActivity.this ).returnLocation();
-                if (location != null) {
-                    String address = "纬度：" + location.getLatitude() + "经度：" + location.getLongitude();
-                    Log.d( "LocationUtils", address );
-                    text.setText( address );
-                }
-                else
-                    Log.d("LocationUtils", "无法获得位置类");
-            }
-        } );
-
     }
 
     //申请获取权限后回调
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
-            case IConst.REQUEST_LOCATION:{
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case IConst.REQUEST_LOCATION: {
                 //允许获取地理位置权限
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                }
-                else {
-                    AlertDialog dialog = new AlertDialog.Builder(this).setTitle("还可以手动开启权限").setMessage("可以前往设置->app->myapp->permission打开").setPositiveButton("确定!", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    }).show();
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("需要定位权限")
+                            .setMessage("我们需要获取您的位置信息来获取、发布动态，" +
+                                    "请前往设置界面手动开启定位权限")
+                            .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent();
+                                    intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                                    intent.setData(Uri.fromParts("package", getPackageName(),
+                                            null));
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
                 }
 
             }
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LocationUtils.getInstance(this).removeLocationUpdatesListener();
+    private void handleLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            final String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                    permission[0])) {
+                //当用户曾经拒绝掉权限时
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("需要定位权限")
+                        .setMessage("我们需要获取您的位置信息来获取、发布动态，" +
+                                "请在接下来弹出的对话框中选择“允许”。")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        permission,
+                                        IConst.REQUEST_LOCATION);
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
 
-    }
-
-
-    private void handleLocationPermi(){
-        //当用户拒绝掉权限时.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                permission[0])||ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                permission[1])) {
-
-            AlertDialog dialog = new AlertDialog.Builder(this).setTitle("需要开启定位权限才能正常使用").setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            permission,
-                            IConst.REQUEST_LOCATION);
-                }
-            }).setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            }).show();
-
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, permission, IConst.REQUEST_LOCATION);
-
-
+            } else {
+                //未申请过权限或用户在拒绝权限时勾选了“不再提醒”选项
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        permission,
+                        IConst.REQUEST_LOCATION);
+            }
         }
     }
-
 }
