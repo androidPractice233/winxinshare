@@ -5,7 +5,7 @@ package com.scut.weixinshare.model;
 * 
 */
 public class ResultBean<T> {
-private Integer status=200;
+private Integer code=200;
 
 //    error_msg 错误信息，若status为200时，为正常，500时为服务器错误
 private String msg;
@@ -13,15 +13,15 @@ private String msg;
 //    content 返回体报文的出参，使用泛型兼容不同的类型
 private T data;
 
-public Integer getStatus() {
-    return status;
-}
+    public Integer getCode() {
+        return code;
+    }
 
-public void setStatus(Integer code) {
-    this.status = code;
-}
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
-public String getMsg() {
+    public String getMsg() {
     return msg;
 }
 
@@ -44,7 +44,7 @@ public T getData() {
 @Override
 public String toString() {
     return "Result{" +
-            "status=" + status +
+            "data=" + data +
             ", msg='" + msg + '\'' +
             ", data=" + data +
             '}';

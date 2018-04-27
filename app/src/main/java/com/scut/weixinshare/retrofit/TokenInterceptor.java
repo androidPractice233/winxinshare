@@ -20,9 +20,13 @@ public class TokenInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         SharedPreferences preferences = MyApplication.getInstance().getApplicationContext().getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
         String token = preferences.getString("token",null);
+
         Response originalResponse = chain.proceed(chain.request());
-        return originalResponse.newBuilder()
-                .header("token", token)
-                .build();
+        if(token!=null) {
+            return originalResponse.newBuilder()
+                    .header("token", token)
+                    .build();
+        }
+        else return originalResponse;
     }
 }
