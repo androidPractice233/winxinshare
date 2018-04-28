@@ -1,4 +1,4 @@
-package com.scut.weixinshare.db;
+package com.scut.weixinshare.model;
 
 public class User {
     private String userId;

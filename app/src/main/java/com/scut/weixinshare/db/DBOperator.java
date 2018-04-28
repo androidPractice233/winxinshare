@@ -3,6 +3,7 @@ package com.scut.weixinshare.db;
 import android.content.ContentValues;
 import android.util.Log;
 
+import com.scut.weixinshare.model.User;
 import com.tencent.wcdb.Cursor;
 import com.tencent.wcdb.database.SQLiteDatabase;
 
