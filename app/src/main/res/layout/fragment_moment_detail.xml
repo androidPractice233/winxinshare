@@ -84,9 +84,9 @@
             android:inputType="textMultiLine"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/release_comment"
+            app:layout_constraintEnd_toStartOf="@+id/release_comment"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/division" />
+            app:layout_constraintTop_toTopOf="@+id/division" />
 
         <ImageButton
             android:id="@+id/release_comment"

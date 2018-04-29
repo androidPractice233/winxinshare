@@ -69,9 +69,9 @@
         android:layout_marginTop="12dp"
         android:textSize="13sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@id/add_comment"
+        app:layout_constraintEnd_toStartOf="@+id/add_comment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_pics" />
+        app:layout_constraintTop_toBottomOf="@+id/content_pics" />
 
     <ImageButton
         android:id="@+id/add_comment"
@@ -81,8 +81,8 @@
         android:layout_marginEnd="4dp"
         android:background="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_comment_gray_24dp"
-        app:layout_constraintEnd_toStartOf="@id/comment_count"
-        app:layout_constraintTop_toBottomOf="@id/content_pics" />
+        app:layout_constraintEnd_toStartOf="@+id/comment_count"
+        app:layout_constraintTop_toBottomOf="@+id/content_pics" />
 
     <TextView
         android:id="@+id/comment_count"
