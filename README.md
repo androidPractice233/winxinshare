@@ -354,3 +354,7 @@ public class NetworkUtils {
 
     }
 ```
+
+## 动态、评论发布界面
+* 请把项目的最低sdk版本设置为21，最高随意
+* 主题颜色可以在color.xml中进行修改
