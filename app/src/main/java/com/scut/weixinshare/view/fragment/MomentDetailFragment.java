@@ -81,7 +81,7 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
 
     private TextView initCommentView(final Comment comment){
         TextView commentItem = (TextView) getLayoutInflater().inflate(R.layout.view_comment,
-                comments);
+                null);
         commentItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
