@@ -114,7 +114,6 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
                 });*/
                 view.initMoments(initTestMoments());
                 if(isFirst){
-                    view.setListEndView();
                     isFirst = false;
                 } else {
                     view.hideRefreshing();
