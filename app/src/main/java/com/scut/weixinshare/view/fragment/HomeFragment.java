@@ -3,9 +3,9 @@ package com.scut.weixinshare.view.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,17 +25,17 @@ import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.DensityUtils;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
-import com.scut.weixinshare.view.component.MomentView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-//动态主页fragment
-public class HomeActivityFragment extends Fragment implements HomeContract.View,
+public class HomeFragment extends Fragment implements HomeContract.View,
         MomentAdapter.MomentItemListener {
-    private RecyclerView recyclerView;
+    //private RecyclerView recyclerView;
     private HomeContract.Presenter presenter;
     private MomentAdapter momentAdapter;
     private PullUpRefreshAdapter pullUpRefreshAdapter;
@@ -47,7 +47,7 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        recyclerView = view.findViewById(R.id.list_moments);
+        RecyclerView recyclerView = view.findViewById(R.id.list_moments);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         momentAdapter = new MomentAdapter(new ArrayList<Moment>(), this);
         pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter);
@@ -108,7 +108,7 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.toReleaseMoment();
+                    presenter.toEditReleaseMoment();
                 }
             });
         }
@@ -117,18 +117,34 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case IConst.REQUEST_CODE_MOMENT_DETAIL:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     //获取动态正文页面返回的修改信息
                     Bundle bundle = data.getExtras();
-                    if(bundle != null && bundle.getBoolean("isChanged")){
+                    if (bundle != null && bundle.getBoolean("isChanged")) {
                         Moment moment = bundle.getParcelable("moment");
                         //更新显示数据
                         momentAdapter.updateAdapterData(moment, lastPosition);
                         pullUpRefreshAdapter.notifyItemChanged(lastPosition);
                     }
                 }
+                break;
+            case IConst.REQUEST_CODE_RELEASE_MOMENT:
+                if(resultCode == RESULT_OK){
+                    String text = data.getStringExtra("text");
+                    Location location = data.getParcelableExtra("location");
+                    if(!data.getBooleanExtra("isTextOnly", true)){
+                        File[] images = (File[]) data.getSerializableExtra("images");
+                        presenter.releaseMoment(text, location, new ArrayList<>(Arrays
+                                .asList(images)));
+                    } else {
+                        presenter.releaseMoment(text, location);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -174,9 +190,7 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showReleaseMomentUI(Location location) {
-        Intent intent = new Intent(this.getContext(), ReleaseMomentActivity.class);
-        intent.putExtra("location", location);     //向发布动态界面传递位置信息
-        startActivity(intent);
+        ReleaseMomentActivity.activityStartForResult(this, location);
     }
 
     @Override

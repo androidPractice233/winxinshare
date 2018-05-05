@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.0.2'
     implementation 'com.android.support:gridlayout-v7:27.0.2'
     implementation 'com.zhy:okhttputils:2.6.2'
+    //PictureSelector库
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
     //glide库
     implementation 'com.github.bumptech.glide:glide:4.5.0'

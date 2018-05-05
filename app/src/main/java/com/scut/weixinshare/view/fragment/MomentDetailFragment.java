@@ -3,6 +3,8 @@ package com.scut.weixinshare.view.fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
@@ -40,8 +42,8 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     //private Moment moment;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment_detail, container,
                 false);
         momentView = view.findViewById(R.id.moment);
@@ -73,7 +75,8 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefresh.setRefreshing(false);
+                presenter.refreshMomentDetail();
+                //swipeRefresh.setRefreshing(false);
             }
         });
         return view;
@@ -89,7 +92,7 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
                 KeyBroadUtils.showKeyBroad(inputComment);
             }
         });
-        //发送者昵称，接收者昵称，文本内容采用不同的文本格式
+        //发送者昵称与接收者昵称，文本内容采用不同的文本格式
         SpannableStringBuilder commentStr = new SpannableStringBuilder(comment.getSenderId());
         //发送者昵称格式
         commentStr.setSpan(new StyleSpan(Typeface.BOLD), 0,

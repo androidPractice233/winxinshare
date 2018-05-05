@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="8dp"
                 android:background="@color/windowBackground"
-                app:layout_constraintTop_toBottomOf="@id/moment"
+                app:layout_constraintTop_toBottomOf="@+id/moment"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -50,7 +50,7 @@
                 android:animateLayoutChanges="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view" />
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -84,9 +84,9 @@
             android:inputType="textMultiLine"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/release_comment"
+            app:layout_constraintEnd_toStartOf="@+id/release_comment"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/division" />
+            app:layout_constraintTop_toTopOf="@+id/division" />
 
         <ImageButton
             android:id="@+id/release_comment"

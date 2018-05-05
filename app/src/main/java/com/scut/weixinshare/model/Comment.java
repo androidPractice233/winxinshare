@@ -10,7 +10,7 @@ import java.util.UUID;
 //封装评论信息
 public class Comment implements Parcelable {
 
-    private UUID commentId;           //评论id
+    private String commentId;           //评论id
     private String senderId;          //发送者昵称
     private String recvId;            //接收者昵称，可能为空
     private String content;           //评论内容
@@ -20,7 +20,7 @@ public class Comment implements Parcelable {
         this(null, null, null, null, null);
     }
 
-    public Comment(UUID commentId, String senderId, String recvId, String content,
+    public Comment(String commentId, String senderId, String recvId, String content,
                    Timestamp createTime){
         this.commentId = commentId;
         this.senderId = senderId;
@@ -29,7 +29,7 @@ public class Comment implements Parcelable {
         this.createTime = createTime;
     }
 
-    public UUID getCommentId() {
+    public String getCommentId() {
         return commentId;
     }
 
@@ -56,7 +56,7 @@ public class Comment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeSerializable(commentId);
+        parcel.writeString(commentId);
         parcel.writeString(senderId);
         parcel.writeString(recvId);
         parcel.writeString(content);
@@ -68,7 +68,7 @@ public class Comment implements Parcelable {
         @Override
         public Comment createFromParcel(Parcel parcel) {
             Comment comment = new Comment();
-            comment.commentId = (UUID) parcel.readSerializable();
+            comment.commentId = parcel.readString();
             comment.senderId = parcel.readString();
             comment.recvId = parcel.readString();
             comment.content = parcel.readString();
