@@ -23,6 +23,11 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
 
     private static int PAGE_SIZE = 25;
 
+    private static final int NETWORK_ERROR = 0;
+    private static final int LOADING = 1;
+    private static final int END = 2;
+
+    private int state = LOADING;
     private HomeContract.View view;
     //private TencentLocation location = null;
     private boolean isFirst = true;
@@ -44,7 +49,7 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     //测试用数据
     private List<Moment> initTestMoments(){
         List<Moment> momentList = new ArrayList<>();
-        for(int i = 0; i < 25; ++i){
+        for(int i = 0; i < PAGE_SIZE; ++i){
             List<Comment> comments = new ArrayList<>();
             comments.add(new Comment(UUID.randomUUID().toString(), "CJJ",
                             "草鱼", "操他妈你不要再讲了",
@@ -115,22 +120,19 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
                 view.initMoments(initTestMoments());
                 if(isFirst){
                     isFirst = false;
-                } else {
-                    view.hideRefreshing();
+                    view.showMomentList();
                 }
                 isLoading = false;
+                view.hideRefreshing();
+                state = LOADING;
+                view.setListLoadingView();
             }
 
             @Override
             public void onFailure(String error) {
                 view.showReminderMessage(error);
                 isLoading = false;
-                if(isFirst){
-                    view.setListEndView();
-                    isFirst = false;
-                } else {
-                    view.hideRefreshing();
-                }
+                view.hideRefreshing();
             }
         });
     }
@@ -139,12 +141,18 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     public void requestNextMoments() {
         if(count == 5){
             view.setListEndView();
-        } else if(!isLoading){
+            state = END;
+        } else if(!isLoading && state == LOADING){
             isLoading = true;
-            view.setListLoadingView();
-            List<Moment> addedMoments = initTestMoments();
-            //momentList.addAll(addedMoments);
-            view.addMoments(addedMoments);
+            if(count == 2){
+                view.setListErrorView();
+                state = NETWORK_ERROR;
+            } else {
+                view.setListLoadingView();
+                List<Moment> addedMoments = initTestMoments();
+                //momentList.addAll(addedMoments);
+                view.addMoments(addedMoments);
+            }
             ++count;
             isLoading = false;
         }
@@ -222,7 +230,18 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
 
     @Override
     public void releaseMoment(String text, Location location) {
-        releaseMoment(text, location, null);
+        momentDataSource.createMoment(text, location,
+                new MomentDataSource.CreateMomentCallback() {
+                    @Override
+                    public void onSuccess() {
+                        view.showReminderMessage("动态发送成功");
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        view.showReminderMessage(error);
+                    }
+                });
     }
 
     @Override
@@ -230,22 +249,28 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
         view.showReminderMessage("正在发送动态");
         momentDataSource.createMoment(text, location, images,
                 new MomentDataSource.CreateMomentCallback() {
-            @Override
-            public void onSuccess() {
-                view.showReminderMessage("动态发送成功");
-            }
+                    @Override
+                    public void onSuccess() {
+                        view.showReminderMessage("动态发送成功");
+                    }
 
-            @Override
-            public void onFailure(String error) {
-                view.showReminderMessage(error);
-            }
-        });
+                    @Override
+                    public void onFailure(String error) {
+                        view.showReminderMessage(error);
+                    }
+                });
+    }
+
+    @Override
+    public void breakErrorState() {
+        state = LOADING;
     }
 
     @Override
     public void start() {
         if(isFirst) {
-            //view.showRefreshing();
+            view.hideMomentList();
+            view.showRefreshing();
             requestNewMoments();
             //isFirst = false;
         }

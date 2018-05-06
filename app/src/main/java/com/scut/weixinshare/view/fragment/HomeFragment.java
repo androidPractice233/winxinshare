@@ -23,6 +23,7 @@ import com.scut.weixinshare.contract.HomeContract;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.DensityUtils;
+import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
 
@@ -41,16 +42,24 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     private PullUpRefreshAdapter pullUpRefreshAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private FloatingActionButton fab;
+    private RecyclerView recyclerView;
     private int lastPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.list_moments);
+        recyclerView = view.findViewById(R.id.list_moments);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         momentAdapter = new MomentAdapter(new ArrayList<Moment>(), this);
-        pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter);
+        pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter,
+                new PullUpRefreshAdapter.NetworkErrorTextOnClickListener() {
+            @Override
+            public void onClick() {
+                presenter.breakErrorState();
+                presenter.requestNextMoments();
+            }
+        });
         recyclerView.setAdapter(pullUpRefreshAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());     //设置RecyclerView动画
         //设置Item间距，实现类卡片式Item效果
@@ -189,6 +198,11 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
+    public void setListErrorView() {
+        pullUpRefreshAdapter.setNetworkErrorView();
+    }
+
+    @Override
     public void showReleaseMomentUI(Location location) {
         ReleaseMomentActivity.activityStartForResult(this, location);
     }
@@ -200,7 +214,17 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showReminderMessage(String text) {
+        ToastUtils.showToast(getContext(), text);
+    }
 
+    @Override
+    public void showMomentList() {
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideMomentList() {
+        recyclerView.setVisibility(View.GONE);
     }
 
     @Override

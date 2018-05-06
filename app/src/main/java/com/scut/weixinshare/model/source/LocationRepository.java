@@ -14,6 +14,7 @@ public class LocationRepository implements LocationDataSource {
     private static LocationRepository INSTANCE = new LocationRepository();
     private Location lastLocation;
 
+    //单例，线程安全
     public static LocationRepository getInstance(){
         return INSTANCE;
     }
@@ -68,11 +69,6 @@ public class LocationRepository implements LocationDataSource {
 
             }
         });
-    }
-
-    @Override
-    public void setLocation(Location location){
-        lastLocation = location;
     }
 
     @Override

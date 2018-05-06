@@ -17,51 +17,78 @@ public class PullUpRefreshAdapter extends RecyclerView.Adapter<RecyclerView.View
     //区分view类型
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOT_VIEW = 1;
+    //区分footView状态
+    private static final int NETWORK_ERROR = 0;
+    private static final int LOADING = 1;
+    private static final int END = 2;
 
+    private NetworkErrorTextOnClickListener listener;
     private RecyclerView.Adapter dataAdapter;    //recyclerView数据adapter
     private ViewHolder viewHolder;               //ootItem的viewHolder
-    private boolean isLoading = true;            //设定FootView是否为加载中状态
+    private int state = LOADING;                 //设定FootView状态
 
     static class ViewHolder extends RecyclerView.ViewHolder{
 
-        ProgressBar progressBar;
-        TextView textView;
+        View loadingView;
+        View endView;
+        View networkErrorView;
+        TextView networkErrorText;
 
         ViewHolder(View footView){
             super(footView);
-            progressBar = footView.findViewById(R.id.loading_progress);
-            textView = footView.findViewById(R.id.loading_text);
+            loadingView = footView.findViewById(R.id.loading_view);
+            endView = footView.findViewById(R.id.end_view);
+            networkErrorView = footView.findViewById(R.id.network_error_view);
+            networkErrorText = footView.findViewById(R.id.network_error_text);
         }
 
         void setLoadingView(){
-            progressBar.setVisibility(View.VISIBLE);
-            textView.setText("加载中");
+            loadingView.setVisibility(View.VISIBLE);
+            endView.setVisibility(View.GONE);
+            networkErrorView.setVisibility(View.GONE);
         }
 
         void setEndView(){
-            progressBar.setVisibility(View.GONE);
-            textView.setText("已经没有了哦");
+            loadingView.setVisibility(View.GONE);
+            endView.setVisibility(View.VISIBLE);
+            networkErrorView.setVisibility(View.GONE);
         }
+
+        void setNetworkErrorView(){
+            loadingView.setVisibility(View.GONE);
+            endView.setVisibility(View.GONE);
+            networkErrorView.setVisibility(View.VISIBLE);
+        }
+
     }
 
     //传入数据adapter
-    public PullUpRefreshAdapter(RecyclerView.Adapter dataAdapter){
+    public PullUpRefreshAdapter(RecyclerView.Adapter dataAdapter,
+                                NetworkErrorTextOnClickListener listener){
         this.dataAdapter = dataAdapter;
+        this.listener = listener;
     }
 
     //设置footView样式为没有剩余数据
     public void setEndView(){
-        if(isLoading) {
-            isLoading = false;
+        if(state != END) {
+            state = END;
             viewHolder.setEndView();
         }
     }
 
     //设置footView样式为加载中
     public void setLoadingView() {
-        if (!isLoading){
-            isLoading = true;
+        if (state != LOADING){
+            state = LOADING;
             viewHolder.setLoadingView();
+        }
+    }
+
+    public void setNetworkErrorView(){
+        if(state != NETWORK_ERROR){
+            state = NETWORK_ERROR;
+            viewHolder.setNetworkErrorView();
         }
     }
 
@@ -94,11 +121,25 @@ public class PullUpRefreshAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(position == getItemCount() - 1){
             //footView样式根据isLoading的值进行初始化
-            if(isLoading) {
-                ((ViewHolder) holder).setLoadingView();
-            } else {
-                ((ViewHolder) holder).setEndView();
+            switch(state) {
+                case LOADING:
+                    ((ViewHolder) holder).setLoadingView();
+                    break;
+                case END:
+                    ((ViewHolder) holder).setEndView();
+                    break;
+                case NETWORK_ERROR:
+                    ((ViewHolder) holder).setNetworkErrorView();
+                    break;
+                default:
+                    break;
             }
+            ((ViewHolder) holder).networkErrorText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onClick();
+                }
+            });
         } else {
             //itemView样式由数据adapter决定
             dataAdapter.onBindViewHolder(holder, position);
@@ -109,6 +150,10 @@ public class PullUpRefreshAdapter extends RecyclerView.Adapter<RecyclerView.View
     public int getItemCount() {
         //item数目为数据item数据+1
         return dataAdapter.getItemCount() + 1;
+    }
+
+    public interface NetworkErrorTextOnClickListener{
+        void onClick();
     }
 
 }

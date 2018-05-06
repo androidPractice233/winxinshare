@@ -40,7 +40,7 @@ public interface MomentDetailContract {
         Bundle resultToHome();
 
         //获取动态正文
-        void requestMomentDetail();
+        void refreshMomentDetail();
 
     }
 

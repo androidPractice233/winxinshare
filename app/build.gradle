@@ -46,5 +46,8 @@ dependencies {
     //glide库
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    //wcdb库
+    implementation 'com.tencent.wcdb:wcdb-android:1.0.6'
+
     testImplementation 'junit:junit:4.12'
 }
