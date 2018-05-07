@@ -34,6 +34,18 @@ public class DBOperator {
         cursor.close();
         return false;
     }
+    private boolean isUserNameExist(String userName){
+        Cursor cursor = database.rawQuery("select * from user where userName = ?",
+                new String[]{userName});
+        int t = cursor.getCount();
+        if(t!=0){
+            Log.d("testUser","user was existed");
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
 
     /** 用户表的操作 **/
     //插入新用户信息到数据库，如果用户已存在，reutrn false
@@ -83,7 +95,7 @@ public class DBOperator {
         Log.d("delete","user not exist");
         return false;
     }
-    //查找用户
+    //根据id查找用户
     public User selectUser(String userId){
         Cursor cursor = database.rawQuery("select * from user where userId = ?",
                 new String[]{userId});
@@ -95,6 +107,36 @@ public class DBOperator {
         else if(t==1){
             cursor.moveToFirst();
             String userName = cursor.getString(cursor.getColumnIndex("userName"));
+            String nickName = cursor.getString(cursor.getColumnIndex("nickName"));
+            int sex = cursor.getInt(cursor.getColumnIndex("sex"));
+            String birthday = cursor.getString(cursor.getColumnIndex("birthday"));
+            String location = cursor.getString(cursor.getColumnIndex("location"));
+            String portrait = cursor.getString(cursor.getColumnIndex("portrait"));
+            User user = new User(userId,userName,nickName);
+            user.setSex(sex);
+            if(birthday!=null) user.setBirthday(birthday);
+            if(location!=null) user.setLocation(location);
+            if(portrait!=null) user.setPortrait(portrait);
+            return user;
+        }
+        else{
+            //理论上这里不可能执行
+            Log.d("select user","more than one user was selected");
+            return null;
+        }
+    }
+    //根据用户名查找用户
+    public User selectUserByName(String userName){
+        Cursor cursor = database.rawQuery("select * from user where userName = ?",
+                new String[]{userName});
+        int t = cursor.getCount();
+        if(t==0){
+            Log.d("select user","user not exist");
+            return null;
+        }
+        else if(t==1){
+            cursor.moveToFirst();
+            String userId = cursor.getString(cursor.getColumnIndex("userId"));
             String nickName = cursor.getString(cursor.getColumnIndex("nickName"));
             int sex = cursor.getInt(cursor.getColumnIndex("sex"));
             String birthday = cursor.getString(cursor.getColumnIndex("birthday"));
@@ -136,8 +178,8 @@ public class DBOperator {
             return false;
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        database.execSQL("insert into moment(momentId,userId,createTime,insertTime,location,content,pictureUrl) values(?,?,?,?,?,?,?)",
-                new String[]{moment.getMomentId(),moment.getUserId(),moment.getCreateTime(),timestamp.toString(),moment.getLocation(),moment.getContent(),moment.getPictureUrl()});
+        database.execSQL("insert into moment(momentId,userId,createTime,updateTime, insertTime,location,content,pictureUrl) values(?,?,?,?,?,?,?,?)",
+                new String[]{moment.getMomentId(),moment.getUserId(),moment.getCreateTime(),moment.getUpdateTime(), timestamp.toString(),moment.getLocation(),moment.getContent(),moment.getPictureUrl()});
         Log.d("insertMoment","insert moment success:"+moment.getContent());
         return true;
     }
@@ -165,10 +207,11 @@ public class DBOperator {
             cursor.moveToFirst();
             String userId = cursor.getString(cursor.getColumnIndex("userId"));
             String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+            String updateTime = cursor.getString(cursor.getColumnIndex("updateTime"));
             String location = cursor.getString(cursor.getColumnIndex("location"));
             String content = cursor.getString(cursor.getColumnIndex("content"));
             String pictureUrl = cursor.getString(cursor.getColumnIndex("pictureUrl"));
-            Moment moment = new Moment(momentId,userId,createTime,location);
+            Moment moment = new Moment(momentId,userId,createTime,updateTime, location);
             if(content!=null) moment.setContent(content);
             if(pictureUrl!=null) moment.setPictureUrl(pictureUrl);
             return moment;
@@ -188,10 +231,11 @@ public class DBOperator {
                 String momentId = cursor.getString(cursor.getColumnIndex("momentId"));
                 String userId = cursor.getString(cursor.getColumnIndex("userId"));
                 String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+                String updateTime = cursor.getString(cursor.getColumnIndex("updateTime"));
                 String location = cursor.getString(cursor.getColumnIndex("location"));
                 String pictureUrl = cursor.getString(cursor.getColumnIndex("pictureUrl"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));
-                moments.add(new Moment(momentId,userId,createTime,location,pictureUrl,content));
+                moments.add(new Moment(momentId,userId,createTime,updateTime,location,pictureUrl,content));
             }while (cursor.moveToNext());
         }
         cursor.close();
@@ -205,10 +249,11 @@ public class DBOperator {
             do{
                 String momentId = cursor.getString(cursor.getColumnIndex("momentId"));
                 String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+                String updateTime = cursor.getString(cursor.getColumnIndex("updateTime"));
                 String location = cursor.getString(cursor.getColumnIndex("location"));
                 String pictureUrl = cursor.getString(cursor.getColumnIndex("pictureUrl"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));
-                moments.add(new Moment(momentId,userId,createTime,location,pictureUrl,content));
+                moments.add(new Moment(momentId,userId,createTime,updateTime,location,pictureUrl,content));
             }while (cursor.moveToNext());
         }
         cursor.close();
