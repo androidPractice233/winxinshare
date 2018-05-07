@@ -3,9 +3,9 @@ package com.scut.weixinshare.manager;
 import android.util.Log;
 
 
-import com.google.gson.Gson;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
+import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
@@ -26,15 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
 
 
 /**
@@ -132,12 +128,67 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-
-
-
     public  void MutiprtTest(Callback<ResultBean> callback, List<File> fileList) throws IOException {
         MultipartService multipartService=multipartRetrofit.create(MultipartService.class);
         Call<ResultBean> call=multipartService.test("卧槽", NetworkUtils.filesToMultipartBodyParts(fileList,"fileList"));
         call.enqueue(callback);
     }
+
+    public void requestNearbyMoment(Callback<ResultBean> callBack, Location location, int pageNum,
+                                    int pageSize){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, Object> params = new HashMap<>();
+        params.put("longitude", location.getLongitude());
+        params.put("latitude", location.getLatitude());
+        params.put("pageNum", pageNum);
+        params.put("pageSize", pageSize);
+        Call<ResultBean> call = service.requestNearbyMoment(params);
+        call.enqueue(callBack);
+    }
+
+    public void requestMomentDetail(Callback<ResultBean> callback, List<String> momentIds){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String id : momentIds){
+            stringBuilder.append(id);
+            stringBuilder.append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        params.put("ids", stringBuilder.toString());
+        Call<ResultBean> call = service.requestMomentDetail(params);
+        call.enqueue(callback);
+    }
+
+    public void createMoment(Callback<ResultBean> callback, String text, Location location){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, Object> params = new HashMap<>();
+        params.put("textConent", text);
+        params.put("longitude", location.getLongitude());
+        params.put("latitude", location.getLatitude());
+        params.put("location", location.getName());
+        Call<ResultBean> call = service.createMoment(params);
+        call.enqueue(callback);
+    }
+
+    public void uploadMomentImages(Callback<ResultBean> callback, String momentId,
+                                   List<File> imageFileList) throws IOException{
+        MultipartService service = multipartRetrofit.create(MultipartService.class);
+        Call<ResultBean> call = service.uploadMomentImages(momentId, NetworkUtils
+                .filesToMultipartBodyParts(imageFileList, "picContent"));
+        call.enqueue(callback);
+    }
+
+    public void createComment(Callback<ResultBean> callback, String momentId, String senderId,
+                              String receiverId, String text){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, Object> params = new HashMap<>();
+        params.put("momentId", momentId);
+        params.put("sendId", senderId);
+        params.put("recvId", receiverId);
+        params.put("content", text);
+        Call<ResultBean> call = service.createComment(params);
+        call.enqueue(callback);
+    }
+
 }

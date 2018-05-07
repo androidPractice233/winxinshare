@@ -15,8 +15,23 @@ import retrofit2.http.POST;
  */
 
 public interface TestService {
+
     @POST("test")
     Call<ResultBean> test(@Body String test);
+
     @POST("user/register")
     Call<ResultBean> register(@Body Map praram);
+
+    @POST("/moment/nearby")
+    Call<ResultBean> requestNearbyMoment(@Body Map params);
+
+    @POST("/moment/detail")
+    Call<ResultBean> requestMomentDetail(@Body Map params);
+
+    @POST("/moment/create")
+    Call<ResultBean> createMoment(@Body Map params);
+
+    @POST("/comment/create")
+    Call<ResultBean> createComment(@Body Map params);
+
 }

@@ -14,24 +14,28 @@ import java.util.UUID;
 //动态信息封装
 public class Moment implements Parcelable {
 
-    private UUID momentId;                      //动态id
-    private String username;                    //用户账号
-    private String nickname;                    //用户昵称
-    private transient Uri portrait;             //用户头像
-    private Timestamp createTime;               //动态创建时间
-    private String location;                    //动态位置名
-    private String textContent;                 //动态文字内容
-    private transient List<Uri> picContent;     //动态图片内容
-    private List<Comment> commentList;          //评论
-    private Timestamp updateTime;               //动态更新时间
+    private String momentId;               //动态id
+    private String username;               //用户账号
+    private String nickname;               //用户昵称
+    private Uri portrait;                  //用户头像
+    private Timestamp createTime;          //动态创建时间
+    private String location;               //动态位置名
+    private String textContent;            //动态文字内容
+    private List<Uri> picContent;          //动态图片内容
+    private List<Comment> commentList;     //评论
+    private Timestamp updateTime;          //动态更新时间
 
-    public Moment(){
-        this(null, null, null, null, null,
+    private Moment(){
+        this(null);
+    }
+
+    public Moment(String momentId){
+        this(momentId, null, null, null, null,
                 null, null, null, null,
                 null);
     }
 
-    public Moment(UUID momentId, String username, String nickname, Uri portrait,
+    public Moment(String momentId, String username, String nickname, Uri portrait,
                   Timestamp createTime, String location, String textContent, List<Uri> picContent,
                   List<Comment> commentList, Timestamp updateTime){
         this.momentId = momentId;
@@ -46,7 +50,7 @@ public class Moment implements Parcelable {
         this.updateTime = updateTime;
     }
 
-    public UUID getMomentId() {
+    public String getMomentId() {
         return momentId;
     }
 
@@ -97,7 +101,7 @@ public class Moment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeSerializable(momentId);
+        parcel.writeString(momentId);
         parcel.writeString(username);
         parcel.writeString(nickname);
         parcel.writeParcelable(portrait, i);
@@ -114,7 +118,7 @@ public class Moment implements Parcelable {
         @Override
         public Moment createFromParcel(Parcel parcel) {
             Moment moment = new Moment();
-            moment.momentId = (UUID) parcel.readSerializable();
+            moment.momentId = parcel.readString();
             moment.username = parcel.readString();
             moment.nickname = parcel.readString();
             moment.portrait = parcel.readParcelable(Uri.class.getClassLoader());

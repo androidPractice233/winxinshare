@@ -25,7 +25,7 @@
         android:textStyle="bold"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/portrait"
+        app:layout_constraintStart_toEndOf="@+id/portrait"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -37,8 +37,8 @@
         android:textSize="13sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/portrait"
-        app:layout_constraintTop_toBottomOf="@id/nickname" />
+        app:layout_constraintStart_toEndOf="@+id/portrait"
+        app:layout_constraintTop_toBottomOf="@+id/nickname" />
 
     <TextView
         android:id="@+id/content_text"
@@ -50,7 +50,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/portrait" />
+        app:layout_constraintTop_toBottomOf="@+id/portrait" />
 
     <com.scut.weixinshare.view.component.NineGridPatternView
         android:id="@+id/content_pics"
@@ -69,9 +69,9 @@
         android:layout_marginTop="12dp"
         android:textSize="13sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/add_comment"
+        app:layout_constraintEnd_toStartOf="@id/add_comment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_pics" />
+        app:layout_constraintTop_toBottomOf="@id/content_pics" />
 
     <ImageButton
         android:id="@+id/add_comment"
@@ -80,7 +80,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:background="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_comment_gray_24dp"
+        android:src="@drawable/ic_comment_gray_20dp"
         app:layout_constraintEnd_toStartOf="@+id/comment_count"
         app:layout_constraintTop_toBottomOf="@+id/content_pics" />
 
@@ -92,6 +92,6 @@
         android:textSize="13sp"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_pics"/>
+        app:layout_constraintTop_toBottomOf="@+id/content_pics"/>
 
 </android.support.constraint.ConstraintLayout>

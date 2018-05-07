@@ -1,6 +1,7 @@
 package com.scut.weixinshare.manager;
 
 import com.scut.weixinshare.MyApplication;
+import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
@@ -33,4 +34,5 @@ public class LocationManager {
     public static void stopLocation(TencentLocationListener listener) {
         manager.removeUpdates(listener);
     }
+
 }

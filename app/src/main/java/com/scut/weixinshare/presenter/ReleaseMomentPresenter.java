@@ -28,32 +28,39 @@ public class ReleaseMomentPresenter implements ReleaseMomentContract.Presenter,
 
     @Override
     public void getLocation() {
-        view.showLoadingDialog("正在更新定位信息");
+        /*view.showLoadingDialog("正在更新定位信息");
         int error = LocationManager.startLocation(this);
         if (error != 0) {
             view.hideLoadingDialog();
             view.showReminderMessage("定位组件加载失败，错误码" + error);
-        }
+        }*/
         view.showPickLocationUI();
     }
 
     @Override
-    public void selectPic() {
+    public void selectImages() {
         view.showPictureSelectorUI(selectedImages);
     }
 
     @Override
-    public void publish() {
-        String text = view.getText();
+    public void publish(String text) {
         if(text != null && !"".equals(text)){
             //发送动态
+            List<File> imageFileList = null;
+            if(selectedImages.size() != 0) {
+                imageFileList = new ArrayList<>();
+                for (LocalMedia image : selectedImages) {
+                    imageFileList.add(new File(image.getPath()));
+                }
+            }
+            view.setResultAndFinish(text, location, imageFileList);
         } else {
             view.showReminderMessage("输入内容不能为空");
         }
     }
 
     @Override
-    public void addPics(List<LocalMedia> selectList) {
+    public void addImages(List<LocalMedia> selectList) {
         if(selectList != null && selectList.size() != 0) {
             selectedImages.addAll(selectList);
             List<Uri> pics = new ArrayList<>();
@@ -62,6 +69,12 @@ public class ReleaseMomentPresenter implements ReleaseMomentContract.Presenter,
             }
             view.showAddedPics(pics);
         }
+    }
+
+    @Override
+    public void setLocation(Location location) {
+        this.location = location;
+        view.updateLocationStatus(location.getName());
     }
 
     @Override

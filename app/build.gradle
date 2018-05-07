@@ -20,34 +20,34 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.android.support:support-v4:27.0.2'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.android.support:support-v4:27.0.2'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.0.2'
     // Retrofit库
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.2.0'
     // Okhttp库
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    compile 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    implementation 'com.google.code.gson:gson:2.6.2'
     //retrofit-converter-gson
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.zhy:okhttputils:2.6.2'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.android.support:gridlayout-v7:27.0.2'
-    compile 'com.zhy:okhttputils:2.6.2'
-    compile 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.zhy:okhttputils:2.6.2'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    implementation 'com.android.support:gridlayout-v7:27.0.2'
+    implementation 'com.zhy:okhttputils:2.6.2'
+    //PictureSelector库
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
     //glide库
-    compile 'com.github.bumptech.glide:glide:4.5.0'
-    compile 'devlight.io:navigationtabbar:1.2.5'
-    //WCDB数据库
-    compile 'com.tencent.wcdb:wcdb-android:1.0.6'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    //wcdb库
+    implementation 'com.tencent.wcdb:wcdb-android:1.0.6'
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
