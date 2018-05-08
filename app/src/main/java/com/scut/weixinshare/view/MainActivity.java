@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //new Test().testDb(this);
+
         handleLocationPermission();
 
         toHome = findViewById(R.id.button_to_home_activity);

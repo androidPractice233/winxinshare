@@ -30,7 +30,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
     本地数据库表中不存储具体的经纬度，只保留位置名
     在联网获取最新动态前，展示本地数据库中最近的动态
      insertTime是动态被插入到数据库的时间，当选择最近动态展示时根据insertTime而不是createTime
-    content是动态中的文字描述，可以为空
+    updateTime是动态上次更新的时间
+     content是动态中的文字描述，可以为空
     pictureUrl是图片或者视频的地址
      */
     private static final String CREATE_MOMENT = "create table moment(" +
@@ -38,18 +39,20 @@ public class MyDBHelper extends SQLiteOpenHelper {
             "userId text not null," +
             "createTime text not null, " +
             "insertTime text not null,"+
+            "updateTime text not null,"+
             "location text not null," +
             "pictureUrl text," +
             "content text)";
     /**
     留言表：
-    发送者和接收者不能为空
+    发送者不能为空
+     接受者可以为空（评论是所有人可见的）
      */
     private static final String CREATE_COMMENT = "create table comment(" +
             "commentId text primary key," +
             "momentId text not null,"+
             "senderId text not null," +
-            "receiverId text not null," +
+            "receiverId text ," +
             "createTime text not null," +
             "content text not null)";
 

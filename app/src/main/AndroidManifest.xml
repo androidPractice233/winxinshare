@@ -49,7 +49,7 @@
             android:label="发布动态"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.MomentDetailActivity"
-            android:label=""
+            android:label="动态正文"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

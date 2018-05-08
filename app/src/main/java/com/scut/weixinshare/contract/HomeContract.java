@@ -1,12 +1,11 @@
 package com.scut.weixinshare.contract;
 
-import android.os.Bundle;
-
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 
+import java.io.File;
 import java.util.List;
 
 //动态主页交互接口
@@ -32,6 +31,9 @@ public interface HomeContract {
         //设置主页动态尾部为加载状态
         void setListLoadingView();
 
+        //设置主页动态尾部为网络错误状态
+        void setListErrorView();
+
         //显示发布动态界面
         void showReleaseMomentUI(Location location);
 
@@ -41,12 +43,15 @@ public interface HomeContract {
         //显示应用提示信息
         void showReminderMessage(String text);
 
+        //显示动态列表
+        void showMomentList();
+
+        //隐藏动态列表
+        void hideMomentList();
+
     }
 
     interface Presenter extends BasePresenter {
-
-        //获取用户当前位置
-        void getLocation();
 
         //向服务器请求新的动态
         void requestNewMoments();
@@ -54,14 +59,23 @@ public interface HomeContract {
         //向服务器请求后续动态
         void requestNextMoments();
 
-        //前往发布动态
-        void toReleaseMoment();
+        //前往编辑发布动态
+        void toEditReleaseMoment();
 
         //前往动态详情
         void toMomentDetail(Moment moment);
 
         //前往发布评论
         void toReleaseComment(Moment moment);
+
+        //发布动态
+        void releaseMoment(String text, Location location);
+
+        //发布动态
+        void releaseMoment(String text, Location location, List<File> images);
+
+        //设置后续动态请求为可加载状态
+        void breakErrorState();
 
     }
 }

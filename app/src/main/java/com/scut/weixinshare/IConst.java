@@ -19,7 +19,8 @@ public final static String URL_BASE = "http://193.112.37.77:8081/";
 
     public final static int REQUEST_LOCATION=1001;
     public final static int MAX_IMAGE_NUM = 9;
-    public final static int MARGIN_CARD = 8;
 
     public final static int REQUEST_CODE_MOMENT_DETAIL = 504;
+    public final static int REQUEST_CODE_RELEASE_MOMENT = 326;
+    public final static int REQUEST_CODE_PICK_LOCATION = 213;
 }

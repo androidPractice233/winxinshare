@@ -3,6 +3,8 @@ package com.scut.weixinshare.view.fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
@@ -22,6 +24,7 @@ import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.KeyBroadUtils;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.component.CommentView;
 import com.scut.weixinshare.view.component.MomentView;
 
 import java.util.List;
@@ -40,8 +43,8 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     //private Moment moment;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moment_detail, container,
                 false);
         momentView = view.findViewById(R.id.moment);
@@ -73,24 +76,36 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefresh.setRefreshing(false);
+                presenter.refreshMomentDetail();
+                //swipeRefresh.setRefreshing(false);
             }
         });
         return view;
     }
 
-    private TextView initCommentView(final Comment comment){
-        TextView commentItem = (TextView) getLayoutInflater().inflate(R.layout.view_comment,
-                comments);
-        commentItem.setOnClickListener(new View.OnClickListener() {
+    private CommentView initCommentView(final Comment comment){
+        CommentView view = new CommentView(getContext());
+        view.setListener(new CommentView.CommentViewListener() {
             @Override
-            public void onClick(View view) {
-                inputComment.setHint("@" + comment.getSenderId());
+            public void onItemClick() {
+                inputComment.setHint("@" + comment.getSendNickName());
                 KeyBroadUtils.showKeyBroad(inputComment);
             }
         });
-        //发送者昵称，接收者昵称，文本内容采用不同的文本格式
-        SpannableStringBuilder commentStr = new SpannableStringBuilder(comment.getSenderId());
+        view.setClickable(true);
+        view.setView(comment);
+        return view;
+        /*TextView commentItem = (TextView) getLayoutInflater().inflate(R.layout.view_comment,
+                null);
+        commentItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputComment.setHint("@" + comment.getSendId());
+                KeyBroadUtils.showKeyBroad(inputComment);
+            }
+        });
+        //发送者昵称与接收者昵称，文本内容采用不同的文本格式
+        SpannableStringBuilder commentStr = new SpannableStringBuilder(comment.getSendId());
         //发送者昵称格式
         commentStr.setSpan(new StyleSpan(Typeface.BOLD), 0,
                 commentStr.length(),
@@ -110,7 +125,7 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
         commentStr.append(" ");
         commentStr.append(comment.getContent());
         commentItem.setText(commentStr);
-        return commentItem;
+        return commentItem;*/
     }
 
     @Override
@@ -137,7 +152,9 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     @Override
     public void addComment(Comment comment) {
         //向评论布局顶部添加评论
-        comments.addView(initCommentView(comment), 0);
+        //comments.addView(initCommentView(comment), 0);
+        //向评论布局底部添加评论
+        comments.addView(initCommentView(comment));
         //增加评论计数
         momentView.addCommentCount(1);
     }
