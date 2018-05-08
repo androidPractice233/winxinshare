@@ -20,6 +20,7 @@ public class CommentView extends ConstraintLayout implements View.OnClickListene
     private TextView nickname;
     private TextView text;
     private CommentViewListener listener;
+    private Comment comment;
 
     public CommentView(Context context) {
         super(context);
@@ -35,6 +36,7 @@ public class CommentView extends ConstraintLayout implements View.OnClickListene
     }
 
     public void setView(Comment comment){
+        this.comment = comment;
         GlideUtils.loadImageViewInCircleCrop(getContext(), comment.getPortrait(), portrait);
         nickname.setText(comment.getSendNickName());
         SpannableStringBuilder commentText = new SpannableStringBuilder();
@@ -55,13 +57,13 @@ public class CommentView extends ConstraintLayout implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             default:
-                listener.onItemClick();
+                listener.onItemClick(comment);
                 break;
         }
     }
 
     public interface CommentViewListener{
 
-        void onItemClick();
+        void onItemClick(Comment comment);
     }
 }

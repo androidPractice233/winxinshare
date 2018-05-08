@@ -30,7 +30,7 @@ import com.scut.weixinshare.view.component.MomentView;
 import java.util.List;
 
 public class MomentDetailFragment extends Fragment implements MomentDetailContract.View,
-        MomentView.MomentViewListener {
+        MomentView.MomentViewListener, CommentView.CommentViewListener {
 
     private static final String DEFAULT_HINT = "添加评论";     //评论输入框默认提示
 
@@ -77,55 +77,17 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
             @Override
             public void onRefresh() {
                 presenter.refreshMomentDetail();
-                //swipeRefresh.setRefreshing(false);
             }
         });
         return view;
     }
 
-    private CommentView initCommentView(final Comment comment){
+    private CommentView initCommentView(Comment comment){
         CommentView view = new CommentView(getContext());
-        view.setListener(new CommentView.CommentViewListener() {
-            @Override
-            public void onItemClick() {
-                inputComment.setHint("@" + comment.getSendNickName());
-                KeyBroadUtils.showKeyBroad(inputComment);
-            }
-        });
+        view.setListener(this);
         view.setClickable(true);
         view.setView(comment);
         return view;
-        /*TextView commentItem = (TextView) getLayoutInflater().inflate(R.layout.view_comment,
-                null);
-        commentItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                inputComment.setHint("@" + comment.getSendId());
-                KeyBroadUtils.showKeyBroad(inputComment);
-            }
-        });
-        //发送者昵称与接收者昵称，文本内容采用不同的文本格式
-        SpannableStringBuilder commentStr = new SpannableStringBuilder(comment.getSendId());
-        //发送者昵称格式
-        commentStr.setSpan(new StyleSpan(Typeface.BOLD), 0,
-                commentStr.length(),
-                SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);
-        String receiverId = comment.getRecvId();
-        if(receiverId != null && !"".equals(receiverId)){
-            //接收者昵称格式
-            int pos = commentStr.length();
-            commentStr.append(" @");
-            commentStr.append(receiverId);
-            commentStr.setSpan(new ForegroundColorSpan(getResources()
-                            .getColor(R.color.colorAccent)), pos + 1,
-                    commentStr.length(),
-                    SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        //文本内容采用TextView的默认格式
-        commentStr.append(" ");
-        commentStr.append(comment.getContent());
-        commentItem.setText(commentStr);
-        return commentItem;*/
     }
 
     @Override
@@ -175,31 +137,41 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     }
 
     @Override
+    public void showUserDataUI(String userId) {
+
+    }
+
+    @Override
     public void setPresenter(MomentDetailContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void onPortraitClick() {
-        //点击头像事件处理
+    public void onPortraitClick(Moment moment) {
+        presenter.openUserData(moment);
     }
 
     @Override
-    public void onNickNameClick() {
-        //点击昵称事件处理
+    public void onNickNameClick(Moment moment) {
+        presenter.openUserData(moment);
     }
 
     @Override
-    public void onItemClick() {
+    public void onItemClick(Moment moment) {
         //不做处理
     }
 
     @Override
-    public void onAddCommentButtonClick() {
+    public void onAddCommentButtonClick(Moment moment) {
         //点击评论，弹出软键盘并设置评论输入框提示为默认样式
         inputComment.setHint(DEFAULT_HINT);
         KeyBroadUtils.showKeyBroad(inputComment);
     }
 
+    @Override
+    public void onItemClick(Comment comment) {
+        inputComment.setHint("@" + comment.getSendNickName());
+        KeyBroadUtils.showKeyBroad(inputComment);
+    }
 }
 

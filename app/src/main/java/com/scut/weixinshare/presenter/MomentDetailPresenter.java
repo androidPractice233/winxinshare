@@ -75,6 +75,11 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
     }
 
     @Override
+    public void openUserData(Moment moment) {
+        view.showUserDataUI(moment.getUserId());
+    }
+
+    @Override
     public void start() {
 
     }

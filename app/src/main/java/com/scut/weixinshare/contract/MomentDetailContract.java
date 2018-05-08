@@ -29,6 +29,9 @@ public interface MomentDetailContract {
         //显示应用提示信息
         void showReminderMessage(String message);
 
+        //显示用户信息界面
+        void showUserDataUI(String userId);
+
     }
 
     interface Presenter extends BasePresenter{
@@ -41,6 +44,9 @@ public interface MomentDetailContract {
 
         //获取动态正文
         void refreshMomentDetail();
+
+        //打开用户信息
+        void openUserData(Moment moment);
 
     }
 

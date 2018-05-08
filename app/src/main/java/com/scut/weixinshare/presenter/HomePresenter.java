@@ -1,7 +1,10 @@
 package com.scut.weixinshare.presenter;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
+import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.contract.HomeContract;
 import com.scut.weixinshare.manager.LocationManager;
 import com.scut.weixinshare.model.Comment;
@@ -16,11 +19,14 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class HomePresenter implements HomeContract.Presenter/*, TencentLocationListener*/ {
+import static android.app.Activity.RESULT_OK;
+
+public class HomePresenter implements HomeContract.Presenter {
 
     private static int PAGE_SIZE = 25;
 
@@ -30,14 +36,13 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
 
     private int state = LOADING;
     private HomeContract.View view;
-    //private TencentLocation location = null;
     private boolean isFirst = true;
     private int count = 0;
     private int pageNum = 1;
     private boolean isLoading = false;
     private MomentDataSource momentDataSource;
     private LocationDataSource locationDataSource;
-    //private List<Moment> momentList = new ArrayList<>();
+    private int lastPosition = -1;
 
     public HomePresenter(HomeContract.View view, MomentDataSource momentDataSource,
                          LocationDataSource locationDataSource){
@@ -200,7 +205,7 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     }
 
     @Override
-    public void toEditReleaseMoment() {
+    public void editReleaseMoment() {
         /*if(location != null){
             //已获得定位信息的情况下才可以发布动态
             view.showReleaseMomentUI(new Location(location));
@@ -221,12 +226,14 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     }
 
     @Override
-    public void toMomentDetail(Moment moment) {
+    public void openMomentDetail(Moment moment, int position) {
+        lastPosition = position;
         view.showMomentDetailUI(moment, false);
     }
 
     @Override
-    public void toReleaseComment(Moment moment) {
+    public void releaseComment(Moment moment, int position) {
+        lastPosition = position;
         view.showMomentDetailUI(moment, true);
     }
 
@@ -269,6 +276,45 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     }
 
     @Override
+    public void openUserData(Moment moment, int position) {
+        view.showUserDataUI(moment.getMomentId());
+    }
+
+    @Override
+    public void result(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case IConst.REQUEST_CODE_MOMENT_DETAIL:
+                if (resultCode == RESULT_OK) {
+                    //获取动态正文页面返回的修改信息
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null && bundle.getBoolean("isChanged")) {
+                        Moment moment = bundle.getParcelable("moment");
+                        //更新显示数据
+                        if(lastPosition != -1) {
+                            view.updateMomentView(moment, lastPosition);
+                        }
+                    }
+                }
+                break;
+            case IConst.REQUEST_CODE_RELEASE_MOMENT:
+                if(resultCode == RESULT_OK){
+                    String text = data.getStringExtra("text");
+                    Location location = data.getParcelableExtra("location");
+                    if(!data.getBooleanExtra("isTextOnly", true)){
+                        File[] images = (File[]) data.getSerializableExtra("images");
+                        releaseMoment(text, location, new ArrayList<>(Arrays
+                                .asList(images)));
+                    } else {
+                        releaseMoment(text, location);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void start() {
         if(isFirst) {
             view.hideMomentList();
@@ -277,20 +323,5 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
             //isFirst = false;
         }
     }
-
-    /*@Override
-    public void onLocationChanged(TencentLocation location, int error, String reason) {
-        if(TencentLocation.ERROR_OK == error){
-            this.location = location;
-        } else {
-            view.showReminderMessage("定位失败");
-        }
-        LocationManager.stopLocation(this);
-    }
-
-    @Override
-    public void onStatusUpdate(String s, int i, String s1) {
-        //处理GPS、Wifi等状态变化时间
-    }*/
 
 }
