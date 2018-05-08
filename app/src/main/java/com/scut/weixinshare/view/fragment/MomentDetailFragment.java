@@ -38,9 +38,7 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     private MomentView momentView;
     private LinearLayout comments;
     private EditText inputComment;
-    //private ImageButton releaseComment;
     private SwipeRefreshLayout swipeRefresh;
-    //private Moment moment;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -58,12 +56,7 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
                 String text = inputComment.getText().toString();
                 if(!"".equals(text)){
                     //从输入框提示中获取接收者信息
-                    String hint = inputComment.getHint().toString();
-                    if(!hint.equals(DEFAULT_HINT)){
-                        presenter.releaseComment(text, hint.substring(1));
-                    } else {
-                        presenter.releaseComment(text, null);
-                    }
+                    presenter.releaseComment(text);
                     inputComment.setText("");
                     KeyBroadUtils.hideKeyBroad(inputComment);
                 } else {
@@ -80,6 +73,12 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
             }
         });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.start();
     }
 
     private CommentView initCommentView(Comment comment){
@@ -112,16 +111,6 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     }
 
     @Override
-    public void addComment(Comment comment) {
-        //向评论布局顶部添加评论
-        //comments.addView(initCommentView(comment), 0);
-        //向评论布局底部添加评论
-        comments.addView(initCommentView(comment));
-        //增加评论计数
-        momentView.addCommentCount(1);
-    }
-
-    @Override
     public void showRefreshing() {
         swipeRefresh.setRefreshing(true);
     }
@@ -138,6 +127,21 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
 
     @Override
     public void showUserDataUI(String userId) {
+
+    }
+
+    @Override
+    public void updateCommentUI(String nickname) {
+        if(nickname != null) {
+            inputComment.setHint("@" + nickname);
+        } else {
+            inputComment.setHint(DEFAULT_HINT);
+        }
+        KeyBroadUtils.showKeyBroad(inputComment);
+    }
+
+    @Override
+    public void showLoginUI() {
 
     }
 
@@ -163,15 +167,12 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
 
     @Override
     public void onAddCommentButtonClick(Moment moment) {
-        //点击评论，弹出软键盘并设置评论输入框提示为默认样式
-        inputComment.setHint(DEFAULT_HINT);
-        KeyBroadUtils.showKeyBroad(inputComment);
+        presenter.changeCommentUser(null);
     }
 
     @Override
     public void onItemClick(Comment comment) {
-        inputComment.setHint("@" + comment.getSendNickName());
-        KeyBroadUtils.showKeyBroad(inputComment);
+        presenter.changeCommentUser(comment);
     }
 }
 

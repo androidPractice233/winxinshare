@@ -181,12 +181,17 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
-    public void showMomentDetailUI(Moment moment, boolean isToComment) {
-        MomentDetailActivity.activityStartForResult(this, moment, isToComment);
+    public void showMomentDetailUI(String momentId, boolean isToComment) {
+        MomentDetailActivity.activityStartForResult(this, momentId, isToComment);
     }
 
     @Override
     public void showUserDataUI(String momentId) {
+
+    }
+
+    @Override
+    public void showLoginUI() {
 
     }
 

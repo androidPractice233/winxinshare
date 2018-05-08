@@ -112,8 +112,8 @@ public class MomentsRepository implements MomentDataSource {
                                                     new MomentRemoteSource.GetMomentUserDataCallback() {
                                                         @Override
                                                         public void onUserDataLoaded(List<MomentUserData> userDataList) {
-                                                            for(int i = 0; i < userDataList.size(); ++i){
-                                                                userDataMap.put(userList.get(i), userDataList.get(i));
+                                                            for(MomentUserData userData : userDataList){
+                                                                userDataMap.put(userData.getUserId(), userData);
                                                             }
                                                             for(MomentLocal momentLocal : moments){
                                                                 Moment moment = MomentUtils.momentLocalToMoment(momentLocal);

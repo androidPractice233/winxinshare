@@ -13,6 +13,7 @@ import com.scut.weixinshare.model.source.LocationDataSource;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.source.MomentDataSource;
 import com.scut.weixinshare.model.source.MomentsRepository;
+import com.scut.weixinshare.utils.NetworkUtils;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 
@@ -43,6 +44,7 @@ public class HomePresenter implements HomeContract.Presenter {
     private MomentDataSource momentDataSource;
     private LocationDataSource locationDataSource;
     private int lastPosition = -1;
+    private String lastMomentId;
 
     public HomePresenter(HomeContract.View view, MomentDataSource momentDataSource,
                          LocationDataSource locationDataSource){
@@ -53,7 +55,7 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     //测试用数据
-    private List<Moment> initTestMoments(){
+    /*private List<Moment> initTestMoments(){
         List<Moment> momentList = new ArrayList<>();
         for(int i = 0; i < PAGE_SIZE; ++i){
             List<Comment> comments = new ArrayList<>();
@@ -95,7 +97,7 @@ public class HomePresenter implements HomeContract.Presenter {
                     "嘿嘿嘿", picUris, comments, new Timestamp(System.currentTimeMillis())));
         }
         return momentList;
-    }
+    }*/
 
     @Override
     public void requestNewMoments() {
@@ -104,27 +106,40 @@ public class HomePresenter implements HomeContract.Presenter {
         locationDataSource.getLocation(new LocationDataSource.GetLocationCallback() {
             @Override
             public void onSuccess(Location location) {
-                /*MomentsRepository.getInstance().getMoments(location, 0, PAGE_SIZE,
+                momentDataSource.getMoments(location, 0, PAGE_SIZE,
                         new MomentDataSource.GetMomentsCallback(){
                     @Override
                     public void onMomentsLoaded(List<Moment> momentList) {
                         view.initMoments(momentList);
                         if(momentList.size() < PAGE_SIZE){
+                            state = END;
                             view.setListEndView();
+                        } else {
+                            state = LOADING;
+                            view.setListLoadingView();
                         }
-                        pageNum = 0;
+                        if(isFirst){
+                            isFirst = false;
+                            view.showMomentList();
+                        }
+                        pageNum = 1;
                         isLoading = false;
                         view.hideRefreshing();
                     }
 
                     @Override
                     public void onDataNotAvailable(String error) {
-                        view.showReminderMessage(error);
-                        isLoading = false;
-                        view.hideRefreshing();
+                        if(NetworkUtils.isLoginFailed(error)){
+                            view.showReminderMessage("登录失效，请重新登录");
+                            view.showLoginUI();
+                        } else {
+                            view.showReminderMessage("获取动态失败，" + error);
+                            isLoading = false;
+                            view.hideRefreshing();
+                        }
                     }
-                });*/
-                view.initMoments(initTestMoments());
+                });
+                /*view.initMoments(initTestMoments());
                 if(isFirst){
                     isFirst = false;
                     view.showMomentList();
@@ -132,12 +147,12 @@ public class HomePresenter implements HomeContract.Presenter {
                 isLoading = false;
                 view.hideRefreshing();
                 state = LOADING;
-                view.setListLoadingView();
+                view.setListLoadingView();*/
             }
 
             @Override
             public void onFailure(String error) {
-                view.showReminderMessage(error);
+                view.showReminderMessage("获取定位失败，" + error);
                 isLoading = false;
                 view.hideRefreshing();
             }
@@ -146,7 +161,7 @@ public class HomePresenter implements HomeContract.Presenter {
 
     @Override
     public void requestNextMoments() {
-        if(count == 5){
+        /*if(count == 5){
             view.setListEndView();
             state = END;
         } else if(!isLoading && state == LOADING){
@@ -162,10 +177,9 @@ public class HomePresenter implements HomeContract.Presenter {
             }
             ++count;
             isLoading = false;
-        }
-        /*if(!isLoading){
+        }*/
+        if(!isLoading && state == LOADING){
             isLoading = true;
-            view.setListLoadingView();
             locationDataSource.getLocation(new LocationDataSource.GetLocationCallback(){
 
                 @Override
@@ -178,6 +192,7 @@ public class HomePresenter implements HomeContract.Presenter {
                                 view.setListEndView();
                             } else {
                                 if(momentList.size() < PAGE_SIZE){
+                                    state = END;
                                     view.setListEndView();
                                 }
                                 view.addMoments(momentList);
@@ -189,29 +204,33 @@ public class HomePresenter implements HomeContract.Presenter {
 
                         @Override
                         public void onDataNotAvailable(String error) {
-                            view.showReminderMessage(error);
-                            isLoading = false;
+                            if(NetworkUtils.isLoginFailed(error)){
+                                view.showReminderMessage("登录失效，请重新登录");
+                                view.showLoginUI();
+                            } else {
+                                view.showReminderMessage("获取动态失败，" + error);
+                                state = NETWORK_ERROR;
+                                view.setListErrorView();
+                                isLoading = false;
+                            }
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    view.showReminderMessage(error);
+                    //理论上不会出现
+                    state = NETWORK_ERROR;
+                    view.setListErrorView();
+                    view.showReminderMessage("获取定位失败，" + error);
                     isLoading = false;
                 }
             });
-        }*/
+        }
     }
 
     @Override
     public void editReleaseMoment() {
-        /*if(location != null){
-            //已获得定位信息的情况下才可以发布动态
-            view.showReleaseMomentUI(new Location(location));
-        } else {
-            view.showReminderMessage("缺少定位信息");
-        }*/
         locationDataSource.getLocation(new LocationDataSource.GetLocationCallback() {
             @Override
             public void onSuccess(Location location) {
@@ -220,7 +239,7 @@ public class HomePresenter implements HomeContract.Presenter {
 
             @Override
             public void onFailure(String error) {
-                view.showReminderMessage("缺少定位信息");
+                view.showReminderMessage("缺少位置信息，无法发送动态");
             }
         });
     }
@@ -228,17 +247,20 @@ public class HomePresenter implements HomeContract.Presenter {
     @Override
     public void openMomentDetail(Moment moment, int position) {
         lastPosition = position;
-        view.showMomentDetailUI(moment, false);
+        lastMomentId = moment.getMomentId();
+        view.showMomentDetailUI(lastMomentId, false);
     }
 
     @Override
     public void releaseComment(Moment moment, int position) {
         lastPosition = position;
-        view.showMomentDetailUI(moment, true);
+        lastMomentId = moment.getMomentId();
+        view.showMomentDetailUI(lastMomentId, true);
     }
 
     @Override
     public void releaseMoment(String text, Location location) {
+        view.showReminderMessage("正在发送动态");
         momentDataSource.createMoment(text, location,
                 new MomentDataSource.CreateMomentCallback() {
                     @Override
@@ -248,7 +270,12 @@ public class HomePresenter implements HomeContract.Presenter {
 
                     @Override
                     public void onFailure(String error) {
-                        view.showReminderMessage(error);
+                        if(NetworkUtils.isLoginFailed(error)){
+                            view.showReminderMessage("登录失效，请重新登录");
+                            view.showLoginUI();
+                        } else {
+                            view.showReminderMessage("动态发送失败，" + error);
+                        }
                     }
                 });
     }
@@ -265,7 +292,12 @@ public class HomePresenter implements HomeContract.Presenter {
 
                     @Override
                     public void onFailure(String error) {
-                        view.showReminderMessage(error);
+                        if(NetworkUtils.isLoginFailed(error)){
+                            view.showReminderMessage("登录失效，请重新登录");
+                            view.showLoginUI();
+                        } else {
+                            view.showReminderMessage("动态发送失败，" + error);
+                        }
                     }
                 });
     }
@@ -273,6 +305,7 @@ public class HomePresenter implements HomeContract.Presenter {
     @Override
     public void breakErrorState() {
         state = LOADING;
+        view.setListLoadingView();
     }
 
     @Override
@@ -286,18 +319,28 @@ public class HomePresenter implements HomeContract.Presenter {
             case IConst.REQUEST_CODE_MOMENT_DETAIL:
                 if (resultCode == RESULT_OK) {
                     //获取动态正文页面返回的修改信息
-                    Bundle bundle = data.getExtras();
-                    if (bundle != null && bundle.getBoolean("isChanged")) {
-                        Moment moment = bundle.getParcelable("moment");
-                        //更新显示数据
-                        if(lastPosition != -1) {
-                            view.updateMomentView(moment, lastPosition);
-                        }
+                    if(data.getBooleanExtra("isChanged", false) &&
+                            lastPosition != -1){
+                        momentDataSource.getMoment(lastMomentId, new MomentDataSource.GetMomentCallback() {
+                            @Override
+                            public void onMomentLoaded(Moment moment) {
+                                view.updateMomentView(moment, lastPosition);
+                            }
+
+                            @Override
+                            public void onDataNotAvailable(String error) {
+                                if(NetworkUtils.isLoginFailed(error)){
+                                    view.showReminderMessage("登录失效，请重新登录");
+                                    view.showLoginUI();
+                                }
+                            }
+                        });
                     }
                 }
                 break;
             case IConst.REQUEST_CODE_RELEASE_MOMENT:
                 if(resultCode == RESULT_OK){
+                    //发送动态
                     String text = data.getStringExtra("text");
                     Location location = data.getParcelableExtra("location");
                     if(!data.getBooleanExtra("isTextOnly", true)){

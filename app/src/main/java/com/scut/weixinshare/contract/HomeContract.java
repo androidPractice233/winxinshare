@@ -40,10 +40,13 @@ public interface HomeContract {
         void showReleaseMomentUI(Location location);
 
         //显示动态详情界面（添加评论）
-        void showMomentDetailUI(Moment moment, boolean isToComment);
+        void showMomentDetailUI(String momentId, boolean isToComment);
 
         //显示用户信息界面
         void showUserDataUI(String momentId);
+
+        //显示登录界面
+        void showLoginUI();
 
         //显示应用提示信息
         void showReminderMessage(String text);

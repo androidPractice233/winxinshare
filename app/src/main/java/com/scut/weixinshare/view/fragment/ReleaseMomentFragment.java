@@ -36,9 +36,6 @@ import java.util.List;
 public class ReleaseMomentFragment extends Fragment implements ReleaseMomentContract.View,
         View.OnClickListener {
 
-    //private ImageButton relocateButton;     //重定位按钮
-    //private ImageButton addPicButton;       //添加图片按钮
-    //private ImageButton publishButton;      //发布按钮
     private TextView locationStatus;        //显示位置信息
     private EditText text;                  //文字信息编辑
     private ProgressDialog dialog;          //加载中对话框
@@ -82,21 +79,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case PictureConfig.CHOOSE_REQUEST:
-                if (resultCode == Activity.RESULT_OK) {
-                    //获取选择的图片
-                    presenter.addImages(PictureSelector.obtainMultipleResult(data));
-                }
-                break;
-            case IConst.REQUEST_CODE_PICK_LOCATION:
-                if(resultCode == Activity.RESULT_OK){
-                    presenter.setLocation((Location) data.getParcelableExtra("location"));
-                }
-            default:
-                break;
-        }
+        presenter.result(requestCode, resultCode, data);
     }
 
     @Override
