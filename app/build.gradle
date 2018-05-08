@@ -48,6 +48,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     //wcdb库
     implementation 'com.tencent.wcdb:wcdb-android:1.0.6'
+    //轮播图
+    implementation 'com.youth.banner:banner:1.4.10'
 
     testImplementation 'junit:junit:4.12'
 }
