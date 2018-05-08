@@ -11,6 +11,7 @@ import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
 import com.scut.weixinshare.service.MultipartService;
+import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.service.TestService;
 import com.scut.weixinshare.utils.AES;
 import com.scut.weixinshare.utils.NetworkUtils;
@@ -129,6 +130,15 @@ public class NetworkManager {
         params.put("sex", "1");
         params.put("birthday", "20011010");
         Call<ResultBean> call=testService.register(params);
+        call.enqueue(callback);
+    }
+
+    public void pullComment(Callback<ResultBean> callback,String token,String time){
+        PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
+        Map<String, Object> params = new HashMap<>();
+        params.put("token",token);
+        params.put("dateTime",time);
+        Call<ResultBean> call=pullCommentService.pullComment(params);
         call.enqueue(callback);
     }
 

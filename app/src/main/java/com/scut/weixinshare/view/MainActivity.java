@@ -25,11 +25,15 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.R;
+import com.scut.weixinshare.db.Comment;
+import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.utils.LocationUtils;
+import com.tencent.wcdb.database.SQLiteDebug;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,13 +50,19 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     Button locationBtn;
     Button toHome;
+    public static String TOKEN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //new Test().testDb(this);
+        new Test().testDb(this);
+        //获取评论更新
+        Log.d("MainActivity","Thread id is"+Thread.currentThread().getId());
+        Intent intent = new Intent(MainActivity.this, CommentPullIntentServer.class);
+        startService(intent);
+        //
 
         handleLocationPermission();
 
@@ -70,20 +80,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkManager.getInstance().test(new BaseCallback() {
-                    @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                        ResultBean resultBean=  response.body();
-                        if(this.checkResult(MainActivity.this,resultBean)) {
-                            Toast.makeText(MainActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResultBean> call, Throwable t) {
-                        Log.e("MainActivity", t.getMessage()  );
-                    }
-                });
             }
         });
 
