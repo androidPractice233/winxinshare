@@ -36,6 +36,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment implements HomeContract.View,
         MomentAdapter.MomentItemListener {
+    public final static int MARGIN_TOP_CARD = 8;
+    public final static int MARGIN_BOTTOM_CARD = 4;
+
     //private RecyclerView recyclerView;
     private HomeContract.Presenter presenter;
     private MomentAdapter momentAdapter;
@@ -69,9 +72,9 @@ public class HomeFragment extends Fragment implements HomeContract.View,
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 outRect.top = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_TOP_CARD);
                 outRect.bottom = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_BOTTOM_CARD);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){

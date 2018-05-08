@@ -34,4 +34,7 @@ public interface TestService {
     @POST("/comment/create")
     Call<ResultBean> createComment(@Body Map params);
 
+    @POST("/user/getnickpot")
+    Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
+
 }

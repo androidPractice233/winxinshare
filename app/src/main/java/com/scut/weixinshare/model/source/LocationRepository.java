@@ -24,7 +24,7 @@ public class LocationRepository implements LocationDataSource {
         if(lastLocation != null){
             callback.onSuccess(lastLocation);
         } else {
-            LocationManager.startLocation(
+            if(LocationManager.startLocation(
                     new TencentLocationListener() {
                 @Override
                 public void onLocationChanged(TencentLocation tencentLocation, int error,
@@ -42,13 +42,15 @@ public class LocationRepository implements LocationDataSource {
                 public void onStatusUpdate(String s, int i, String s1) {
 
                 }
-            });
+            }) != 0){
+                callback.onFailure("定位组件加载失败");
+            }
         }
     }
 
     @Override
     public void getLocationList(final GetLocationListCallback callback) {
-        LocationManager.startLocationForPOI(new TencentLocationListener() {
+        if(LocationManager.startLocationForPOI(new TencentLocationListener() {
             @Override
             public void onLocationChanged(TencentLocation tencentLocation, int error,
                                           String reason) {
@@ -68,7 +70,9 @@ public class LocationRepository implements LocationDataSource {
             public void onStatusUpdate(String s, int i, String s1) {
 
             }
-        });
+        }) != 0){
+            callback.onFailure("定位组件加载失败");
+        }
     }
 
     @Override

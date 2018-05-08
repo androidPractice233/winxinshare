@@ -25,7 +25,6 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.R;
-import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.retrofit.BaseCallback;

@@ -15,7 +15,7 @@ public class LocationManager {
     //开始异步定位，获取经纬度及当前位置名，返回监听器注册结果
     public static int startLocation(TencentLocationListener listener) {
         TencentLocationRequest request = TencentLocationRequest.create();
-        request.setInterval(30000);
+        request.setInterval(10000);
         request.setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_NAME);
         request.setAllowCache(false);
         return manager.requestLocationUpdates(request, listener);
@@ -24,7 +24,7 @@ public class LocationManager {
     //开始异步定位，获取经纬度及当前位置附近的地点名，返回监听器注册结果
     public static int startLocationForPOI(TencentLocationListener listener){
         TencentLocationRequest request = TencentLocationRequest.create();
-        request.setInterval(30000);
+        request.setInterval(10000);
         request.setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_POI);
         request.setAllowCache(false);
         return manager.requestLocationUpdates(request, listener);

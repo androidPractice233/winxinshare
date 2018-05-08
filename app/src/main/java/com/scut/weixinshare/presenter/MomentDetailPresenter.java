@@ -1,5 +1,6 @@
 package com.scut.weixinshare.presenter;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.scut.weixinshare.contract.MomentDetailContract;
@@ -31,8 +32,9 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
 
     @Override
     public void releaseComment(String text, String receiverId) {
-        Comment comment = new Comment(UUID.randomUUID().toString(), "大神",
-                receiverId, text, new Timestamp(System.currentTimeMillis()));
+        Comment comment = new Comment(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                receiverId, "傻强", Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"),
+                null, text, new Timestamp(System.currentTimeMillis()));
         //向服务器上传评论
         /*momentDataSource.createComment(text, moment.getMomentId(), "大神",
                 receiverId, new MomentDataSource.CreateCommentCallback() {

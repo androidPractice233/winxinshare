@@ -9,6 +9,8 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.model.source.LocationRepository;
 import com.scut.weixinshare.model.source.MomentsRepository;
+import com.scut.weixinshare.model.source.local.MomentDatabaseSource;
+import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.view.fragment.HomeFragment;
 
@@ -25,12 +27,12 @@ public class HomeActivity extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.content_home, fragment, PictureConfig.FC_TAG);
             transaction.commit();
-            new HomePresenter(fragment, MomentsRepository.getInstance(),
+            new HomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                     LocationRepository.getInstance());
         } else {
             HomeFragment fragment = (HomeFragment)getSupportFragmentManager()
                     .findFragmentByTag(PictureConfig.FC_TAG);
-            new HomePresenter(fragment, MomentsRepository.getInstance(),
+            new HomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                     LocationRepository.getInstance());
         }
     }

@@ -191,4 +191,18 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
+    public void requestNicknameAndPortrait(Callback<ResultBean> callback, List<String> userId){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, String> params = new HashMap<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String id : userId){
+            stringBuilder.append(id);
+            stringBuilder.append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        params.put("userIds", stringBuilder.toString());
+        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
+        call.enqueue(callback);
+    }
+
 }

@@ -23,6 +23,7 @@ import com.scut.weixinshare.R;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.GlideUtils;
+import com.scut.weixinshare.utils.StringUtils;
 
 import java.util.List;
 
@@ -60,9 +61,9 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
 
     public void setView(Moment moment){
         GlideUtils.loadImageViewInCircleCrop(getContext(), moment.getPortrait(), portrait);
-        nickname.setText(moment.getNickname());
+        nickname.setText(moment.getNickName());
         location.setText(moment.getLocation());
-        time.setText(moment.getCreateTime().toString());
+        time.setText(StringUtils.TimeToString(moment.getCreateTime()));
         textContent.setText(moment.getTextContent());
         List<Uri> picUris = moment.getPicContent();
         if(picUris != null && picUris.size() > 0){

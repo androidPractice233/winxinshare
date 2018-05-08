@@ -288,6 +288,17 @@ public class DBOperator {
         Log.d("insert comment","insert success"+comment.getContent());
         return true;
     }
+    //删除留言
+    public boolean deleteComment(String commentId){
+        if(isCommentExist(commentId)){
+            database.execSQL("delete from comment where commentId=?",
+                    new Object[]{commentId});
+            Log.d("delete comment","delete comment success");
+            return true;
+        }
+        Log.d("delete comment","comment not exist");
+        return false;
+    }
     //查找留言
     public Comment selectCommentById(String commentId){
         Cursor cursor = database.rawQuery("select * from comment where commentId = ?",
@@ -333,5 +344,52 @@ public class DBOperator {
         cursor.close();
         Log.d("commentSize",comments.size()+"");
         return comments;
+    }
+
+    //查找某动态的所有留言
+    public List<Comment> selectCommentUnderMoment(String momentId){
+        List<Comment> comments = new ArrayList<>();
+        Cursor cursor = database.rawQuery("select * from comment where momentId = ? order by createTime",
+                new String[]{momentId});
+        //Cursor cursor = database.rawQuery("select * from comment",null);
+        Log.d("cursorSize",cursor.getCount()+"");
+        if(cursor.moveToFirst()) {
+            do{
+                String commentId = cursor.getString(cursor.getColumnIndex("commentId"));
+                String senderId = cursor.getString(cursor.getColumnIndex("senderId"));
+                String receiverId = cursor.getString(cursor.getColumnIndex("receiverId"));
+                String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                comments.add(new Comment(commentId,momentId,senderId,receiverId,createTime,content));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d("commentSize",comments.size()+"");
+        return comments;
+    }
+
+    //查找某动态的所有留言id
+    public List<String> selectCommentIdUnderMoment(String momentId){
+        //List<Comment> comments = new ArrayList<>();
+        List<String> commentIds = new ArrayList<>();
+        Cursor cursor = database.rawQuery("select commentId from comment where momentId = ? order by createTime",
+                new String[]{momentId});
+        //Cursor cursor = database.rawQuery("select * from comment",null);
+        Log.d("cursorSize",cursor.getCount()+"");
+        if(cursor.moveToFirst()) {
+            do{
+                String commentId = cursor.getString(cursor.getColumnIndex("commentId"));
+                //String senderId = cursor.getString(cursor.getColumnIndex("senderId"));
+                //String receiverId = cursor.getString(cursor.getColumnIndex("receiverId"));
+                //String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+                //String content = cursor.getString(cursor.getColumnIndex("content"));
+                //comments.add(new Comment(commentId,momentId,senderId,receiverId,createTime,content));
+                commentIds.add(commentId);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        //Log.d("commentSize",comments.size()+"");
+        Log.d("commentSize",commentIds.size()+"");
+        return commentIds;
     }
 }

@@ -12,6 +12,8 @@ import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.source.MomentsRepository;
+import com.scut.weixinshare.model.source.local.MomentDatabaseSource;
+import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.MomentDetailPresenter;
 import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.fragment.MomentDetailFragment;
@@ -37,7 +39,7 @@ public class MomentDetailActivity extends AppCompatActivity {
             Moment moment = bundle.getParcelable("moment");
             boolean isToComment = bundle.getBoolean("isToComment", false);
             presenter = new MomentDetailPresenter(fragment, moment, isToComment,
-                    MomentsRepository.getInstance());
+                    MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()));
         } else {
             ToastUtils.showToast(this, "信息不足");
             finish();

@@ -5,7 +5,6 @@ import com.scut.weixinshare.model.Moment;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 //动态信息来源接口
 public interface MomentDataSource {
@@ -40,7 +39,7 @@ public interface MomentDataSource {
     //创建评论监听
     interface CreateCommentCallback{
 
-        void onSuccess(String commentId);
+        void onSuccess();
 
         void onFailure(String error);
 

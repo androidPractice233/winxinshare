@@ -16,6 +16,7 @@ import com.tencent.map.geolocation.TencentLocationListener;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,21 +52,22 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
         List<Moment> momentList = new ArrayList<>();
         for(int i = 0; i < PAGE_SIZE; ++i){
             List<Comment> comments = new ArrayList<>();
-            comments.add(new Comment(UUID.randomUUID().toString(), "CJJ",
-                            "草鱼", "操他妈你不要再讲了",
+            comments.add(new Comment(UUID.randomUUID().toString(), "a", "b", "CJJ",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), "草鱼", "操他妈你不要再讲了",
                             new Timestamp(System.currentTimeMillis())));
-            comments.add(new Comment(UUID.randomUUID().toString(), "草鱼",
-                    "CJJ", "甘霖娘", new Timestamp(System.currentTimeMillis())));
-            comments.add(new Comment(UUID.randomUUID().toString(), "CJJ",
-                    "草鱼", "好了你不要再讲了",
+            comments.add(new Comment(UUID.randomUUID().toString(), "b", "a", "草鱼",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), "CJJ", "甘霖娘", new Timestamp(System.currentTimeMillis())));
+            comments.add(new Comment(UUID.randomUUID().toString(), "a", "b", "CJJ",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), "草鱼", "好了你不要再讲了",
                     new Timestamp(System.currentTimeMillis())));
-            comments.add(new Comment(UUID.randomUUID().toString(), "草鱼",
-                    "CJJ", "鸡掰", new Timestamp(System.currentTimeMillis())));
-            comments.add(new Comment(UUID.randomUUID().toString(), "CJJ",
-                    "草鱼", "诶？不可以这样子讲诶，这个是脏话，小孩子不可以讲",
+            comments.add(new Comment(UUID.randomUUID().toString(), "b", "a", "草鱼",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), "CJJ", "鸡掰", new Timestamp(System.currentTimeMillis())));
+            comments.add(new Comment(UUID.randomUUID().toString(), "a", "b", "CJJ",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), "草鱼", "诶？不可以这样子讲诶，这个是脏话，小孩子不可以讲",
                     new Timestamp(System.currentTimeMillis())));
-            comments.add(new Comment(UUID.randomUUID().toString(), "草鱼",
-                    null, "甘霖娘", new Timestamp(System.currentTimeMillis())));
+            comments.add(new Comment(UUID.randomUUID().toString(), "b", null, "草鱼",
+                    Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"), null, "甘霖娘", new Timestamp(System.currentTimeMillis())));
+            Collections.reverse(comments);
             List<Uri> picUris = null;
             if(i % 3 == 0){
                 picUris = new ArrayList<>();
