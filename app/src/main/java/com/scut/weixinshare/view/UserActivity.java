@@ -34,7 +34,7 @@ public class UserActivity extends AppCompatActivity implements UserInputFragment
         userid=intent.getStringExtra("userid");
 
         if(savedInstanceState==null){
-            fragment=UserFragment.newInstance(currentUser);
+            fragment=UserFragment.newInstance(userid);
             android.support.v4.app.FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.content_user,fragment,"user");
             transaction.commit();
@@ -59,7 +59,7 @@ public class UserActivity extends AppCompatActivity implements UserInputFragment
 
     public void getCurrentUser() {
         if(userid.isEmpty())
-            userid= MyApplication.getCurrentUser().getUserId();
+            userid= MyApplication.user.getUserId();
         NetworkManager.getInstance().getUser(new Callback<ResultBean>() {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.model.User;
 
@@ -70,8 +71,7 @@ public class UserInputFragment extends Fragment {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView: ");
         View view= inflater.inflate(R.layout.fragment_user_input, container, false);
-        UserFragment fragment=(UserFragment)getActivity().getSupportFragmentManager().findFragmentByTag("user");
-        user=fragment.getShowUser();
+        user=MyApplication.user;
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +106,7 @@ public class UserInputFragment extends Fragment {
             editText.setVisibility(View.VISIBLE);
             group.setVisibility(View.GONE);
         }
+        MyApplication.user=user;
         return view;
     }
 

@@ -1,6 +1,7 @@
 package com.scut.weixinshare.view.fragment;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -8,8 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.luck.picture.lib.PictureSelector;
@@ -22,6 +27,7 @@ import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.view.MainActivity;
 
 import static android.content.ContentValues.TAG;
+import static com.scut.weixinshare.MyApplication.user;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,11 +39,11 @@ import static android.content.ContentValues.TAG;
 public class UserFragment extends Fragment implements UserContract.View ,View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_USER = "param1";
+    private static final String ARG_USER = "userId";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String type;
     private String mParam2;
     public User getShowUser() {
         return presenter.getUser();
@@ -51,7 +57,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private LinearLayout ll_nickname;
     private LinearLayout ll_sex;
     private LinearLayout ll_birthday;
-
+    private RadioGroup group;
     private ImageView iv_portrait;
     private TextView text_nickname;
     private TextView text_username;
@@ -59,8 +65,10 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private TextView text_sex;
     private TextView text_birthday;
     private TextView text_Location;
-
-
+    private EditText editText;
+    private ConstraintLayout layout_info;
+    private RelativeLayout layout_input;
+private Button button;
     public UserFragment() {
         // Required empty public constructor
     }
@@ -96,6 +104,8 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_user, container, false);
         ll_username=view.findViewById(R.id.ll_username);
+        layout_info=view.findViewById(R.id.frame_info);
+        layout_input=view.findViewById(R.id.content_input);
         ll_birthday=view.findViewById(R.id.ll_birthday);
         ll_nickname=view.findViewById(R.id.ll_nickname);
         iv_portrait=view.findViewById(R.id.iv_portrait);
@@ -105,19 +115,24 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
         text_nickname=view.findViewById(R.id.textNickName);
         text_Location=view.findViewById(R.id.textLocation);
         text_sex=view.findViewById(R.id.textSex);
+         group=view.findViewById(R.id.radio_sex);
         text_username=view.findViewById(R.id.textUserName);
         text_userid=view.findViewById(R.id.textID);
         view.setOnClickListener(this);
+        editText=view.findViewById(R.id.edit_input);
+        button=view.findViewById(R.id.button);
+
         //初始化显示个人界面
         presenter.start();
 
-        if(presenter.getUser().getUserId().equals(MyApplication.user.getUserId())) {
+        if(presenter.getUser().getUserId().equals(user.getUserId())) {
             ll_nickname.setOnClickListener(this);
             iv_portrait.setOnClickListener(this);
             ll_birthday.setOnClickListener(this);
             ll_sex.setOnClickListener(this);
             ll_location.setOnClickListener(this);
-
+            editText.setOnClickListener(this);
+            button.setOnClickListener(this);
         }
 
         return view;
@@ -127,7 +142,6 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
-        showUserInfo(presenter.getUser());
     }
 
     @Override
@@ -156,21 +170,41 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.updateUserInfo();
+        //presenter.updateUserInfo();保存
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.ll_nickname:
-                jumpToChange("昵称");
-            case R.id.ll_birthday:
-                jumpToChange("生日");
-            case R.id.ll_sex:
-                jumpToChange("性别");
+                getActivity().setTitle("昵称");
+                type="昵称";
+                changeVisibility(1);
                 break;
+            case R.id.ll_birthday:
+                getActivity().setTitle("生日");
+                type="生日";
+                changeVisibility(1);
+
+                break;
+            case R.id.ll_sex:
+                getActivity().setTitle("性别");
+                type="性别";
+                changeVisibility(1);
+                editText.setVisibility(View.INVISIBLE);
+                group.setVisibility(View.VISIBLE);
+                int selected=group.getCheckedRadioButtonId();
+                if (selected==R.id.btn_male)
+                    user.setSex(0);
+                else
+                    user.setSex(1);
+                break;
+
             case R.id.ll_location:
-                jumpToChange("城市");
+                getActivity().setTitle("城市");
+                type="城市";
+                changeVisibility(1);
+                break;
             case R.id.iv_portrait:
                 PictureSelector.create(getActivity())
                         .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio(
@@ -184,17 +218,34 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
                         .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
                         .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
                 break;
+            case R.id.button:
+                switch(type){
+                    case "昵称":
+                        user.setNickName(editText.getText().toString());
+                        break;
+                    case "城市":
+                        user.setLocation(editText.getText().toString());
+                        break;
+                    case "生日":
+                        user.setBirthday(editText.getText().toString());
+                        break;
+
+                }
+                showUserInfo(user);
+                changeVisibility(0);
         }
     }
-    private void jumpToChange(String type){
-        Bundle bundle=new Bundle();
-        bundle.putString("type",type);
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        UserInputFragment inputFragment=new UserInputFragment();
-        inputFragment.setArguments(bundle);
-        fragmentTransaction.replace(R.id.content_user,inputFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+
+    private void changeVisibility(int flag){
+        if (flag==0){
+            layout_info.setVisibility(View.VISIBLE);
+            layout_input.setVisibility(View.INVISIBLE);
+        }
+        else {
+            layout_info.setVisibility(View.INVISIBLE);
+            layout_input.setVisibility(View.VISIBLE);
+        }
+
     }
 
 }
