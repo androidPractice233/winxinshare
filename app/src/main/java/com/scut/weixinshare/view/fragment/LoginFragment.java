@@ -1,12 +1,10 @@
-package com.scut.weixinshare.view;
+package com.scut.weixinshare.view.fragment;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,19 +16,18 @@ import android.widget.Toast;
 
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.db.MyDBHelper;
+import com.scut.weixinshare.db.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
-import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.view.LoginActivity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by skyluo on 2018/4/15.
- */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginFragment extends Fragment {
 
     private ImageView img_upload;
     private EditText edt_account = null;
@@ -38,13 +35,25 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_pwd = null;
     private Button btn_login = null;
 
+    public LoginFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+    }
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        setContentView(R.id.);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         img_upload = view.findViewById(R.id.profilePhoto);
         edt_name = view.findViewById(R.id.userName);
@@ -60,23 +69,23 @@ public class LoginActivity extends AppCompatActivity {
                 final String user_account = edt_account.getText().toString();//获取账号
                 final String user_pwd = edt_pwd.getText().toString();//获取密码
                 if(TextUtils.isEmpty(user_account)){
-                    Toast.makeText(LoginActivity.this,"账号不能为空",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"账号不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(user_pwd)){
-                    Toast.makeText(LoginActivity.this,"密码不能为空",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(user_name)){
-                    Toast.makeText(LoginActivity.this,"用户名不能为空",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"用户名不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(user_account.length()>20){
-                    Toast.makeText(LoginActivity.this,"您输入的账号过长",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"您输入的账号过长",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(user_pwd.length()>20){
-                    Toast.makeText(LoginActivity.this,"您输入的密码过长",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"您输入的密码过长",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -105,12 +114,12 @@ public class LoginActivity extends AppCompatActivity {
                 },user);
             }
         });
-    }
-    public static void actionStart(Context context) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
 
+
+
+        return view;
     }
+
 
 
 }

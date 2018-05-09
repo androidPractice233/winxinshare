@@ -7,10 +7,12 @@ import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
 import com.scut.weixinshare.service.MultipartService;
+import com.scut.weixinshare.service.RegisterService;
 import com.scut.weixinshare.service.TestService;
 import com.scut.weixinshare.utils.AES;
 import com.scut.weixinshare.utils.NetworkUtils;
@@ -201,6 +203,17 @@ public class NetworkManager {
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         params.put("userIds", stringBuilder.toString());
         Call<ResultBean> call = service.requestNicknameAndPortrait(params);
+        call.enqueue(callback);
+    }
+    public  void register(Callback<ResultBean> callback,User user){
+        RegisterService registerService= retrofit.create(RegisterService.class);
+        Call<ResultBean> call=registerService.register(user);
+        call.enqueue(callback);
+    }
+
+    public  void login(Callback<ResultBean> callback,User user){
+        RegisterService registerService= retrofit.create(RegisterService.class);
+        Call<ResultBean> call=registerService.login(user);
         call.enqueue(callback);
     }
 

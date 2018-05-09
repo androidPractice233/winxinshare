@@ -3,6 +3,7 @@ package com.scut.weixinshare;
 import android.app.Application;
 import android.content.Context;
 
+import com.scut.weixinshare.model.User;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
@@ -47,7 +48,7 @@ public class MyApplication extends MultiDexApplication {
 
     private static MyApplication instance;
     private static Context context;
-
+    private static User user;
 
     @Override
     public void onCreate() {

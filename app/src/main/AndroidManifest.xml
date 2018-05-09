@@ -52,6 +52,10 @@
             android:name=".view.MomentDetailActivity"
             android:label="动态正文"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.LoginActivity"
+            android:label="登陆界面"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.BigPicActivity"></activity>
     </application>
 
