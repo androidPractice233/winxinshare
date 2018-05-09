@@ -1,5 +1,6 @@
 package com.scut.weixinshare.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -26,18 +27,20 @@ public class PersonalMomentActivity  extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent intent=getIntent();
+        String userid=intent.getStringExtra("userId");
         if(savedInstanceState == null) {
             HomeFragment fragment = new HomeFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.content_home, fragment, PictureConfig.FC_TAG);
             transaction.commit();
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance());
+                    LocationRepository.getInstance(),userid);
         } else {
             HomeFragment fragment = (HomeFragment)getSupportFragmentManager()
                     .findFragmentByTag(PictureConfig.FC_TAG);
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance());
+                    LocationRepository.getInstance(),userid);
         }
     }
 }

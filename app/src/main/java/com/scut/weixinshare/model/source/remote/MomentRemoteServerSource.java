@@ -36,9 +36,13 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                final List<MomentVersion> momentVersionList =
-                        (List<MomentVersion>) resultBean.getData();
-                callback.onMomentVersionsLoaded(momentVersionList);
+                if(resultBean.getCode() == 200) {
+                    final List<MomentVersion> momentVersionList =
+                            (List<MomentVersion>) resultBean.getData();
+                    callback.onMomentVersionsLoaded(momentVersionList);
+                } else {
+                    callback.onDataNotAvailable(resultBean.getMsg());
+                }
             }
 
             @Override
@@ -56,25 +60,29 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                List<List<Object>> data = (List<List<Object>>) resultBean.getData();
-                if(data != null && data.size() > 0){
-                    List<Object> momentData = data.get(0);
-                    if(momentData != null && momentData.size() > 0){
-                        Moment moment = (Moment) momentData.get(0);
-                        if(momentData.size() > 1){
-                            List<Comment> comments = new ArrayList<>();
-                            for(int i = 1; i < momentData.size(); ++i){
-                                comments.add((Comment) momentData.get(i));
+                if(resultBean.getCode() == 200) {
+                    List<List<Object>> data = (List<List<Object>>) resultBean.getData();
+                    if (data != null && data.size() > 0) {
+                        List<Object> momentData = data.get(0);
+                        if (momentData != null && momentData.size() > 0) {
+                            Moment moment = (Moment) momentData.get(0);
+                            if (momentData.size() > 1) {
+                                List<Comment> comments = new ArrayList<>();
+                                for (int i = 1; i < momentData.size(); ++i) {
+                                    comments.add((Comment) momentData.get(i));
+                                }
+                                Collections.reverse(comments);
+                                moment.setCommentList(comments);
                             }
-                            Collections.reverse(comments);
-                            moment.setCommentList(comments);
+                            callback.onMomentLoaded(moment);
+                        } else {
+                            callback.onDataNotAvailable("动态已被删除");
                         }
-                        callback.onMomentLoaded(moment);
                     } else {
                         callback.onDataNotAvailable("动态已被删除");
                     }
                 } else {
-                    callback.onDataNotAvailable("动态已被删除");
+                    callback.onDataNotAvailable(resultBean.getMsg());
                 }
             }
 
@@ -91,23 +99,27 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                List<List<Object>> data = (List<List<Object>>) resultBean.getData();
-                List<Moment> momentsFromRemote = new ArrayList<>();
-                for(List<Object> momentData : data){
-                    if(momentData != null && momentData.size() > 0){
-                        Moment moment = (Moment) momentData.get(0);
-                        if(momentData.size() > 1){
-                            List<Comment> comments = new ArrayList<>();
-                            for(int i = 1; i < momentData.size(); ++i){
-                                comments.add((Comment) momentData.get(i));
+                if(resultBean.getCode() == 200) {
+                    List<List<Object>> data = (List<List<Object>>) resultBean.getData();
+                    List<Moment> momentsFromRemote = new ArrayList<>();
+                    for (List<Object> momentData : data) {
+                        if (momentData != null && momentData.size() > 0) {
+                            Moment moment = (Moment) momentData.get(0);
+                            if (momentData.size() > 1) {
+                                List<Comment> comments = new ArrayList<>();
+                                for (int i = 1; i < momentData.size(); ++i) {
+                                    comments.add((Comment) momentData.get(i));
+                                }
+                                Collections.reverse(comments);
+                                moment.setCommentList(comments);
                             }
-                            Collections.reverse(comments);
-                            moment.setCommentList(comments);
+                            momentsFromRemote.add(moment);
                         }
-                        momentsFromRemote.add(moment);
                     }
+                    callback.onMomentsLoaded(momentsFromRemote);
+                } else {
+                    callback.onDataNotAvailable(resultBean.getMsg());
                 }
-                callback.onMomentsLoaded(momentsFromRemote);
             }
 
             @Override
@@ -124,28 +136,32 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                final String momentId = (String) resultBean.getData();
-                if(imageFiles != null){
-                    try {
-                        NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
-                            @Override
-                            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                                ResultBean resultBean = response.body();
-                                List<Uri> imageUriList = (List<Uri>) resultBean.getData();
-                                callback.onSuccess();
-                            }
+                if(resultBean.getCode() == 200) {
+                    final String momentId = (String) resultBean.getData();
+                    if (imageFiles != null) {
+                        try {
+                            NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
+                                @Override
+                                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                                    ResultBean resultBean = response.body();
+                                    List<Uri> imageUriList = (List<Uri>) resultBean.getData();
+                                    callback.onSuccess();
+                                }
 
-                            @Override
-                            public void onFailure(Call<ResultBean> call, Throwable t) {
-                                callback.onFailure(t.getMessage());
-                            }
-                        }, momentId, imageFiles);
-                    } catch (IOException e){
-                        //callback.onFailure("图片上传失败，请检查文件是否存在");
+                                @Override
+                                public void onFailure(Call<ResultBean> call, Throwable t) {
+                                    callback.onFailure(t.getMessage());
+                                }
+                            }, momentId, imageFiles);
+                        } catch (IOException e) {
+                            //callback.onFailure("图片上传失败，请检查文件是否存在");
+                            callback.onSuccess();
+                        }
+                    } else {
                         callback.onSuccess();
                     }
                 } else {
-                    callback.onSuccess();
+                    callback.onFailure(resultBean.getMsg());
                 }
             }
 
@@ -163,8 +179,12 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                String commentId = (String) resultBean.getData();
-                callback.onSuccess();
+                if(resultBean.getCode() == 200) {
+                    String commentId = (String) resultBean.getData();
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(resultBean.getMsg());
+                }
             }
 
             @Override
@@ -180,9 +200,14 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                final List<MomentVersion> momentVersionList =
-                        (List<MomentVersion>) resultBean.getData();
-                callback.onMomentVersionsLoaded(momentVersionList);
+                if(resultBean.getCode() == 200) {
+                    final List<MomentVersion> momentVersionList =
+                            (List<MomentVersion>) resultBean.getData();
+                    callback.onMomentVersionsLoaded(momentVersionList);
+                }
+                else {
+                    callback.onDataNotAvailable(resultBean.getMsg());
+                }
             }
 
             @Override
@@ -198,8 +223,12 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
-                List<MomentUserData> userDataList = (List<MomentUserData>) resultBean.getData();
-                callback.onUserDataLoaded(userDataList);
+                if(resultBean.getCode() == 200) {
+                    List<MomentUserData> userDataList = (List<MomentUserData>) resultBean.getData();
+                    callback.onUserDataLoaded(userDataList);
+                } else {
+                    callback.onFailure(resultBean.getMsg());
+                }
             }
 
             @Override

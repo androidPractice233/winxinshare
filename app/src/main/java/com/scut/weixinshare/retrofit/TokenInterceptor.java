@@ -24,7 +24,7 @@ public class TokenInterceptor implements Interceptor {
         Response originalResponse = chain.proceed(chain.request());
         if(token!=null) {
             return originalResponse.newBuilder()
-                    .header("token", token)
+                    .header("Auth-Token", token)
                     .build();
         }
         else return originalResponse;

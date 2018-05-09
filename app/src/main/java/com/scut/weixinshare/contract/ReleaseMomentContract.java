@@ -1,5 +1,6 @@
 package com.scut.weixinshare.contract;
 
+import android.content.Intent;
 import android.net.Uri;
 
 import com.luck.picture.lib.entity.LocalMedia;
@@ -55,11 +56,8 @@ public interface ReleaseMomentContract {
         //发布动态
         void publish(String text);
 
-        //添加已选择图片
-        void addImages(List<LocalMedia> selectList);
-
-        //设置位置信息
-        void setLocation(Location location);
+        //处理活动返回信息
+        void result(int requestCode, int resultCode, Intent data);
 
     }
 }

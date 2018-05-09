@@ -1,5 +1,7 @@
 package com.scut.weixinshare.contract;
 
+import android.content.Intent;
+
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.Location;
@@ -38,7 +40,13 @@ public interface HomeContract {
         void showReleaseMomentUI(Location location);
 
         //显示动态详情界面（添加评论）
-        void showMomentDetailUI(Moment moment, boolean isToComment);
+        void showMomentDetailUI(String momentId, boolean isToComment);
+
+        //显示用户信息界面
+        void showUserDataUI(String momentId);
+
+        //显示登录界面
+        void showLoginUI();
 
         //显示应用提示信息
         void showReminderMessage(String text);
@@ -48,6 +56,9 @@ public interface HomeContract {
 
         //隐藏动态列表
         void hideMomentList();
+
+        //更新指定位置的动态信息
+        void updateMomentView(Moment moment, int position);
 
     }
 
@@ -60,13 +71,13 @@ public interface HomeContract {
         void requestNextMoments();
 
         //前往编辑发布动态
-        void toEditReleaseMoment();
+        void editReleaseMoment();
 
         //前往动态详情
-        void toMomentDetail(Moment moment);
+        void openMomentDetail(Moment moment, int position);
 
         //前往发布评论
-        void toReleaseComment(Moment moment);
+        void releaseComment(Moment moment, int position);
 
         //发布动态
         void releaseMoment(String text, Location location);
@@ -77,5 +88,10 @@ public interface HomeContract {
         //设置后续动态请求为可加载状态
         void breakErrorState();
 
+        //打开用户信息
+        void openUserData(Moment moment, int position);
+
+        //处理活动返回结果
+        void result(int requestCode, int resultCode, Intent data);
     }
 }

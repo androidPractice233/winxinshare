@@ -39,20 +39,19 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     public final static int MARGIN_TOP_CARD = 8;
     public final static int MARGIN_BOTTOM_CARD = 4;
 
-    //private RecyclerView recyclerView;
     private HomeContract.Presenter presenter;
     private MomentAdapter momentAdapter;
     private PullUpRefreshAdapter pullUpRefreshAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private FloatingActionButton fab;
     private RecyclerView recyclerView;
-    private int lastPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = view.findViewById(R.id.list_moments);
+        fab = view.findViewById(R.id.fab);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         momentAdapter = new MomentAdapter(new ArrayList<Moment>(), this);
         pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter,
@@ -116,11 +115,11 @@ public class HomeFragment extends Fragment implements HomeContract.View,
         //获取Activity中的fab
         Activity activity = getActivity();
         if(activity != null) {
-            fab = activity.findViewById(R.id.fab);
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.toEditReleaseMoment();
+                    presenter.editReleaseMoment();
                 }
             });
         }
@@ -129,35 +128,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case IConst.REQUEST_CODE_MOMENT_DETAIL:
-                if (resultCode == RESULT_OK) {
-                    //获取动态正文页面返回的修改信息
-                    Bundle bundle = data.getExtras();
-                    if (bundle != null && bundle.getBoolean("isChanged")) {
-                        Moment moment = bundle.getParcelable("moment");
-                        //更新显示数据
-                        momentAdapter.updateAdapterData(moment, lastPosition);
-                        pullUpRefreshAdapter.notifyItemChanged(lastPosition);
-                    }
-                }
-                break;
-            case IConst.REQUEST_CODE_RELEASE_MOMENT:
-                if(resultCode == RESULT_OK){
-                    String text = data.getStringExtra("text");
-                    Location location = data.getParcelableExtra("location");
-                    if(!data.getBooleanExtra("isTextOnly", true)){
-                        File[] images = (File[]) data.getSerializableExtra("images");
-                        presenter.releaseMoment(text, location, new ArrayList<>(Arrays
-                                .asList(images)));
-                    } else {
-                        presenter.releaseMoment(text, location);
-                    }
-                }
-                break;
-            default:
-                break;
-        }
+        presenter.result(requestCode, resultCode, data);
     }
 
     @Override
@@ -211,8 +182,18 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
-    public void showMomentDetailUI(Moment moment, boolean isToComment) {
-        MomentDetailActivity.activityStartForResult(this, moment, isToComment);
+    public void showMomentDetailUI(String momentId, boolean isToComment) {
+        MomentDetailActivity.activityStartForResult(this, momentId, isToComment);
+    }
+
+    @Override
+    public void showUserDataUI(String momentId) {
+
+    }
+
+    @Override
+    public void showLoginUI() {
+
     }
 
     @Override
@@ -231,29 +212,33 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
+    public void updateMomentView(Moment moment, int position) {
+        momentAdapter.updateAdapterData(moment, position);
+        pullUpRefreshAdapter.notifyItemChanged(position);
+    }
+
+    @Override
     public void setPresenter(HomeContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void onPortraitClick(Moment moment, int position) {
-
+        presenter.openUserData(moment, position);
     }
 
     @Override
     public void onNickNameClick(Moment moment, int position) {
-
+        presenter.openUserData(moment, position);
     }
 
     @Override
     public void onItemClick(Moment moment, int position) {
-        lastPosition = position;
-        presenter.toMomentDetail(moment);
+        presenter.openMomentDetail(moment, position);
     }
 
     @Override
     public void onAddCommentButtonClick(Moment moment, int position) {
-        lastPosition = position;
-        presenter.toReleaseComment(moment);
+        presenter.releaseComment(moment, position);
     }
 }

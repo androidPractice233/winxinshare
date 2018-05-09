@@ -64,22 +64,22 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
         holder.item.setView(moment);
         holder.item.setListener(new MomentView.MomentViewListener() {
             @Override
-            public void onPortraitClick() {
+            public void onPortraitClick(Moment moment) {
                 listener.onPortraitClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onNickNameClick() {
+            public void onNickNameClick(Moment moment) {
                 listener.onNickNameClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onItemClick() {
+            public void onItemClick(Moment moment) {
                 listener.onItemClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onAddCommentButtonClick() {
+            public void onAddCommentButtonClick(Moment moment) {
                 listener.onAddCommentButtonClick(moment, holder.getAdapterPosition());
             }
         });

@@ -5,6 +5,7 @@ import com.scut.weixinshare.model.source.MomentVersion;
 
 import java.util.List;
 
+//动态数据本地来源接口
 public interface MomentLocalSource {
 
     //监听获取多条动态回调接口
