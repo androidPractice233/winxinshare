@@ -37,7 +37,7 @@ public class MainFragment  extends Fragment{
                 NetworkManager.getInstance().test(new BaseCallback() {
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                        ResultBean resultBean=  response.body();
+                       ResultBean resultBean=getResultBean(response);
                         if(this.checkResult(getContext(),resultBean)) {
 //                           Toast.makeText(getContext(), (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
                         }
