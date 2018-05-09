@@ -7,6 +7,11 @@ public class MomentVersion{
     String momentId;
     Timestamp updateTime;
 
+    public MomentVersion(String momentId, Timestamp updateTime){
+        this.momentId = momentId;
+        this.updateTime = updateTime;
+    }
+
     public void setMomentId(String momentId) {
         this.momentId = momentId;
     }

@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.scut.weixinshare.R;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.source.LocationRepository;
+import com.scut.weixinshare.model.source.MomentDataSource;
 import com.scut.weixinshare.model.source.MomentsRepository;
 import com.scut.weixinshare.model.source.local.MomentDatabaseSource;
 import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
@@ -156,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocationUtils.getInstance(this).removeLocationUpdatesListener();
+        //LocationUtils.getInstance(this).removeLocationUpdatesListener();
 
     }
 
@@ -189,11 +191,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUI() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
 
         HomeFragment homefragment = new HomeFragment();
-        new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                LocationRepository.getInstance());
+        MomentDataSource momentDataSource = MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance());
+        new HomePresenter(homefragment, momentDataSource, LocationRepository.getInstance());
         MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();

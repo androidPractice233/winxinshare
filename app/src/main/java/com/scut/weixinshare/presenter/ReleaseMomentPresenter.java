@@ -81,6 +81,7 @@ public class ReleaseMomentPresenter implements ReleaseMomentContract.Presenter {
     }
 
     private void addImages(List<LocalMedia> selectList) {
+        selectedImages.clear();
         if(selectList != null && selectList.size() != 0) {
             selectedImages.addAll(selectList);
             List<Uri> pics = new ArrayList<>();
@@ -88,6 +89,8 @@ public class ReleaseMomentPresenter implements ReleaseMomentContract.Presenter {
                 pics.add(Uri.fromFile(new File(media.getPath())));
             }
             view.showAddedPics(pics);
+        } else {
+            view.showAddedPics(new ArrayList<Uri>());
         }
     }
 

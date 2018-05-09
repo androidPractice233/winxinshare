@@ -3,8 +3,7 @@ package com.scut.weixinshare.model.source.local;
 import android.net.Uri;
 
 import com.scut.weixinshare.db.Moment;
-import com.scut.weixinshare.model.source.local.CommentLocal;
-import com.scut.weixinshare.utils.StringUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -26,7 +25,7 @@ public class MomentLocal {
         this.createTime = Timestamp.valueOf(moment.getCreateTime());
         this.location = moment.getLocation();
         this.text = moment.getContent();
-        this.picContent = StringUtils.imageUriStringToList(moment.getPictureUrl());
+        this.picContent = MomentUtils.imageUriStringToList(moment.getPictureUrl());
         this.updateTime = Timestamp.valueOf(moment.getUpdateTime());
     }
 

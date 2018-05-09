@@ -9,6 +9,12 @@ public class MomentUserData {
     private String nickName;     //用户昵称
     private Uri portrait;        //用户头像
 
+    public MomentUserData(String userId, String nickName, Uri portrait){
+        this.userId = userId;
+        this.nickName = nickName;
+        this.portrait = portrait;
+    }
+
     public String getUserId(){
         return userId;
     }

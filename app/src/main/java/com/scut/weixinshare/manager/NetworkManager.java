@@ -1,13 +1,17 @@
 package com.scut.weixinshare.manager;
 
+import android.net.Uri;
 import android.util.Log;
 
 
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
+import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.model.source.MomentUserData;
+import com.scut.weixinshare.model.source.MomentVersion;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;

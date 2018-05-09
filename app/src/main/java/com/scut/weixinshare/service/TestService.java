@@ -27,20 +27,20 @@ public interface TestService {
     Call<ResultBean> register(@Body Map praram);
 
     @POST("/moment/nearby")
-    Call<ResultBean<List<MomentVersion>>> requestNearbyMoment(@Body Map params);
+    Call<ResultBean> requestNearbyMoment(@Body Map params);
 
     @POST("/moment/detail")
-    Call<ResultBean<List<Moment>>> requestMomentDetail(@Body Map params);
+    Call<ResultBean> requestMomentDetail(@Body Map params);
 
     @POST("/moment/create")
-    Call<ResultBean<String>> createMoment(@Body Map params);
+    Call<ResultBean> createMoment(@Body Map params);
 
     @POST("/comment/create")
-    Call<ResultBean<String>> createComment(@Body Map params);
+    Call<ResultBean> createComment(@Body Map params);
 
     @POST("/user/getnickpot")
 
-    Call<ResultBean<List<MomentUserData>>> requestNicknameAndPortrait(@Body Map params);
+    Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
     @POST("/moment/personal")
     Call<ResultBean> requestPersonMoment(@Body Map params);
 

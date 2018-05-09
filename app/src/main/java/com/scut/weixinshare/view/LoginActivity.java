@@ -90,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                             //跳转至个人主页
                             editor.commit();
                             MyApplication.getInstance().setToken( (String) resultmap.get("token"));
+                            MyApplication.getInstance().setUserId((String) ((Map) resultmap.get("user")).get("userId"));
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             ////

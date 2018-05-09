@@ -15,11 +15,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.scut.weixinshare.MyApplication;
+import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.MyDBHelper;
-import com.scut.weixinshare.db.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.view.LoginActivity;
 
 import retrofit2.Call;
