@@ -42,7 +42,7 @@ import retrofit2.Response;
 public class RegisterActivity extends AppCompatActivity {
     private static String img_url = null;
     private ImageView img_upload;
-    private EditText edt_account = null;
+    private EditText nickname = null;
     private EditText edt_name = null;
     private EditText edt_pwd = null;
     private Button btn_register = null;
@@ -53,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_register);
         img_upload = findViewById(R.id.profilePhoto);
         edt_name = findViewById(R.id.userName);
-        edt_account = findViewById(R.id.account);
+        nickname = findViewById(R.id.nickname);
         edt_pwd = findViewById(R.id.password);
         btn_register = findViewById(R.id.registerButton);
 
@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 final String user_name = edt_name.getText().toString();//获取用户名
-                final String user_account = edt_account.getText().toString();//获取账号
+                final String user_account = nickname.getText().toString();//获取账号
                 final String user_pwd = edt_pwd.getText().toString();//获取密码
                 if (TextUtils.isEmpty(user_pwd)) {
                     Toast.makeText(RegisterActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
