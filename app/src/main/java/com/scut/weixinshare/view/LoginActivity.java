@@ -75,33 +75,34 @@ public class LoginActivity extends AppCompatActivity {
                 User user =new User();
                 user.setUserPwd(user_pwd);
                 user.setUserName(user_name);
-                NetworkManager.getInstance().login(new BaseCallback() {
-                    @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-
-                        ResultBean resultBean=  getResultBean(response);
-                        if(checkResult(LoginActivity.this,resultBean)) {
-                            SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
-                                    .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            Map resultmap = (Map) resultBean.getData();
-                            editor.putString("token", (String) resultmap.get("token"));
-                            //初始化数据库
-                            //跳转至个人主页
-                            editor.commit();
-                            MyApplication.currentUser=loginReceive.getUser();
-                            MyApplication.getInstance().setToken(  loginReceive.getToken());
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            ////
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResultBean> call, Throwable t) {
-
-                    }
-                },user);
+//                NetworkManager.getInstance().login(new BaseCallback() {
+//
+//                    @Override
+//                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+//
+//                        ResultBean resultBean=  getResultBean(response);
+//                        if(checkResult(LoginActivity.this,resultBean)) {
+//                            SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
+//                                    .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
+//                            SharedPreferences.Editor editor = preferences.edit();
+//                            Map resultmap = (Map) resultBean.getData();
+//                            editor.putString("token", (String) resultmap.get("token"));
+//                            //初始化数据库
+//                            //跳转至个人主页
+//                            editor.commit();
+////                            MyApplication.currentUser=loginReceive.getUser();
+////                            MyApplication.getInstance().setToken(  loginReceive.getToken());
+//                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                            ////
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResultBean> call, Throwable t) {
+//
+//                    }
+//                },user);
             }
         });
 

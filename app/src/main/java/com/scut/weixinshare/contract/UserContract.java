@@ -18,7 +18,7 @@ public interface UserContract {
     }
     interface Presenter extends BasePresenter {
         //获取个人信息
-        void getUserInfo(String userid);
+        void setShowUser(String userid);
 
 
         void updateUserInfo();

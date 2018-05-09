@@ -183,8 +183,8 @@ public class MainActivity extends AppCompatActivity  {
 
         UserFragment userFragment = UserFragment.newInstance("n");
 
-        if (MyApplication.user!=null)
-            new UserPresenter(userFragment, MyApplication.user);
+        if (MyApplication.currentUser!=null)
+            new UserPresenter(userFragment, MyApplication.currentUser);
         else {
             User user = new User("", "", "", 0, "", "", "");
             new UserPresenter(userFragment, user);

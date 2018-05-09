@@ -74,7 +74,7 @@ public class User {
         return userPwd;
     }
     public void setUserId(String userId){this.userId=userId;};
-
+    public void setPassword(String password){this.userPwd=password;}
     public void setUserName(String userName) {
         this.userName = userName;
     }

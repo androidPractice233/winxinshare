@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +26,9 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
-import com.scut.weixinshare.manager.NetworkManager;
-import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
-import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
-import static com.scut.weixinshare.MyApplication.user;
+import static com.scut.weixinshare.MyApplication.currentUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +60,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
 
     private UserContract.Presenter presenter;
     private FragmentManager fragmentManager;
-
+    private Boolean isEdit;
     private LinearLayout ll_username;
     private LinearLayout ll_location;
     private LinearLayout ll_nickname;
@@ -108,7 +103,7 @@ private Button button;
         super.onCreate(savedInstanceState);
         fragmentManager=getFragmentManager();
         assert getArguments() != null;
-        presenter.getUserInfo(getArguments().getString("userId"));
+        presenter.setShowUser(getArguments().getString("userId"));
 
     }
 
@@ -139,7 +134,7 @@ private Button button;
         //初始化显示个人界面
         presenter.start();
 
-        if(presenter.getUser().getUserId().equals(user.getUserId())) {
+        if(presenter.getUser().getUserId().equals(currentUser.getUserId())) {
             ll_nickname.setOnClickListener(this);
             iv_portrait.setOnClickListener(this);
             ll_birthday.setOnClickListener(this);
@@ -159,20 +154,21 @@ private Button button;
     }
 
     @Override
-    public void showUserInfo(User user) {
-        text_userid.setText(user.getUserId());
-        text_username.setText(user.getUserName());
-        if(user.getSex()==1)
+    public void showUserInfo(User currentUser) {
+        text_userid.setText(currentUser.getUserId());
+        text_username.setText(currentUser.getUserName());
+        if(currentUser.getSex()==1)
             text_sex.setText("女");
-        if(user.getSex()==0)
+        if(currentUser.getSex()==0)
             text_sex.setText("男");
-        text_Location.setText(user.getLocation());
-        text_nickname.setText(user.getNickName());
-        text_birthday.setText(user.getBirthday());
+        text_Location.setText(currentUser.getLocation());
+        text_nickname.setText(currentUser.getNickName());
+        text_birthday.setText(currentUser.getBirthday());
     }
 
     @Override
     public void showUserPhoto() {
+
 
     }
 
@@ -209,9 +205,9 @@ private Button button;
                 group.setVisibility(View.VISIBLE);
                 int selected=group.getCheckedRadioButtonId();
                 if (selected==R.id.btn_male)
-                    user.setSex(0);
+                    currentUser.setSex(0);
                 else
-                    user.setSex(1);
+                    currentUser.setSex(1);
                 break;
 
             case R.id.ll_location:
@@ -235,17 +231,17 @@ private Button button;
             case R.id.button:
                 switch(type){
                     case "昵称":
-                        user.setNickName(editText.getText().toString());
+                        currentUser.setNickName(editText.getText().toString());
                         break;
                     case "城市":
-                        user.setLocation(editText.getText().toString());
+                        currentUser.setLocation(editText.getText().toString());
                         break;
                     case "生日":
-                        user.setBirthday(editText.getText().toString());
+                        currentUser.setBirthday(editText.getText().toString());
                         break;
 
                 }
-                showUserInfo(user);
+                showUserInfo(currentUser);
                 changeVisibility(0);
         }
     }
@@ -275,7 +271,7 @@ private Button button;
                 try {
                     Uri uri = data.getData();
                     String img_url = uri.getPath();
-                    user.setPortrait(img_url);
+                    currentUser.setPortrait(img_url);
                     ContentResolver cr = getContext().getContentResolver();
                     Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
 

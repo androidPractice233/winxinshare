@@ -38,8 +38,8 @@ public class UserPresenter implements UserContract.Presenter {
     }
 
     @Override
-    public void getUserInfo(String userId) {
-        if(!userId.equals(MyApplication.user.getUserId())) {
+    public void setShowUser(String userId) {
+        if(!userId.equals(MyApplication.currentUser.getUserId())) {
             NetworkManager.getInstance().getUser(new Callback<ResultBean>() {
                 @Override
                 public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
@@ -54,7 +54,7 @@ public class UserPresenter implements UserContract.Presenter {
             }, userId);
         }
         else
-            user=MyApplication.user;
+            user=MyApplication.currentUser;
 
     }
 

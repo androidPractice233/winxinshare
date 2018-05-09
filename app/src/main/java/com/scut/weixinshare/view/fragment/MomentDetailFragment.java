@@ -26,6 +26,7 @@ import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.KeyBroadUtils;
 import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.BigPicActivity;
+import com.scut.weixinshare.view.UserActivity;
 import com.scut.weixinshare.view.component.CommentView;
 import com.scut.weixinshare.view.component.MomentView;
 
@@ -130,7 +131,9 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
 
     @Override
     public void showUserDataUI(String userId) {
-
+        Intent intent=new Intent(getContext(),UserActivity.class);
+        intent.putExtra("userId",userId);
+        startActivity(intent);
     }
 
     @Override

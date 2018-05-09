@@ -25,8 +25,9 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
-import com.scut.weixinshare.db.User;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.view.RegisterActivity;
@@ -126,7 +127,7 @@ public class RegisterFragment extends Fragment{
                 //服务器进行用户注册
                 NetworkManager.getInstance().register(new Callback<ResultBean>() {
                     @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response{
+                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response){
                         ResultBean resultBean=  response.body();
                         Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
                         //数据库进行用户注册
@@ -153,12 +154,12 @@ public class RegisterFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<File> fileList=new ArrayList<>();
+        List<File> fileList = new ArrayList<>();
         if (requestCode == PictureConfig.CHOOSE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
                 for (LocalMedia p : selectList) {
-                    fileList.add( new File(p.getPath()));
+                    fileList.add(new File(p.getPath()));
                 }
                 try {
                     Uri uri = data.getData();
@@ -171,15 +172,15 @@ public class RegisterFragment extends Fragment{
                     NetworkManager.getInstance().MutiprtTest(new Callback<ResultBean>() {
                         @Override
                         public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                            ResultBean resultBean=  response.body();
-                            Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+                            ResultBean resultBean = response.body();
+                            Toast.makeText(getContext(), (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(Call<ResultBean> call, Throwable t) {
-                            Log.e("MainActivity", t.getMessage()  );
+                            Log.e("MainActivity", t.getMessage());
                         }
-                    },fileList);
+                    }, fileList);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -187,4 +188,5 @@ public class RegisterFragment extends Fragment{
         }
 
 
+    }
 }

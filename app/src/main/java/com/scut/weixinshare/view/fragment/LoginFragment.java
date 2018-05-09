@@ -15,11 +15,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.scut.weixinshare.MyApplication;
+import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.MyDBHelper;
-import com.scut.weixinshare.db.User;
+import com.scut.weixinshare.model.LoginReceive;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.view.LoginActivity;
 
 import retrofit2.Call;
@@ -92,25 +95,30 @@ public class LoginFragment extends Fragment {
                 //查找有无此用户
                 DBOperator operator = new DBOperator();
                 User user = operator.selectUser(user_account);
-                NetworkManager.getInstance().login(new Callback<ResultBean>() {
+                NetworkManager.getInstance().login(new BaseCallback<ResultBean<LoginReceive>>() {
                     @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                        ResultBean resultBean=  response.body();
-                        SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
-                                .getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("token",resultBean.getData().toString());
-                        //初始化数据库
+                    public void onResponse(Call<ResultBean<LoginReceive>> call, Response<ResultBean<LoginReceive>> response) {
+                        ResultBean resultBean = getResultBean(response);
+                        if (checkResult(LoginActivity.this, resultBean)) {
+                            SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
+                                    .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            LoginReceive loginReceive=(LoginReceive)resultBean.getData();
+                            editor.putString("token", loginReceive.getToken());
+                            //初始化数据库
 
-                        //跳转至个人主页
-                        Intent intent = new Intent();
-                        ////
+                            //跳转至个人主页
+                            Intent intent = new Intent();
+                            ////
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<ResultBean> call, Throwable t) {
+                    public void onFailure(Call<ResultBean<LoginReceive>> call, Throwable t) {
 
                     }
+
+
                 },user);
             }
         });

@@ -236,6 +236,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
+
     public void updateUserInfo(Callback<ResultBean>callback,User user){
         TestService service=retrofit.create(TestService.class);
         Map<String,Object> params=new HashMap<>();
