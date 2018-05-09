@@ -163,7 +163,7 @@ public class NetworkManager {
     public void createMoment(Callback<ResultBean> callback, String text, Location location){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
-        params.put("textConent", text);
+        params.put("textContent", text);
         params.put("longitude", location.getLongitude());
         params.put("latitude", location.getLatitude());
         params.put("location", location.getName());
@@ -179,12 +179,11 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void createComment(Callback<ResultBean> callback, String momentId, String senderId,
+    public void createComment(Callback<ResultBean> callback, String momentId,
                               String receiverId, String text){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
         params.put("momentId", momentId);
-        params.put("sendId", senderId);
         params.put("recvId", receiverId);
         params.put("content", text);
         Call<ResultBean> call = service.createComment(params);

@@ -20,6 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//实现从远程服务器获取动态数据
 public class MomentRemoteServerSource implements MomentRemoteSource {
 
     private static MomentRemoteServerSource INSTANCE = new MomentRemoteServerSource();
@@ -36,6 +37,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     final List<MomentVersion> momentVersionList =
                             (List<MomentVersion>) resultBean.getData();
@@ -60,6 +62,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     List<List<Object>> data = (List<List<Object>>) resultBean.getData();
                     if (data != null && data.size() > 0) {
@@ -71,6 +74,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                                 for (int i = 1; i < momentData.size(); ++i) {
                                     comments.add((Comment) momentData.get(i));
                                 }
+                                //服务器获取评论按照事件降序，需要反序
                                 Collections.reverse(comments);
                                 moment.setCommentList(comments);
                             }
@@ -99,6 +103,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     List<List<Object>> data = (List<List<Object>>) resultBean.getData();
                     List<Moment> momentsFromRemote = new ArrayList<>();
@@ -110,6 +115,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                                 for (int i = 1; i < momentData.size(); ++i) {
                                     comments.add((Comment) momentData.get(i));
                                 }
+                                //服务器获取评论按照事件降序，需要反序
                                 Collections.reverse(comments);
                                 moment.setCommentList(comments);
                             }
@@ -136,9 +142,12 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     final String momentId = (String) resultBean.getData();
                     if (imageFiles != null) {
+                        //创建的动态包含图片，则另外上传图片
+                        //若图片上传失败，由于文字动态已创建，返回动态创建成功
                         try {
                             NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
                                 @Override
@@ -150,7 +159,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
 
                                 @Override
                                 public void onFailure(Call<ResultBean> call, Throwable t) {
-                                    callback.onFailure(t.getMessage());
+                                    callback.onSuccess();
                                 }
                             }, momentId, imageFiles);
                         } catch (IOException e) {
@@ -173,12 +182,13 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
     }
 
     @Override
-    public void createComment(final String text, final String momentId, final String senderId,
-                              final String receiverId, final CreateCommentCallback callback) {
+    public void createComment(final String text, final String momentId, final String receiverId,
+                              final CreateCommentCallback callback) {
         NetworkManager.getInstance().createComment(new Callback<ResultBean>() {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     String commentId = (String) resultBean.getData();
                     callback.onSuccess();
@@ -191,7 +201,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             public void onFailure(Call<ResultBean> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
-        }, momentId, senderId, receiverId, text);
+        }, momentId, receiverId, text);
     }
 
     @Override
@@ -200,6 +210,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean.getCode() == 200) {
                     List<MomentUserData> userDataList = (List<MomentUserData>) resultBean.getData();
                     callback.onUserDataLoaded(userDataList);

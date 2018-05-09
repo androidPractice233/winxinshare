@@ -15,13 +15,13 @@ public interface MomentLocalSource {
 
     }
 
-    //获取多条动态
+    //获取与传入Version相同的所有动态
     void getMoments(List<MomentVersion> momentVersions, GetMomentsCallback callback);
 
-    //创建动态
+    //创建动态，不提供监听信息
     void createMoment(Moment moment);
 
-    //创建多条动态
+    //创建多条动态，不提供监听信息
     void createMoments(List<Moment> moments);
 
 }

@@ -9,6 +9,7 @@ import com.scut.weixinshare.utils.StringUtils;
 import java.sql.Timestamp;
 import java.util.List;
 
+//封装本地存储的动态信息
 public class MomentLocal {
     private String momentId;
     private String userId;

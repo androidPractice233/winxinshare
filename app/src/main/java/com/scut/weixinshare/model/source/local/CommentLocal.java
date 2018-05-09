@@ -4,6 +4,7 @@ import com.scut.weixinshare.db.Comment;
 
 import java.sql.Timestamp;
 
+//封装本地存储的评论信息
 public class CommentLocal {
     private String commentId;
     private String senderId;

@@ -37,7 +37,7 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
                 null, "傻强", Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"),
                 null, text, new Timestamp(System.currentTimeMillis()));*/
         //向服务器上传评论
-        momentDataSource.createComment(text, momentId, "大神",
+        momentDataSource.createComment(text, momentId, /*"大神",*/
                 receiverId, new MomentDataSource.CreateCommentCallback() {
             @Override
             public void onSuccess() {

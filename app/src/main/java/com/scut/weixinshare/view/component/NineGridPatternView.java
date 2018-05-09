@@ -24,8 +24,8 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
 
     public NineGridPatternView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setClickable(true);
-        setOnClickListener(this);
+        //setClickable(true);
+        //setOnClickListener(this);
     }
 
     //设置图片间距
@@ -80,6 +80,8 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
     private void addImageView(int num){
         for(int i = 0; i < num; ++i){
             SquareImageView imageView = new SquareImageView(MyApplication.getContext());
+            imageView.setClickable(true);
+            imageView.setOnClickListener(this);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             //设置ImageView在Layout中的位置
             GridLayout.Spec rowSpec = GridLayout.spec(imageViews.size() / 3);

@@ -11,6 +11,7 @@ import java.util.List;
 //动态数据远程来源接口
 public interface MomentRemoteSource {
 
+    //监听获取附近动态接口
     interface GetNearbyMomentsCallback{
 
         void onMomentVersionsLoaded(List<MomentVersion> momentVersionList);
@@ -19,6 +20,7 @@ public interface MomentRemoteSource {
 
     }
 
+    //监听获取单条动态接口
     interface GetMomentCallback{
 
         void onMomentLoaded(Moment moment);
@@ -27,6 +29,7 @@ public interface MomentRemoteSource {
 
     }
 
+    //监听获取多条动态接口
     interface GetMomentsCallback{
 
         void onMomentsLoaded(List<Moment> momentList);
@@ -35,6 +38,7 @@ public interface MomentRemoteSource {
 
     }
 
+    //监听创建动态接口
     interface CreateMomentCallback{
 
         void onSuccess();
@@ -43,6 +47,7 @@ public interface MomentRemoteSource {
 
     }
 
+    //监听创建评论接口
     interface CreateCommentCallback{
 
         void onSuccess();
@@ -51,6 +56,7 @@ public interface MomentRemoteSource {
 
     }
 
+    //监听获取动态中的用户信息接口
     interface GetMomentUserDataCallback{
 
         void onUserDataLoaded(List<MomentUserData> userDataList);
@@ -73,7 +79,7 @@ public interface MomentRemoteSource {
                       CreateMomentCallback callback);
 
     //创建评论
-    void createComment(String text, String momentId, String senderId, String receiverId,
+    void createComment(String text, String momentId, String receiverId,
                        CreateCommentCallback callback);
 
     //获取动态中的用户信息（昵称与头像uri）
