@@ -175,6 +175,24 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
     }
 
     @Override
+    public void getSomebodyMoments(String personId,   int pageNum, int pageSize, final GetPersonMomentsCallback callback) {
+        NetworkManager.getInstance().requestPersonMoment(new Callback<ResultBean>() {
+            @Override
+            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                ResultBean resultBean = response.body();
+                final List<MomentVersion> momentVersionList =
+                        (List<MomentVersion>) resultBean.getData();
+                callback.onMomentVersionsLoaded(momentVersionList);
+            }
+
+            @Override
+            public void onFailure(Call<ResultBean> call, Throwable t) {
+                callback.onDataNotAvailable(t.getMessage());
+            }
+        }, personId, pageNum, pageSize);
+    }
+
+    @Override
     public void getMomentUserData(List<String> userId, final GetMomentUserDataCallback callback) {
         NetworkManager.getInstance().requestNicknameAndPortrait(new Callback<ResultBean>() {
             @Override

@@ -25,7 +25,7 @@ public class MomentsRepository implements MomentDataSource {
     private MomentLocalSource localSource;
     private MomentRemoteSource remoteSource;
 
-    private MomentsRepository(MomentLocalSource localSource, MomentRemoteSource remoteSource){
+    public MomentsRepository(MomentLocalSource localSource, MomentRemoteSource remoteSource){
         this.localSource = localSource;
         this.remoteSource = remoteSource;
     }
@@ -42,6 +42,92 @@ public class MomentsRepository implements MomentDataSource {
     //销毁单例
     public static void destroyInstance(){
         INSTANCE = null;
+    }
+    @Override
+    public void getSomebodyMoments(String personId, int pageNum, int pageSize,final  GetMomentsCallback callback) {
+        remoteSource.getSomebodyMoments(personId, pageNum, pageSize,
+                new MomentRemoteSource.GetPersonMomentsCallback() {
+                    @Override
+                    public void onMomentVersionsLoaded(final List<MomentVersion> momentVersionList) {
+                        if(momentVersionList != null && momentVersionList.size() > 0) {
+                            localSource.getMoments(momentVersionList, new MomentLocalSource
+                                    .GetMomentsCallback() {
+                                @Override
+                                public void onMomentsLoaded(final List<MomentLocal> moments) {
+                                    final Set<String> usersWithoutPortrait = new HashSet<>();
+                                    List<String> momentsNeedToRequest = new ArrayList<>();
+                                    Set<String> momentsFromLocal = new HashSet<>();
+                                    for(MomentLocal moment : moments){
+                                        momentsFromLocal.add(moment.getMomentId());
+                                        if(!userDataMap.containsKey(moment.getUserId())){
+                                            usersWithoutPortrait.add(moment.getUserId());
+                                        }
+                                        if(moment.getCommentList() != null){
+                                            for(CommentLocal comment : moment.getCommentList()){
+                                                if(!userDataMap.containsKey(comment.getSenderId())){
+                                                    usersWithoutPortrait.add(comment.getSenderId());
+                                                }
+                                            }
+                                        }
+                                    }
+                                    for(MomentVersion momentVersion : momentVersionList){
+                                        if(!momentsFromLocal.contains(momentVersion.getMomentId())){
+                                            momentsNeedToRequest.add(momentVersion.getMomentId());
+                                        }
+                                    }
+                                    remoteSource.getMoments(momentsNeedToRequest, new MomentRemoteSource.GetMomentsCallback() {
+                                        @Override
+                                        public void onMomentsLoaded(List<Moment> momentList) {
+                                            for(Moment moment : momentList){
+                                                momentMap.put(moment.getMomentId(), moment);
+                                            }
+                                            final List<String> userList = new ArrayList<>(usersWithoutPortrait);
+                                            remoteSource.getMomentUserData(userList,
+                                                    new MomentRemoteSource.GetMomentUserDataCallback() {
+                                                        @Override
+                                                        public void onUserDataLoaded(List<MomentUserData> userDataList) {
+                                                            for(int i = 0; i < userDataList.size(); ++i){
+                                                                userDataMap.put(userList.get(i), userDataList.get(i));
+                                                            }
+                                                            for(MomentLocal momentLocal : moments){
+                                                                Moment moment = MomentUtils.momentLocalToMoment(momentLocal);
+                                                                MomentUserData  userData = userDataMap.get(moment.getUserId());
+                                                                moment.setUserData(userData.getNickName(), userData.getPortrait());
+                                                                if(moment.getCommentList() != null){
+                                                                    for(Comment comment : moment.getCommentList()){
+                                                                        comment.setSenderData(userDataMap.get(comment.getSendId()));
+                                                                        comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                    }
+                                                                }
+                                                                momentMap.put(moment.getMomentId(), moment);
+                                                            }
+                                                            callback.onMomentsLoaded(initMomentList(momentVersionList));
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(String error) {
+                                                            callback.onDataNotAvailable(error);
+                                                        }
+                                                    });
+                                        }
+
+                                        @Override
+                                        public void onDataNotAvailable(String error) {
+                                            callback.onDataNotAvailable(error);
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            callback.onMomentsLoaded(new ArrayList<Moment>());
+                        }
+                    }
+
+                    @Override
+                    public void onDataNotAvailable(String error) {
+                        callback.onDataNotAvailable(error);
+                    }
+                });
     }
 
     @Override

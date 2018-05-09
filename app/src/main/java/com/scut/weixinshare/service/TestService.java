@@ -36,5 +36,6 @@ public interface TestService {
 
     @POST("/user/getnickpot")
     Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
-
+    @POST("/moment/personal")
+    Call<ResultBean> requestPersonMoment(@Body Map params);
 }

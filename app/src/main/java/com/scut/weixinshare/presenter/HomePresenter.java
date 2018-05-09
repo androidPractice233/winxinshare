@@ -3,15 +3,11 @@ package com.scut.weixinshare.presenter;
 import android.net.Uri;
 
 import com.scut.weixinshare.contract.HomeContract;
-import com.scut.weixinshare.manager.LocationManager;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.source.LocationDataSource;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.source.MomentDataSource;
-import com.scut.weixinshare.model.source.MomentsRepository;
-import com.tencent.map.geolocation.TencentLocation;
-import com.tencent.map.geolocation.TencentLocationListener;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -24,17 +20,17 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
 
     private static int PAGE_SIZE = 25;
 
-    private static final int NETWORK_ERROR = 0;
-    private static final int LOADING = 1;
-    private static final int END = 2;
+    protected static final int NETWORK_ERROR = 0;
+    protected static final int LOADING = 1;
+    protected static final int END = 2;
 
-    private int state = LOADING;
-    private HomeContract.View view;
+    protected int state = LOADING;
+    protected HomeContract.View view;
     //private TencentLocation location = null;
-    private boolean isFirst = true;
-    private int count = 0;
+    protected boolean isFirst = true;
+    protected int count = 0;
     private int pageNum = 1;
-    private boolean isLoading = false;
+    protected boolean isLoading = false;
     private MomentDataSource momentDataSource;
     private LocationDataSource locationDataSource;
     //private List<Moment> momentList = new ArrayList<>();
@@ -48,7 +44,7 @@ public class HomePresenter implements HomeContract.Presenter/*, TencentLocationL
     }
 
     //测试用数据
-    private List<Moment> initTestMoments(){
+    protected List<Moment> initTestMoments(){
         List<Moment> momentList = new ArrayList<>();
         for(int i = 0; i < PAGE_SIZE; ++i){
             List<Comment> comments = new ArrayList<>();

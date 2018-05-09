@@ -51,6 +51,8 @@ public interface MomentDataSource {
     //获取动态列表
     void getMoments(Location location, int pageNum, int pageSize, GetMomentsCallback callback);
 
+    //获取个人主页动态
+    void getSomebodyMoments(String id, int pageNum, int pageSize, GetMomentsCallback callback);
     //创建不带图片的动态
     void createMoment(String text, Location location, CreateMomentCallback callback);
 

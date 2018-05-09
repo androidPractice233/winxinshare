@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="16dp"
@@ -15,35 +16,36 @@
         android:layout_height="40dp"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/portrait"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="56dp" />
 
     <TextView
         android:id="@+id/location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:textSize="13sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/portrait"
-        app:layout_constraintTop_toBottomOf="@+id/nickname" />
+        app:layout_constraintTop_toBottomOf="@+id/nickname"
+        tools:layout_editor_absoluteX="56dp" />
 
     <TextView
         android:id="@+id/content_text"
-        android:layout_width="match_parent"
+        android:layout_width="336dp"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textSize="15sp"
@@ -51,39 +53,41 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/portrait" />
+        app:layout_constraintTop_toBottomOf="@+id/portrait"
+        tools:layout_editor_absoluteX="8dp" />
 
     <com.scut.weixinshare.view.component.NineGridPatternView
         android:id="@+id/content_pics"
-        android:layout_width="match_parent"
+        android:layout_width="336dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_text"/>
+        app:layout_constraintTop_toBottomOf="@+id/content_text"
+        tools:layout_editor_absoluteX="8dp" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="12dp"
         android:textSize="13sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@id/add_comment"
+        app:layout_constraintEnd_toStartOf="@+id/add_comment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_pics" />
+        app:layout_constraintTop_toBottomOf="@+id/content_pics"
+        tools:layout_editor_absoluteX="0dp" />
 
     <ImageButton
         android:id="@+id/add_comment"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
         android:background="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_comment_gray_20dp"
         app:layout_constraintEnd_toStartOf="@+id/comment_count"
-        app:layout_constraintTop_toBottomOf="@+id/content_pics" />
+        app:layout_constraintTop_toBottomOf="@+id/content_pics"
+        tools:layout_editor_absoluteX="324dp" />
 
     <TextView
         android:id="@+id/comment_count"
@@ -93,6 +97,7 @@
         android:textSize="13sp"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_pics"/>
+        app:layout_constraintTop_toBottomOf="@+id/content_pics"
+        tools:layout_editor_absoluteX="352dp" />
 
 </android.support.constraint.ConstraintLayout>

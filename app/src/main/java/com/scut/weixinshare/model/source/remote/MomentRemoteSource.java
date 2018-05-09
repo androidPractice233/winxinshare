@@ -17,6 +17,13 @@ public interface MomentRemoteSource {
         void onDataNotAvailable(String error);
 
     }
+    interface GetPersonMomentsCallback{
+
+        void onMomentVersionsLoaded(List<MomentVersion> momentVersionList);
+
+        void onDataNotAvailable(String error);
+
+    }
 
     interface GetMomentCallback{
 
@@ -61,6 +68,8 @@ public interface MomentRemoteSource {
                           GetNearbyMomentsCallback callback);
 
     void getMoment(String momentId, GetMomentCallback callback);
+
+    void getSomebodyMoments(String personId,   int pageNum, int pageSize, final  GetPersonMomentsCallback callback);
 
     void getMoments(List<String> momentIds, GetMomentsCallback callback);
 

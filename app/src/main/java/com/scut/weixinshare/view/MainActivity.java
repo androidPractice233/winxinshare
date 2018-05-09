@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 NetworkManager.getInstance().test(new BaseCallback() {
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+
                         ResultBean resultBean=  response.body();
                         if(this.checkResult(MainActivity.this,resultBean)) {
                             Toast.makeText(MainActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();

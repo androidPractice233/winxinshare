@@ -146,6 +146,16 @@ public class NetworkManager {
         call.enqueue(callBack);
     }
 
+    public void requestPersonMoment(Callback<ResultBean> callBack, String personId, int pageNum,
+                                    int pageSize){
+        TestService service = retrofit.create(TestService.class);
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", personId);
+        params.put("pageNum", pageNum);
+        params.put("pageSize", pageSize);
+        Call<ResultBean> call = service.requestPersonMoment(params);
+        call.enqueue(callBack);
+    }
     public void requestMomentDetail(Callback<ResultBean> callback, List<String> momentIds){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
