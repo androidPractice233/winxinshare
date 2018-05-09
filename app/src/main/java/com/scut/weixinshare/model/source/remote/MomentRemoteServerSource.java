@@ -136,7 +136,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
     }
 
     @Override
-    public void createMoment(Location location, String text, final List<File> imageFiles,
+    public void createMoment(String userId, Location location, String text, final List<File> imageFiles,
                              final CreateMomentCallback callback) {
         NetworkManager.getInstance().createMoment(new Callback<ResultBean>() {
             @Override
@@ -178,11 +178,11 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             public void onFailure(Call<ResultBean> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
-        }, text, location);
+        }, userId, text, location);
     }
 
     @Override
-    public void createComment(final String text, final String momentId, final String receiverId,
+    public void createComment(String text, String momentId, String receiverId, String sendId,
                               final CreateCommentCallback callback) {
         NetworkManager.getInstance().createComment(new Callback<ResultBean>() {
             @Override
@@ -201,7 +201,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             public void onFailure(Call<ResultBean> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
-        }, momentId, receiverId, text);
+        }, momentId, sendId, receiverId, text);
     }
 
     @Override

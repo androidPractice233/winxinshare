@@ -52,14 +52,14 @@ public interface MomentDataSource {
     void getMoments(Location location, int pageNum, int pageSize, GetMomentsCallback callback);
 
     //创建不带图片的动态
-    void createMoment(String text, Location location, CreateMomentCallback callback);
+    void createMoment(String userId, String text, Location location, CreateMomentCallback callback);
 
     //创建带图片的动态
-    void createMoment(String text, Location location, List<File> imageFiles,
+    void createMoment(String userId, String text, Location location, List<File> imageFiles,
                       CreateMomentCallback callback);
 
     //创建评论
-    void createComment(String text, String momentId, String receiverId,
+    void createComment(String text, String momentId, String sendId, String receiverId,
                        CreateCommentCallback callback);
 
     //清除单条动态缓存
