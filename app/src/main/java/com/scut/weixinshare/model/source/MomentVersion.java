@@ -1,17 +1,18 @@
 package com.scut.weixinshare.model.source;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class MomentVersion{
 
     String momentId;
-    Timestamp updateTime;
+    Date updateTime;
 
     public void setMomentId(String momentId) {
         this.momentId = momentId;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -19,7 +20,7 @@ public class MomentVersion{
         return momentId;
     }
 
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 }

@@ -48,7 +48,7 @@ public class MyApplication extends MultiDexApplication {
 
     private static MyApplication instance;
     private static Context context;
-    public static User user;
+    public static User currentUser;
     private  String token;
 
     public  String getToken() {

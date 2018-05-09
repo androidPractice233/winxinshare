@@ -24,23 +24,29 @@ public class PersonalMomentActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_person_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent intent=getIntent();
-        String userid=intent.getStringExtra("userId");
-        if(savedInstanceState == null) {
+        Intent intent = getIntent();
+        String userid = intent.getStringExtra("userId");
+        if (savedInstanceState == null) {
             HomeFragment fragment = new HomeFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.content_home, fragment, PictureConfig.FC_TAG);
             transaction.commit();
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance(),userid);
+                    LocationRepository.getInstance(), userid);
         } else {
-            HomeFragment fragment = (HomeFragment)getSupportFragmentManager()
+            HomeFragment fragment = (HomeFragment) getSupportFragmentManager()
                     .findFragmentByTag(PictureConfig.FC_TAG);
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance(),userid);
+                    LocationRepository.getInstance(), userid);
         }
     }
-}
+    public static void actionStart(android.content.Context context) {
+        Intent intent = new Intent(context, PersonalMomentActivity.class);
+        context.startActivity(intent);
+    }
+
+    }
+

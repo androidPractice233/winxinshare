@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.BaseCallback;
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_name = null;
     private EditText edt_pwd = null;
     private Button btn_login = null;
-    private Button register_button = null;
+    private TextView register_button = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,21 +77,24 @@ public class LoginActivity extends AppCompatActivity {
                 User user =new User();
                 user.setUserPwd(user_pwd);
                 user.setUserName(user_name);
-                NetworkManager.getInstance().login(new BaseCallback() {
+                NetworkManager.getInstance().login(new BaseCallback<ResultBean<LoginReceive>>() {
+
+
                     @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                    public void onResponse(Call<ResultBean<LoginReceive>> call, Response<ResultBean<LoginReceive>> response) {
 
                         ResultBean resultBean=  getResultBean(response);
                         if(checkResult(LoginActivity.this,resultBean)) {
                             SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
                                     .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
-                            Map resultmap = (Map) resultBean.getData();
-                            editor.putString("token", (String) resultmap.get("token"));
+                            LoginReceive loginReceive= (LoginReceive) resultBean.getData();
+                            editor.putString("token",loginReceive.getToken() );
                             //初始化数据库
                             //跳转至个人主页
                             editor.commit();
-                            MyApplication.getInstance().setToken( (String) resultmap.get("token"));
+                            MyApplication.currentUser=loginReceive.getUser();
+                            MyApplication.getInstance().setToken(  loginReceive.getToken());
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             ////
@@ -97,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ResultBean> call, Throwable t) {
+                    public void onFailure(Call<ResultBean<LoginReceive>> call, Throwable t) {
 
                     }
                 },user);

@@ -1,7 +1,9 @@
 package com.scut.weixinshare.service;
 
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.source.MomentVersion;
 
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.RequestBody;
@@ -23,7 +25,7 @@ public interface TestService {
     Call<ResultBean> register(@Body Map praram);
 
     @POST("/moment/nearby")
-    Call<ResultBean> requestNearbyMoment(@Body Map params);
+    Call<ResultBean<List<MomentVersion>>> requestNearbyMoment(@Body Map params);
 
     @POST("/moment/detail")
     Call<ResultBean> requestMomentDetail(@Body Map params);

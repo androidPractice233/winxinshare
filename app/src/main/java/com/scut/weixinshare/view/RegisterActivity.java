@@ -101,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
                 user.setUserPwd(user_pwd);
 
                 //服务器进行用户注册
-                NetworkManager.getInstance().register(new BaseCallback() {
+                NetworkManager.getInstance().register(new BaseCallback<ResultBean>() {
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                         ResultBean resultBean = getResultBean(response);

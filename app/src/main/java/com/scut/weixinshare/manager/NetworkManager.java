@@ -6,8 +6,10 @@ import android.util.Log;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
@@ -136,7 +138,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void requestNearbyMoment(Callback<ResultBean> callBack, Location location, int pageNum,
+    public void requestNearbyMoment(Callback callBack, Location location, int pageNum,
                                     int pageSize){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
@@ -144,7 +146,7 @@ public class NetworkManager {
         params.put("latitude", location.getLatitude());
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        Call<ResultBean> call = service.requestNearbyMoment(params);
+        Call call = service.requestNearbyMoment(params);
         call.enqueue(callBack);
     }
 
@@ -221,9 +223,9 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public  void login(Callback<ResultBean> callback,User user){
+    public  void login(BaseCallback callback, User user){
         RegisterService registerService= retrofit.create(RegisterService.class);
-        Call<ResultBean> call=registerService.login(user);
+        Call call=registerService.login(user);
         call.enqueue(callback);
     }
 

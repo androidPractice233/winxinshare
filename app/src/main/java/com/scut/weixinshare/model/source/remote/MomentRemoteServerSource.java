@@ -34,9 +34,9 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
     @Override
     public void getNearbyMoments(Location location, int pageNum, int pageSize,
                                  final GetNearbyMomentsCallback callback) {
-        NetworkManager.getInstance().requestNearbyMoment(new Callback<ResultBean>() {
+        NetworkManager.getInstance().requestNearbyMoment(new Callback<ResultBean<List<MomentVersion>>>() {
             @Override
-            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+            public void onResponse(Call<ResultBean<List<MomentVersion>>>call, Response<ResultBean<List<MomentVersion>>>response) {
                 ResultBean resultBean = response.body();
                 //检查请求是否成功
                 if(resultBean.getCode() == 200) {
@@ -49,7 +49,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             }
 
             @Override
-            public void onFailure(Call<ResultBean> call, Throwable t) {
+            public void onFailure(Call<ResultBean<List<MomentVersion>>> call, Throwable t) {
                 callback.onDataNotAvailable(t.getMessage());
             }
         }, location, pageNum, pageSize);

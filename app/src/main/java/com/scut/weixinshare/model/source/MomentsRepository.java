@@ -168,6 +168,8 @@ public class MomentsRepository implements MomentDataSource {
                         if(momentVersionList != null && momentVersionList.size() > 0) {
                             //检查动态是否已缓存
                             final List<MomentVersion> momentWithoutCache = new ArrayList<>();
+                            //这里有bug
+
                             for(MomentVersion moment : momentVersionList){
                                 if(!momentMap.containsKey(moment.getMomentId()) ||
                                         !momentMap.get(moment.getMomentId()).getUpdateTime()

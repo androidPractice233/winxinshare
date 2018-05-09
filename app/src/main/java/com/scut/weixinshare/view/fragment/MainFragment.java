@@ -19,8 +19,11 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
@@ -47,7 +50,8 @@ public class MainFragment  extends Fragment{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkManager.getInstance().test(new BaseCallback() {
+                NetworkManager.getInstance().test(new BaseCallback<ResultBean>() {
+
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                        ResultBean resultBean=getResultBean(response);
