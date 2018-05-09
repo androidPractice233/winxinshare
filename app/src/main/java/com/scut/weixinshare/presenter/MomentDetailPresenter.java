@@ -1,12 +1,16 @@
 package com.scut.weixinshare.presenter;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.scut.weixinshare.contract.MomentDetailContract;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.source.MomentDataSource;
 import com.scut.weixinshare.utils.NetworkUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MomentDetailPresenter implements MomentDetailContract.Presenter {
 
@@ -109,6 +113,11 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
             this.receiverId = null;
             view.updateCommentUI(null);
         }
+    }
+
+    @Override
+    public void openBigImage(List<Uri> uriList) {
+        view.showBigPicUI(new ArrayList<>(uriList));
     }
 
     @Override

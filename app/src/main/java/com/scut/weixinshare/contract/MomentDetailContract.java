@@ -1,12 +1,15 @@
 package com.scut.weixinshare.contract;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.net.Uri;
 
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface MomentDetailContract {
 
@@ -36,6 +39,9 @@ public interface MomentDetailContract {
         //显示登录界面
         void showLoginUI();
 
+        //显示大图界面
+        void showBigPicUI(ArrayList<Uri> images);
+
     }
 
     interface Presenter extends BasePresenter{
@@ -54,6 +60,9 @@ public interface MomentDetailContract {
 
         //改变评论对象
         void changeCommentUser(Comment comment);
+
+        //打开大图
+        void openBigImage(List<Uri> uriList);
 
     }
 

@@ -1,7 +1,6 @@
 package com.scut.weixinshare.view.component;
 
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
@@ -15,14 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 //实现九宫格图片显示，xml文件中layout_width必须为固定宽度或者match_parent
-public class NineGridPatternView extends GridLayout {
+public class NineGridPatternView extends GridLayout implements View.OnClickListener {
 
     //保存已创建的ImageView，避免重复删除添加ImageView，减少卡顿
     private List<ImageView> imageViews = new ArrayList<>();
+    private List<Uri> uriList;
+    private NineGridPatternViewListener listener;
     private int margin = 8;     //默认图片间距为8dp
 
     public NineGridPatternView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setClickable(true);
+        setOnClickListener(this);
     }
 
     //设置图片间距
@@ -30,13 +33,18 @@ public class NineGridPatternView extends GridLayout {
         this.margin = margin;
     }
 
+    public void setListener(NineGridPatternViewListener listener){
+        this.listener = listener;
+    }
+
     //设置图片显示
-    public void setView(final List<Uri> images) {
+    public void setView(List<Uri> images) {
         //最多显示九张图片
-        final int numImages = images.size() > 9 ? 9 : images.size();
+        this.uriList = images;
+        final int numImages = uriList.size() > 9 ? 9 : uriList.size();
         if (numImages > imageViews.size()) {
             for (int i = 0; i < imageViews.size(); ++i) {
-                GlideUtils.loadImageView(getContext(), images.get(i),
+                GlideUtils.loadImageView(getContext(), uriList.get(i),
                         imageViews.get(i));
                 imageViews.get(i).setVisibility(View.VISIBLE);
             }
@@ -48,7 +56,7 @@ public class NineGridPatternView extends GridLayout {
                     //当前ImageView数目少于需要显示的图片数目，添加ImageView
                     addImageView(numImages - pos);
                     for (int i = pos; i < imageViews.size(); ++i) {
-                        GlideUtils.loadImageView(getContext(), images.get(i),
+                        GlideUtils.loadImageView(getContext(), uriList.get(i),
                                 imageViews.get(i));
                         imageViews.get(i).setVisibility(View.VISIBLE);
                     }
@@ -57,7 +65,7 @@ public class NineGridPatternView extends GridLayout {
         } else {
             for (int i = 0; i < imageViews.size(); ++i) {
                 if (i < numImages) {
-                    GlideUtils.loadImageView(getContext(), images.get(i),
+                    GlideUtils.loadImageView(getContext(), uriList.get(i),
                             imageViews.get(i));
                     imageViews.get(i).setVisibility(View.VISIBLE);
                 } else {
@@ -87,4 +95,21 @@ public class NineGridPatternView extends GridLayout {
             imageViews.add(imageView);
         }
     }
+
+    @Override
+    public void onClick(View view) {
+        if(listener != null) {
+            switch (view.getId()) {
+                default:
+                    listener.onItemClick(uriList);
+                    break;
+            }
+        }
+    }
+
+    interface NineGridPatternViewListener{
+
+        void onItemClick(List<Uri> uriList);
+    }
+
 }

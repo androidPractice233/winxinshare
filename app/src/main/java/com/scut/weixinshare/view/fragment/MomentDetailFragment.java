@@ -2,6 +2,7 @@ package com.scut.weixinshare.view.fragment;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,9 +25,11 @@ import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.KeyBroadUtils;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.component.CommentView;
 import com.scut.weixinshare.view.component.MomentView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MomentDetailFragment extends Fragment implements MomentDetailContract.View,
@@ -146,6 +149,11 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     }
 
     @Override
+    public void showBigPicUI(ArrayList<Uri> images) {
+        BigPicActivity.activityStart(getContext(), images);
+    }
+
+    @Override
     public void setPresenter(MomentDetailContract.Presenter presenter) {
         this.presenter = presenter;
     }
@@ -168,6 +176,11 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     @Override
     public void onAddCommentButtonClick(Moment moment) {
         presenter.changeCommentUser(null);
+    }
+
+    @Override
+    public void onImagesClick(List<Uri> images) {
+        presenter.openBigImage(images);
     }
 
     @Override

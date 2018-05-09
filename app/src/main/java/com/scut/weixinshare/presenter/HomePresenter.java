@@ -358,6 +358,11 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     @Override
+    public void openBigImages(List<Uri> uriList) {
+        view.showBigPicUI(new ArrayList<>(uriList));
+    }
+
+    @Override
     public void start() {
         if(isFirst) {
             view.hideMomentList();

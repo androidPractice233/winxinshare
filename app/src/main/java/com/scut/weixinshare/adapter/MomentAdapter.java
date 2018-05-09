@@ -1,5 +1,6 @@
 package com.scut.weixinshare.adapter;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +83,11 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
             public void onAddCommentButtonClick(Moment moment) {
                 listener.onAddCommentButtonClick(moment, holder.getAdapterPosition());
             }
+
+            @Override
+            public void onImagesClick(List<Uri> images) {
+                listener.onImagesClick(images, holder.getAdapterPosition());
+            }
         });
     }
 
@@ -99,6 +105,8 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
         void onItemClick(Moment moment, int position);
 
         void onAddCommentButtonClick(Moment moment, int position);
+
+        void onImagesClick(List<Uri> images, int position);
     }
 
 }

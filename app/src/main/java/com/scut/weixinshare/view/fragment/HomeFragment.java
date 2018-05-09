@@ -3,6 +3,7 @@ package com.scut.weixinshare.view.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.DensityUtils;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
 
@@ -196,6 +198,11 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
+    public void showBigPicUI(ArrayList<Uri> images) {
+        BigPicActivity.activityStart(getContext(), images);
+    }
+
+    @Override
     public void showReminderMessage(String text) {
         ToastUtils.showToast(getContext(), text);
     }
@@ -239,5 +246,10 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     @Override
     public void onAddCommentButtonClick(Moment moment, int position) {
         presenter.releaseComment(moment, position);
+    }
+
+    @Override
+    public void onImagesClick(List<Uri> images, int position) {
+        presenter.openBigImages(images);
     }
 }
