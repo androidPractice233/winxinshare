@@ -1,16 +1,13 @@
 package com.scut.weixinshare.view;
 
-import android.content.Intent;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,35 +27,32 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
-import com.scut.weixinshare.manager.NetworkManager;
-import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.model.source.LocationRepository;
 import com.scut.weixinshare.model.source.MomentDataSource;
 import com.scut.weixinshare.model.source.MomentsRepository;
 import com.scut.weixinshare.model.source.local.MomentDatabaseSource;
 import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
-import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
 import com.scut.weixinshare.view.fragment.HomeFragment;
 import com.scut.weixinshare.view.fragment.MainFragment;
+import com.scut.weixinshare.view.fragment.UserFragment;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     Button btnPopPhoto;
     Button button;
     Button locationBtn;
+    FragmentPagerAdapter adapter;
     private List<Fragment> frag_list;// 声明一个list集合存放Fragment（数据源）
     String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
     @Override
@@ -194,19 +188,29 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
-
         HomeFragment homefragment = new HomeFragment();
-        MomentDataSource momentDataSource = MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance());
-        new HomePresenter(homefragment, momentDataSource, LocationRepository.getInstance());
+        new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
+                LocationRepository.getInstance());
+
+
+        UserFragment userFragment = UserFragment.newInstance("n");
+
+        if (MyApplication.user!=null)
+            new UserPresenter(userFragment, MyApplication.user);
+        else {
+            User user = new User("", "", "", 0, "", "", "");
+            new UserPresenter(userFragment, user);
+        }
+
         MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
-        frag_list.add(fragment2);
+        frag_list.add(userFragment);
 
 
         // 设置适配器
-        FragmentPagerAdapter adapter = new FragmentPagerAdapter(
+         adapter = new FragmentPagerAdapter(
                 getSupportFragmentManager()) {
 
             @Override

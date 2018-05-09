@@ -43,12 +43,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_pwd = null;
     private Button btn_login = null;
     private Button register_button = null;
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        // Inflate the layout for this fragment
+        // Inflate the layout for this userFragment
         setContentView(R.layout.fragment_login);
 
         img_upload = findViewById(R.id.profilePhoto);
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                User user =new User();
+                user =new User();
                 user.setUserPwd(user_pwd);
                 user.setUserName(user_name);
                 NetworkManager.getInstance().login(new BaseCallback() {
@@ -89,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                             //初始化数据库
                             //跳转至个人主页
                             editor.commit();
+                            MyApplication.user=user;
                             MyApplication.getInstance().setToken( (String) resultmap.get("token"));
                             MyApplication.getInstance().setUserId((String) ((Map) resultmap.get("user")).get("userId"));
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -102,6 +104,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 },user);
+
+
             }
         });
 

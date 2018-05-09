@@ -1,6 +1,8 @@
 package com.scut.weixinshare.manager;
 
 import android.net.Uri;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 
@@ -234,6 +236,28 @@ public class NetworkManager {
         RegisterService registerService= retrofit.create(RegisterService.class);
         Call<ResultBean> call=registerService.login(user);
         call.enqueue(callback);
+    }
+
+    public void updateUserInfo(Callback<ResultBean>callback,User user){
+        TestService service=retrofit.create(TestService.class);
+        Map<String,Object> params=new HashMap<>();
+        SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
+                .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
+        params.put("token",preferences.getString("token",""));
+        params.put("userName", user.getUserName());
+        params.put("nickName", user.getNickName());
+        params.put("location", user.getLocation());
+        params.put("sex",user.getSex());
+        params.put("birthday", user.getBirthday());
+        Call<ResultBean> call=service.updateUser(params);
+        call.enqueue(callback);
+    }
+
+    public void getUser(Callback<ResultBean>callback,String userid){
+        TestService service=retrofit.create(TestService.class);
+        Call<ResultBean> call=service.searchUser(userid);
+        call.enqueue(callback);
+
     }
 
 }

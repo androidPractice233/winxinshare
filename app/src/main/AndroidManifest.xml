@@ -63,7 +63,7 @@
             android:name=".view.RegisterActivity"
             android:label="注册界面"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".view.BigPicActivity"/>
+        <activity android:name=".view.BigPicActivity"></activity>
     </application>
 
 </manifest>
