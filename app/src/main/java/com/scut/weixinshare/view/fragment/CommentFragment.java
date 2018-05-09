@@ -50,11 +50,6 @@ public class CommentFragment extends Fragment {
         //从数据库获取
         dbOperator = new DBOperator();
         comments = new ArrayList<>();
-        for(int i=0;i<10;i++) {
-            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你好！"));
-            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你好吗？"));
-            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你真是太好了！"));
-        }
 
 
         recyclerView = view.findViewById(R.id.list_coments);
@@ -62,7 +57,7 @@ public class CommentFragment extends Fragment {
         commentAdapter = new CommentAdapter(comments,dbOperator);
         recyclerView.setAdapter(commentAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());     //设置RecyclerView动画
-//设置Item间距，实现类卡片式Item效果
+        //设置Item间距，实现类卡片式Item效果
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent,

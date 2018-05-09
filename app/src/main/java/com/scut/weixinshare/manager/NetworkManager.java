@@ -138,8 +138,8 @@ public class NetworkManager {
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
 
         Map<String, Object> params = new HashMap<>();
-        //params.put("token", MainActivity.TOKEN);
-        params.put("dateTime",1);
+        params.put("userId",MainActivity.USERID);
+        params.put("dateTime",0);
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

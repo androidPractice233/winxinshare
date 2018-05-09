@@ -1,6 +1,7 @@
 package com.scut.weixinshare.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.Moment;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.view.MainActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.tencent.wcdb.database.SQLiteDebug;
 
@@ -25,6 +27,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public CommentAdapter(List<Comment> comments,DBOperator dbOperator){
         this.comments = comments;
          this.dbOperator = dbOperator;
+         this.updateComments();
     }
 
     public void updateComments(){
@@ -45,7 +48,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 //DBOperator dbOperator = new DBOperator();
                 //Moment moment = dbOperator.selectMoment(comment.getMomentId());
                 //打开动态详情
-                //MomentDetailActivity.activityStart(v.getContext(),moment,true);
+                MomentDetailActivity.activityStart(v.getContext(),comment.getMomentId(),true);
             }
         });
         return holder;
@@ -53,10 +56,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
+        String content = "你好吗你好吗怀念士大夫啊士大夫看见啦士大夫啊圣诞节分厘卡绝对数量";
+
         Comment comment = comments.get(position);
         User user = dbOperator.selectUser(comment.getSenderId());
-        String string = user.getNickName()+" 回复你： "+comments.get(position).getContent();
-        holder.text.setText(string);
+        String string = user.getNickName()+" ：";
+        holder.timeText.setText(comment.getCreateTime());
+        holder.timeText.setGravity(Gravity.CENTER);
+        holder.senderText.setText(string);
+        holder.commentText.setText(comments.get(position).getContent()+content+content);
     }
 
     @Override
@@ -66,11 +74,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     static class CommentViewHolder extends RecyclerView.ViewHolder{
         View commentView;
-        TextView text;
+        TextView timeText;
+        TextView commentText;
+        TextView senderText;
         public CommentViewHolder(View view){
             super(view);
             commentView = view;
-            text = view.findViewById(R.id.item_comment_text);
+            timeText = view.findViewById(R.id.item_comment_time);
+            commentText = view.findViewById(R.id.item_comment_text);
+            senderText = view.findViewById(R.id.item_comment_sender);
         }
     }
 }

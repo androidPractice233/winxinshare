@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     Button toHome;
     private TextView textView;
     public static String TOKEN;
+    public static String USERID;
     public Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //new Test().testDb(this);
+        //new Test(this).testDb();
         new Test(this).login();
         //new Test(this);
         //获取评论更新
@@ -296,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                     getUpdateComments();
                     updateNum(a++);
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(30000);
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
@@ -324,14 +325,21 @@ public class MainActivity extends AppCompatActivity {
                         Object data = resultBean.getData();
                         Log.d("getUpdateComment",resultBean.getCode()+"");
 
+
+
                         //如果返回结果为空，不用更新lastUpdateTime
                         if(data==null){
                             Log.d("getUpdateComment","no comment response");
                             return;
                         }
                         else{
-                            //processData(data);
-                            //getLastUpdateTime();
+                            if(resultBean.getCode()==200){
+                                String dataString = resultBean.getData().toString();
+                                Log.d("getUpdateComment",dataString);
+                                processData(dataString);
+                                getLastUpdateTime();
+                            }
+
                         }
 
                     }
@@ -343,14 +351,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                     //处理返回数据
                     private void processData(String jsonData){
-                        Log.d("getUpdateComment",jsonData);
                         try{
                             JSONArray jsonArray = new JSONArray(jsonData);
                             int n = jsonArray.length();
+                            DBOperator dbOperator = new DBOperator();
                             for(int i=0;i<n;i++){
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-
+                                String commentId = jsonObject.getString("commentId");
+                                String momentId = jsonObject.getString("momentId");
+                                String sendId = jsonObject.getString("sendId");
+                                String recvId = jsonObject.getString("recvId");
+                                String content = jsonObject.getString("content");
+                                String createTime = jsonObject.getString("createTime");
+                                dbOperator.insertComment
+                                        (new Comment(commentId,momentId,sendId,recvId,createTime,content));
                             }
+                            dbOperator.close();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
