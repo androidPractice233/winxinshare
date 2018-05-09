@@ -29,6 +29,7 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,6 +78,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private EditText editText;
     private ConstraintLayout layout_info;
     private RelativeLayout layout_input;
+    private TextView personweb;
 private Button button;
     public UserFragment() {
         // Required empty public constructor
@@ -130,7 +132,7 @@ private Button button;
         view.setOnClickListener(this);
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
-
+        personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
         presenter.start();
 
@@ -142,6 +144,7 @@ private Button button;
             ll_location.setOnClickListener(this);
             editText.setOnClickListener(this);
             button.setOnClickListener(this);
+            personweb.setOnClickListener(this);
         }
 
         return view;
@@ -240,9 +243,12 @@ private Button button;
                         currentUser.setBirthday(editText.getText().toString());
                         break;
 
-                }
+                }break;
+            case R.id.personweb:
+                PersonalMomentActivity.actionStart(getActivity());
                 showUserInfo(currentUser);
                 changeVisibility(0);
+                break;
         }
     }
 
