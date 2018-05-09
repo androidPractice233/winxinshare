@@ -36,7 +36,11 @@ public abstract class BaseCallback implements Callback<ResultBean> {
         }
         if (resultBean.getCode() == 200) {
             return true;
-        } else return false;
+        } else
+        {
+            Toast.makeText(context, "错误："+resultBean.getMsg(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
     protected ResultBean getResultBean(Response<ResultBean> response) {

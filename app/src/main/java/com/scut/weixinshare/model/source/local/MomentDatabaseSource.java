@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+//实现从数据库获取本地动态数据
 public class MomentDatabaseSource implements MomentLocalSource {
 
     private static MomentDatabaseSource INSTANCE = new MomentDatabaseSource();
@@ -50,6 +51,7 @@ public class MomentDatabaseSource implements MomentLocalSource {
                     }
                 }
                 dbOperator.close();
+                //动态数据加载完成
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -80,7 +82,7 @@ public class MomentDatabaseSource implements MomentLocalSource {
                     List<String> commentIds = dbOperator
                             .selectCommentIdUnderMoment(moment.getMomentId());
                     if (commentIds != null && commentIds.size() > 0) {
-                        //对比新版本动态的评论和数据库中的动态评论，
+                        //数据库中存在对应动态的评论，则对比新版本动态的评论和数据库中的动态评论
                         Set<String> commentIdSetLocal = new HashSet<>(commentIds);
                         for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
                             if (commentIdSetLocal.contains(comment.getCommentId())) {
@@ -98,12 +100,14 @@ public class MomentDatabaseSource implements MomentLocalSource {
                             dbOperator.deleteComment(commentId);
                         }
                     } else {
+                        //数据库中不存在该动态的评论，则直接插入所有评论
                         for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
                             dbOperator.insertComment(new Comment(comment.getCommentId(),
                                     moment.getMomentId(), comment.getSendId(), comment.getRecvId(),
                                     comment.getCreateTime().toString(), comment.getContent()));
                         }
                     }
+                    //插入新版本动态
                     dbOperator.insertMoment(new com.scut.weixinshare.db.Moment(moment.getMomentId(),
                             moment.getUserId(), moment.getCreateTime().toString(),
                             moment.getUpdateTime().toString(), moment.getLocation(),

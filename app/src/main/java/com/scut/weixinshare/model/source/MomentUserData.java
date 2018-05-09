@@ -2,11 +2,12 @@ package com.scut.weixinshare.model.source;
 
 import android.net.Uri;
 
+//封装动态中的用户信息
 public class MomentUserData {
 
-    private String userId;
-    private String nickName;
-    private Uri portrait;
+    private String userId;       //用户id
+    private String nickName;     //用户昵称
+    private Uri portrait;        //用户头像
 
     public String getUserId(){
         return userId;

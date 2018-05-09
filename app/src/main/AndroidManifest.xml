@@ -29,10 +29,9 @@
             android:name="TencentMapSDK"
             android:value="WEIBZ-BFY3Q-LRS5Y-GNCCT-5J5P2-UZFJ4" />
 
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -56,7 +55,14 @@
             android:name=".view.PersonalMomentActivity"
             android:label="个人主页"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity
+            android:name=".view.MainActivity"
+            android:label="主界面"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.RegisterActivity"
+            android:label="注册界面"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.BigPicActivity"></activity>
     </application>
 

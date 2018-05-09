@@ -36,7 +36,6 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
     private TextView time;                      //动态发布事件
     private TextView textContent;               //文本内容
     private NineGridPatternView picContent;     //图片内容
-    private ImageButton addComment;             //评论按钮
     private TextView commentCount;              //评论数目显示
     private MomentViewListener listener;
     private Moment moment;
@@ -53,7 +52,15 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         time = findViewById(R.id.time);
         textContent = findViewById(R.id.content_text);
         picContent = findViewById(R.id.content_pics);
-        addComment = findViewById(R.id.add_comment);
+        picContent.setListener(new NineGridPatternView.NineGridPatternViewListener() {
+            @Override
+            public void onItemClick(List<Uri> uriList) {
+                if(listener != null){
+                    listener.onImagesClick(uriList);
+                }
+            }
+        });
+        ImageButton addComment = findViewById(R.id.add_comment);
         addComment.setOnClickListener(this);
         commentCount = findViewById(R.id.comment_count);
     }
@@ -111,7 +118,7 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
     }
 
     //动态视图监听器
-    public interface MomentViewListener{
+    public interface MomentViewListener {
 
         //头像点击事件监听
         void onPortraitClick(Moment moment);
@@ -124,6 +131,9 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
 
         //评论按钮点击事件监听
         void onAddCommentButtonClick(Moment moment);
+
+        //动态图片点击事件监听
+        void onImagesClick(List<Uri> images);
 
     }
 }

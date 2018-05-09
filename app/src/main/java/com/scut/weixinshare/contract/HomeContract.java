@@ -1,6 +1,7 @@
 package com.scut.weixinshare.contract;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
@@ -8,6 +9,7 @@ import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 //动态主页交互接口
@@ -47,6 +49,9 @@ public interface HomeContract {
 
         //显示登录界面
         void showLoginUI();
+
+        //显示大图界面
+        void showBigPicUI(ArrayList<Uri> images);
 
         //显示应用提示信息
         void showReminderMessage(String text);
@@ -93,5 +98,8 @@ public interface HomeContract {
 
         //处理活动返回结果
         void result(int requestCode, int resultCode, Intent data);
+
+        //打开大图
+        void openBigImages(List<Uri> uriList);
     }
 }

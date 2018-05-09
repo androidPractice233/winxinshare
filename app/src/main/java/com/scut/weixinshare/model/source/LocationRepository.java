@@ -9,10 +9,11 @@ import com.tencent.map.geolocation.TencentPoi;
 import java.util.ArrayList;
 import java.util.List;
 
+//实现位置信息仓库
 public class LocationRepository implements LocationDataSource {
 
     private static LocationRepository INSTANCE = new LocationRepository();
-    private Location lastLocation;
+    private Location lastLocation;     //位置信息缓存
 
     //单例，线程安全
     public static LocationRepository getInstance(){
@@ -30,11 +31,13 @@ public class LocationRepository implements LocationDataSource {
                 public void onLocationChanged(TencentLocation tencentLocation, int error,
                                               String reason) {
                     if(TencentLocation.ERROR_OK == error) {
+                        //更新位置信息缓存
                         lastLocation = new Location(tencentLocation);
                         callback.onSuccess(lastLocation);
                     } else {
                         callback.onFailure(reason);
                     }
+                    //无论定位是否成功，都要停止定位
                     LocationManager.stopLocation(this);
                 }
 
@@ -43,6 +46,7 @@ public class LocationRepository implements LocationDataSource {
 
                 }
             }) != 0){
+                //listener注册失败
                 callback.onFailure("定位组件加载失败");
             }
         }
@@ -63,6 +67,7 @@ public class LocationRepository implements LocationDataSource {
                 } else {
                     callback.onFailure(reason);
                 }
+                //无论定位是否成功，都要停止定位
                 LocationManager.stopLocation(this);
             }
 
@@ -71,12 +76,14 @@ public class LocationRepository implements LocationDataSource {
 
             }
         }) != 0){
+            //listener注册失败
             callback.onFailure("定位组件加载失败");
         }
     }
 
     @Override
     public void refreshLocation(){
+        //清除位置信息缓存
         lastLocation = null;
     }
 

@@ -17,14 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+//实现动态数据仓库
 public class MomentsRepository implements MomentDataSource {
 
     private static MomentsRepository INSTANCE;
 
-    private Map<String, Moment> momentMap;
-    private Map<String, MomentUserData> userDataMap;
-    private MomentLocalSource localSource;
-    private MomentRemoteSource remoteSource;
+    private Map<String, Moment> momentMap;               //动态数据缓存
+    private Map<String, MomentUserData> userDataMap;     //用户信息缓存
+    private MomentLocalSource localSource;               //本地动态数据来源
+    private MomentRemoteSource remoteSource;             //远程动态数据来源
 
     public MomentsRepository(MomentLocalSource localSource, MomentRemoteSource remoteSource){
         this.localSource = localSource;
@@ -135,14 +136,16 @@ public class MomentsRepository implements MomentDataSource {
 
     @Override
     public void getMoment(String momentId, final GetMomentCallback callback) {
+        //查找缓存
         if(momentMap.containsKey(momentId)){
             callback.onMomentLoaded(momentMap.get(momentId));
         } else {
+            //不存在动态缓存，远程获取动态数据
             remoteSource.getMoment(momentId, new MomentRemoteSource.GetMomentCallback() {
                 @Override
                 public void onMomentLoaded(Moment moment) {
-                    momentMap.put(moment.getMomentId(), moment);
-                    localSource.createMoment(moment);
+                    momentMap.put(moment.getMomentId(), moment);     //缓存动态数据
+                    localSource.createMoment(moment);                //本地存储动态数据
                     callback.onMomentLoaded(moment);
                 }
 
@@ -157,18 +160,34 @@ public class MomentsRepository implements MomentDataSource {
     @Override
     public void getMoments(final Location location, int pageNum, int pageSize,
                            final GetMomentsCallback callback) {
+        //远程获取附近动态版本信息
         remoteSource.getNearbyMoments(location, pageNum, pageSize,
                 new MomentRemoteSource.GetNearbyMomentsCallback() {
                     @Override
                     public void onMomentVersionsLoaded(final List<MomentVersion> momentVersionList) {
                         if(momentVersionList != null && momentVersionList.size() > 0) {
-                            localSource.getMoments(momentVersionList, new MomentLocalSource
+                            //检查动态是否已缓存
+                            final List<MomentVersion> momentWithoutCache = new ArrayList<>();
+                            for(MomentVersion moment : momentVersionList){
+                                if(!momentMap.containsKey(moment.getMomentId()) ||
+                                        !momentMap.get(moment.getMomentId()).getUpdateTime()
+                                                .equals(moment.getUpdateTime())){
+                                    momentWithoutCache.add(moment);
+                                }
+                            }
+                            //从本地获取相同版本的动态
+                            localSource.getMoments(momentWithoutCache, new MomentLocalSource
                                     .GetMomentsCallback() {
                                 @Override
                                 public void onMomentsLoaded(final List<MomentLocal> moments) {
+                                    //记录缺少用户信息的userId
                                     final Set<String> usersWithoutPortrait = new HashSet<>();
+                                    //记录需要远程请求数据的动态id
                                     List<String> momentsNeedToRequest = new ArrayList<>();
+                                    //记录从已从本地获取动态数据的动态id
                                     Set<String> momentsFromLocal = new HashSet<>();
+                                    //为本地获取的动态数据添加用户信息
+                                    //如果不存在对应用户信息的缓存，则记录userId
                                     for(MomentLocal moment : moments){
                                         momentsFromLocal.add(moment.getMomentId());
                                         if(!userDataMap.containsKey(moment.getUserId())){
@@ -182,25 +201,31 @@ public class MomentsRepository implements MomentDataSource {
                                             }
                                         }
                                     }
-                                    for(MomentVersion momentVersion : momentVersionList){
+                                    //将本地不包含最新数据的动态id，加入需要远程请求数据的动态id表中
+                                    for(MomentVersion momentVersion : momentWithoutCache){
                                         if(!momentsFromLocal.contains(momentVersion.getMomentId())){
                                             momentsNeedToRequest.add(momentVersion.getMomentId());
                                         }
                                     }
+                                    //远程请求动态信息
                                     remoteSource.getMoments(momentsNeedToRequest, new MomentRemoteSource.GetMomentsCallback() {
                                         @Override
                                         public void onMomentsLoaded(List<Moment> momentList) {
+                                            //将请求到的动态信息加入缓存
                                             for(Moment moment : momentList){
                                                 momentMap.put(moment.getMomentId(), moment);
                                             }
                                             final List<String> userList = new ArrayList<>(usersWithoutPortrait);
+                                            //远程请求缺少的用户信息
                                             remoteSource.getMomentUserData(userList,
                                                     new MomentRemoteSource.GetMomentUserDataCallback() {
                                                         @Override
                                                         public void onUserDataLoaded(List<MomentUserData> userDataList) {
+                                                            //将请求到的用户信息加入缓存
                                                             for(MomentUserData userData : userDataList){
                                                                 userDataMap.put(userData.getUserId(), userData);
                                                             }
+                                                            //为本地获取的动态数据添加用户信息，并加入缓存
                                                             for(MomentLocal momentLocal : moments){
                                                                 Moment moment = MomentUtils.momentLocalToMoment(momentLocal);
                                                                 MomentUserData  userData = userDataMap.get(moment.getUserId());
@@ -213,6 +238,7 @@ public class MomentsRepository implements MomentDataSource {
                                                                 }
                                                                 momentMap.put(moment.getMomentId(), moment);
                                                             }
+                                                            //获取最终的动态列表，返回
                                                             callback.onMomentsLoaded(initMomentList(momentVersionList));
                                                         }
 
@@ -231,6 +257,7 @@ public class MomentsRepository implements MomentDataSource {
                                 }
                             });
                         } else {
+                            //附近没有动态信息，返回空列表
                             callback.onMomentsLoaded(new ArrayList<Moment>());
                         }
                     }
@@ -250,6 +277,7 @@ public class MomentsRepository implements MomentDataSource {
     @Override
     public void createMoment(final String text, final Location location, final List<File> imageFiles,
                              final CreateMomentCallback callback) {
+        //远程创建动态
         remoteSource.createMoment(location, text, imageFiles,
                 new MomentRemoteSource.CreateMomentCallback() {
                     @Override
@@ -265,9 +293,10 @@ public class MomentsRepository implements MomentDataSource {
     }
 
     @Override
-    public void createComment(String text, String momentId, String senderId,
-                              String receiverId, final CreateCommentCallback callback) {
-        remoteSource.createComment(text, momentId, senderId, receiverId,
+    public void createComment(String text, String momentId, String receiverId,
+                              final CreateCommentCallback callback) {
+        //远程创建评论
+        remoteSource.createComment(text, momentId, receiverId,
                 new MomentRemoteSource.CreateCommentCallback() {
                     @Override
                     public void onSuccess() {
@@ -283,9 +312,11 @@ public class MomentsRepository implements MomentDataSource {
 
     @Override
     public void refreshMoment(String momentId) {
+        //删除对应id的动态缓存
         momentMap.remove(momentId);
     }
 
+    //根据动态版本信息列表，从本地缓存中获取动态信息列表
     private List<Moment> initMomentList(List<MomentVersion> momentVersionList){
         List<Moment> momentList = new ArrayList<>();
         for(MomentVersion momentVersion : momentVersionList){

@@ -2,6 +2,7 @@ package com.scut.weixinshare.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BigPicActivity extends AppCompatActivity {
-    private List<String> uriList = new ArrayList<>();
+    private List<Uri> uriList = new ArrayList<>();
 
 
     @Override
@@ -29,14 +30,7 @@ public class BigPicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_big_pic);
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //纪委麻烦改一下这里
-//        List<String> uriList = (List<String>) getIntent().getParcelableArrayListExtra("uriList");
-        for(int i = 0; i < 9; i++) {
-            uriList.add("https://img-blog.csdn.net/20170603163237166?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamF2YXplamlhbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast");
-        }
-
-
+        uriList = getIntent().getParcelableArrayListExtra("uriList");
         initView();
     }
 
@@ -72,7 +66,14 @@ public class BigPicActivity extends AppCompatActivity {
     private class GlideImageLoader extends ImageLoader {
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
-            GlideUtils.loadImageView(context, Uri.parse((String)path), imageView);
+            GlideUtils.loadImageView(context, (Uri) path, imageView);
         }
+    }
+
+    public static void activityStart(Context context, ArrayList<Uri> uriList){
+        Intent intent = new Intent(context, BigPicActivity.class);
+        intent.putExtra("uriList", uriList.toArray(new Uri[uriList.size()]));
+        intent.putParcelableArrayListExtra("uriList", uriList);
+        context.startActivity(intent);
     }
 }

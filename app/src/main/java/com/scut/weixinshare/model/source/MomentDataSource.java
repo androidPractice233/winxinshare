@@ -61,7 +61,7 @@ public interface MomentDataSource {
                       CreateMomentCallback callback);
 
     //创建评论
-    void createComment(String text, String momentId, String senderId, String receiverId,
+    void createComment(String text, String momentId, String receiverId,
                        CreateCommentCallback callback);
 
     //清除单条动态缓存
