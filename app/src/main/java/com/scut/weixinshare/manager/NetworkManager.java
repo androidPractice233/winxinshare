@@ -1,5 +1,7 @@
 package com.scut.weixinshare.manager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 
@@ -174,10 +176,12 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void createMoment(Callback<ResultBean> callback, String text, Location location){
+    public void createMoment(Callback<ResultBean> callback, String userId, String text,
+                             Location location){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
         params.put("textContent", text);
+        params.put("userId", userId);
         params.put("longitude", location.getLongitude());
         params.put("latitude", location.getLatitude());
         params.put("location", location.getName());
@@ -193,12 +197,15 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void createComment(Callback<ResultBean> callback, String momentId,
+    public void createComment(Callback<ResultBean> callback, String momentId, String sendId,
                               String receiverId, String text){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
         params.put("momentId", momentId);
-        params.put("recvId", receiverId);
+        params.put("sendId", sendId);
+        if(receiverId != null) {
+            params.put("recvId", receiverId);
+        }
         params.put("content", text);
         Call<ResultBean> call = service.createComment(params);
         call.enqueue(callback);
@@ -227,6 +234,28 @@ public class NetworkManager {
         RegisterService registerService= retrofit.create(RegisterService.class);
         Call call=registerService.login(user);
         call.enqueue(callback);
+    }
+
+    public void updateUserInfo(Callback<ResultBean>callback,User user){
+        TestService service=retrofit.create(TestService.class);
+        Map<String,Object> params=new HashMap<>();
+        SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
+                .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
+        params.put("token",preferences.getString("token",""));
+        params.put("userName", user.getUserName());
+        params.put("nickName", user.getNickName());
+        params.put("location", user.getLocation());
+        params.put("sex",user.getSex());
+        params.put("birthday", user.getBirthday());
+        Call<ResultBean> call=service.updateUser(params);
+        call.enqueue(callback);
+    }
+
+    public void getUser(Callback<ResultBean>callback,String userid){
+        TestService service=retrofit.create(TestService.class);
+        Call<ResultBean> call=service.searchUser(userid);
+        call.enqueue(callback);
+
     }
 
 }

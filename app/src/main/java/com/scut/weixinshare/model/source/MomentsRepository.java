@@ -272,15 +272,15 @@ public class MomentsRepository implements MomentDataSource {
     }
 
     @Override
-    public void createMoment(String text, Location location, CreateMomentCallback callback) {
-        createMoment(text, location, null, callback);
+    public void createMoment(String userId, String text, Location location, CreateMomentCallback callback) {
+        createMoment(userId, text, location, null, callback);
     }
 
     @Override
-    public void createMoment(final String text, final Location location, final List<File> imageFiles,
+    public void createMoment(String userId, String text, Location location, List<File> imageFiles,
                              final CreateMomentCallback callback) {
         //远程创建动态
-        remoteSource.createMoment(location, text, imageFiles,
+        remoteSource.createMoment(userId, location, text, imageFiles,
                 new MomentRemoteSource.CreateMomentCallback() {
                     @Override
                     public void onSuccess() {
@@ -295,10 +295,10 @@ public class MomentsRepository implements MomentDataSource {
     }
 
     @Override
-    public void createComment(String text, String momentId, String receiverId,
+    public void createComment(String text, String momentId, String sendId, String receiverId,
                               final CreateCommentCallback callback) {
         //远程创建评论
-        remoteSource.createComment(text, momentId, receiverId,
+        remoteSource.createComment(text, momentId, receiverId, sendId,
                 new MomentRemoteSource.CreateCommentCallback() {
                     @Override
                     public void onSuccess() {

@@ -40,4 +40,11 @@ public interface TestService {
     Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
     @POST("/moment/personal")
     Call<ResultBean> requestPersonMoment(@Body Map params);
+
+    @POST("/user/update")
+    Call<ResultBean> updateUser(@Body Map params);
+
+    @POST("/user/search")
+    Call<ResultBean> searchUser(@Body String userid);
+
 }

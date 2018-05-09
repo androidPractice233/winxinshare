@@ -84,11 +84,11 @@ public interface MomentRemoteSource {
     void getMoments(List<String> momentIds, GetMomentsCallback callback);
 
     //创建动态
-    void createMoment(Location location, String text, List<File> imageFiles,
+    void createMoment(String userId, Location location, String text, List<File> imageFiles,
                       CreateMomentCallback callback);
 
     //创建评论
-    void createComment(String text, String momentId, String receiverId,
+    void createComment(String text, String momentId, String receiverId, String sendId,
                        CreateCommentCallback callback);
 
     //获取动态中的用户信息（昵称与头像uri）
