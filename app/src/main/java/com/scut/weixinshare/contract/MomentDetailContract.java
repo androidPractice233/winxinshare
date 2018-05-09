@@ -1,5 +1,6 @@
 package com.scut.weixinshare.contract;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.scut.weixinshare.BasePresenter;
@@ -17,9 +18,6 @@ public interface MomentDetailContract {
         //显示软键盘
         void showKeyBroad();
 
-        //向界面中添加评论
-        void addComment(Comment comment);
-
         //显示刷新提示
         void showRefreshing();
 
@@ -29,18 +27,33 @@ public interface MomentDetailContract {
         //显示应用提示信息
         void showReminderMessage(String message);
 
+        //显示用户信息界面
+        void showUserDataUI(String userId);
+
+        //更新评论的提示信息
+        void updateCommentUI(String nickname);
+
+        //显示登录界面
+        void showLoginUI();
+
     }
 
     interface Presenter extends BasePresenter{
 
         //发布评论
-        void releaseComment(String text, String receiverId);
+        void releaseComment(String text);
 
         //返回给主页的结果
-        Bundle resultToHome();
+        Intent returnData();
 
         //获取动态正文
         void refreshMomentDetail();
+
+        //打开用户信息
+        void openUserData(Moment moment);
+
+        //改变评论对象
+        void changeCommentUser(Comment comment);
 
     }
 

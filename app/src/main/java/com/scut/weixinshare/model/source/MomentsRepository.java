@@ -11,6 +11,7 @@ import com.scut.weixinshare.utils.MomentUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class MomentsRepository implements MomentDataSource {
     private MomentsRepository(MomentLocalSource localSource, MomentRemoteSource remoteSource){
         this.localSource = localSource;
         this.remoteSource = remoteSource;
+        momentMap = new HashMap<>();
+        userDataMap = new HashMap<>();
     }
 
     //单例，非线程安全，请在主线程中调用
@@ -109,8 +112,8 @@ public class MomentsRepository implements MomentDataSource {
                                                     new MomentRemoteSource.GetMomentUserDataCallback() {
                                                         @Override
                                                         public void onUserDataLoaded(List<MomentUserData> userDataList) {
-                                                            for(int i = 0; i < userDataList.size(); ++i){
-                                                                userDataMap.put(userList.get(i), userDataList.get(i));
+                                                            for(MomentUserData userData : userDataList){
+                                                                userDataMap.put(userData.getUserId(), userData);
                                                             }
                                                             for(MomentLocal momentLocal : moments){
                                                                 Moment moment = MomentUtils.momentLocalToMoment(momentLocal);
