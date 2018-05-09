@@ -65,9 +65,6 @@
             android:label="注册界面"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.BigPicActivity" />
-        <activity android:name=".view.UserActivity"
-            android:label="我的页面"
-            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

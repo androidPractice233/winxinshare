@@ -1,5 +1,11 @@
 package com.scut.weixinshare.view.fragment;
 
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -20,11 +26,19 @@ import android.widget.TextView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
+import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.view.MainActivity;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static com.scut.weixinshare.MyApplication.user;
@@ -248,4 +262,32 @@ private Button button;
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        List<File> fileList = new ArrayList<>();
+        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+                for (LocalMedia p : selectList) {
+                    fileList.add(new File(p.getPath()));
+                }
+                try {
+                    Uri uri = data.getData();
+                    String img_url = uri.getPath();
+                    user.setPortrait(img_url);
+                    ContentResolver cr = getContext().getContentResolver();
+                    Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+
+                    //将Bitmap设定到ImageView
+                    iv_portrait.setImageBitmap(bitmap);
+                    presenter.updateUserPhoto(fileList);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
 }

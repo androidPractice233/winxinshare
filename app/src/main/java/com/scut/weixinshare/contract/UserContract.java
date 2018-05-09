@@ -4,6 +4,9 @@ import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.User;
 
+import java.io.File;
+import java.util.List;
+
 public interface UserContract {
     interface View extends BaseView<Presenter> {
         //显示个人信息
@@ -24,9 +27,8 @@ public interface UserContract {
         void getUserPhoto();
 
         //上传新头像
-        void updateUserPhoto();
+        void updateUserPhoto(List<File> fileList);
 
-        void toUserName();
 
         User getUser();
 

@@ -28,14 +28,13 @@ import com.scut.weixinshare.utils.LocationUtils;
 import com.scut.weixinshare.view.fragment.HomeFragment;
 import com.scut.weixinshare.view.fragment.MainFragment;
 import com.scut.weixinshare.view.fragment.UserFragment;
-import com.scut.weixinshare.view.fragment.UserInputFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
 
-public class MainActivity extends AppCompatActivity implements UserInputFragment.FragmentInteraction {
+public class MainActivity extends AppCompatActivity  {
 
     Button btnPopPhoto;
     Button button;
@@ -118,16 +117,6 @@ public class MainActivity extends AppCompatActivity implements UserInputFragment
 
     }
 
-    @Override
-    public void changeTitle(String title) {
-        setTitle(title);
-    }
-
-    @Override
-    public void updateUser(User user) {
-        UserFragment fragment=(UserFragment)adapter.getItem(1);
-        fragment.showUserInfo(user);
-    }
 
     //申请获取权限后回调
     @Override

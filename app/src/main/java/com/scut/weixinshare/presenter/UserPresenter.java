@@ -8,6 +8,10 @@ import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,12 +85,23 @@ public class UserPresenter implements UserContract.Presenter {
     }
 
     @Override
-    public void updateUserPhoto() {
+    public void updateUserPhoto(List<File> fileList) {
+        try {
+            NetworkManager.getInstance().MutiprtTest(new Callback<ResultBean>() {
+                @Override
+                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                    ResultBean resultBean=  response.body();
+                }
 
+                @Override
+                public void onFailure(Call<ResultBean> call, Throwable t) {
+                    Log.e("updateUserPhoto", t.getMessage()  );
+                }
+            },fileList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void toUserName() {
 
-    }
 }
