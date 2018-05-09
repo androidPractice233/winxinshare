@@ -189,10 +189,10 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void uploadMomentImages(Callback<ResultBean> callback, String momentId,
+    public void uploadMomentImages(Callback callback, String momentId,
                                    List<File> imageFileList) throws IOException{
         MultipartService service = multipartRetrofit.create(MultipartService.class);
-        Call<ResultBean> call = service.uploadMomentImages(momentId, NetworkUtils
+        Call call = service.uploadMomentImages(momentId, NetworkUtils
                 .filesToMultipartBodyParts(imageFileList, "picContent"));
         call.enqueue(callback);
     }
