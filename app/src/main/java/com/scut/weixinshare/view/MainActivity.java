@@ -1,11 +1,15 @@
 package com.scut.weixinshare.view;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +23,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -35,6 +40,9 @@ import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.utils.LocationUtils;
 import com.tencent.wcdb.database.SQLiteDebug;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,18 +58,43 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     Button locationBtn;
     Button toHome;
+    private TextView textView;
     public static String TOKEN;
+    public Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case UPDATE_COMMENT_NUM:
+                    textView.setText(msg.arg1+"");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };;
+    public static final int UPDATE_COMMENT_NUM = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new Test().testDb(this);
+        textView = findViewById(R.id.text);
+
+
+
+        //new Test().testDb(this);
+        new Test(this).login();
+        //new Test(this);
         //获取评论更新
         Log.d("MainActivity","Thread id is"+Thread.currentThread().getId());
-        Intent intent = new Intent(MainActivity.this, CommentPullIntentServer.class);
-        startService(intent);
+        //Intent intent = new Intent(MainActivity.this, CommentPullIntentServer.class);
+        //startService(intent);
+
+        this.setUpdateCommentNum();
+
+
+
         //
 
         handleLocationPermission();
@@ -80,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -225,5 +259,115 @@ public class MainActivity extends AppCompatActivity {
                         IConst.REQUEST_LOCATION);
             }
         }
+    }
+
+    //登录成功后调用
+    //获取评论更新，并把更新的评论数目发送到主页面
+    private void setUpdateCommentNum(){
+        new Thread(new Runnable() {
+            //初始时间最小
+            private String lastUpdateTime = "1";
+
+            @Override
+            public void run() {
+
+                //初始化时间
+
+                //测试阶段先不设
+                //getLastUpdateTime();
+
+
+                while(MainActivity.TOKEN==null){
+                    Log.d("getUpdateComment","token is null");
+                    Toast.makeText(MainActivity.this,"尚未登录",Toast.LENGTH_LONG).show();
+                    //
+                }
+
+                SharedPreferences sharedPreferences = getSharedPreferences("weixinshare", Context.MODE_PRIVATE); //私有数据
+                String s = sharedPreferences.getString("token",null);
+                if(s==null)
+                    Log.d("getUpdateComment","sharePreference token is null");
+                else
+                    Log.d("getUpdateComment",s);
+
+
+                int a = 0;
+                while(true) {
+                    getUpdateComments();
+                    updateNum(a++);
+                    try {
+                        Thread.sleep(10000);
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            //发送数据到MainActivity
+            private void updateNum(int num){
+                Message message = new Message();
+                message.what = UPDATE_COMMENT_NUM;
+                message.arg1 = num;
+                handler.sendMessage(message);
+            }
+            //获取更新动态
+            void getUpdateComments(){
+                NetworkManager.getInstance().pullComment(new Callback<ResultBean>() {
+                    @Override
+                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                        ResultBean resultBean = response.body();
+                        if(resultBean==null){
+                            Log.d("getUpdateComment","resultBean is null");
+                            return;
+                        }
+                        Log.d("getUpdateComment","res success");
+                        Object data = resultBean.getData();
+                        Log.d("getUpdateComment",resultBean.getCode()+"");
+
+                        //如果返回结果为空，不用更新lastUpdateTime
+                        if(data==null){
+                            Log.d("getUpdateComment","no comment response");
+                            return;
+                        }
+                        else{
+                            //processData(data);
+                            //getLastUpdateTime();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResultBean> call, Throwable t) {
+                        Log.d("loginRes",t.getMessage());
+
+                    }
+                    //处理返回数据
+                    private void processData(String jsonData){
+                        Log.d("getUpdateComment",jsonData);
+                        try{
+                            JSONArray jsonArray = new JSONArray(jsonData);
+                            int n = jsonArray.length();
+                            for(int i=0;i<n;i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                },lastUpdateTime);
+            }
+            //获取最近更新时间
+            private void getLastUpdateTime(){
+                DBOperator dbOperator = new DBOperator();
+                String time = dbOperator.getLastTime();
+                dbOperator.close();
+                if(time!=null){
+                    lastUpdateTime = time;
+                }
+            }
+
+        }).start();
     }
 }

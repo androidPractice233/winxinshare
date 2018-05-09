@@ -1,8 +1,11 @@
 package com.scut.weixinshare.view;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.scut.weixinshare.db.DBOperator;
@@ -68,7 +71,10 @@ public class CommentPullIntentServer extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         Log.d("PullCommentService","Thread id is"+Thread.currentThread().getId());
-
+        Message message = new Message();
+        message.what = MainActivity.UPDATE_COMMENT_NUM;
+        message.arg1 = 5;
+        //MainActivity.handler.sendMessage(message);
 
 
         if (intent != null) {

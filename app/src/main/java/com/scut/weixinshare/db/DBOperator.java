@@ -339,6 +339,34 @@ public class DBOperator {
         Log.d("commentSize",comments.size()+"");
         return comments;
     }
+    //获取和某用户有关的评论
+    public List<Comment> selectCommentByUser(String userId){
+        List<Comment> comments = new ArrayList<>();
+        Cursor cursor = database.rawQuery("select * from comment where receiverId = ?  or receiverId = ? order by createTime desc" ,
+                new String[]{userId,null});
+        //Cursor cursor = database.rawQuery("select * from comment",null);
+        int t = cursor.getCount();
+        Log.d("cursorSize",t+"");
+        if(t==0){
+            Log.d("select comment","no comment");
+            return comments;
+        }
+        if(cursor.moveToFirst()) {
+            do{
+                String commentId = cursor.getString(cursor.getColumnIndex("commentId"));
+                String momentId = cursor.getString(cursor.getColumnIndex("momentId"));
+                String senderId = cursor.getString(cursor.getColumnIndex("senderId"));
+                String receiverId = cursor.getString(cursor.getColumnIndex("receiverId"));
+                String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                comments.add(new Comment(commentId,momentId,senderId,receiverId,createTime,content));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d("commentSize",comments.size()+"");
+        return comments;
+    }
+
     //获取最近的评论时间
     public String getLastTime(){
         Cursor cursor = database.rawQuery("select max(createTime) as maxTime from comment",null);

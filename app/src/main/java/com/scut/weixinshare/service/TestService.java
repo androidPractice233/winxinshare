@@ -19,4 +19,7 @@ public interface TestService {
     Call<ResultBean> test(@Body String test);
     @POST("user/register")
     Call<ResultBean> register(@Body Map praram);
+    @POST("user/login")
+    Call<ResultBean> login(@Body Map praram);
+
 }

@@ -1,109 +1,110 @@
 package com.scut.weixinshare.view.fragment;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.scut.weixinshare.IConst;
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
+import com.scut.weixinshare.adapter.CommentAdapter;
+import com.scut.weixinshare.db.Comment;
+import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.utils.DensityUtils;
+import com.scut.weixinshare.view.CommentPullIntentServer;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CommentFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CommentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class CommentFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    public CommentFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CommentFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CommentFragment newInstance(String param1, String param2) {
-        CommentFragment fragment = new CommentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private RecyclerView recyclerView;
+    private CommentAdapter commentAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private DBOperator dbOperator;
+    private List<Comment> comments;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_comment, container, false);
+        View view = inflater.inflate(R.layout.fragment_comment, container, false);
+
+        //从数据库获取
+        dbOperator = new DBOperator();
+        comments = new ArrayList<>();
+        for(int i=0;i<10;i++) {
+            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你好！"));
+            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你好吗？"));
+            comments.add(new Comment("0001", "0001", "0001", "0001", "2014", "你真是太好了！"));
+        }
+
+
+        recyclerView = view.findViewById(R.id.list_coments);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        commentAdapter = new CommentAdapter(comments,dbOperator);
+        recyclerView.setAdapter(commentAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());     //设置RecyclerView动画
+//设置Item间距，实现类卡片式Item效果
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                       RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.top = DensityUtils.dipToPx(MyApplication.getContext(),
+                        IConst.MARGIN_CARD);
+                outRect.bottom = DensityUtils.dipToPx(MyApplication.getContext(),
+                        IConst.MARGIN_CARD);
+            }
+        });
+
+
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_comment);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //更新comment list
+                commentAdapter.updateComments();
+                Toast.makeText(getContext(),"已更新到最新",Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        dbOperator.close();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+
 }

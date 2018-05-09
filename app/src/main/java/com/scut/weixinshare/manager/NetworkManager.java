@@ -16,6 +16,7 @@ import com.scut.weixinshare.service.TestService;
 import com.scut.weixinshare.utils.AES;
 import com.scut.weixinshare.utils.NetworkUtils;
 import com.scut.weixinshare.utils.RSA;
+import com.scut.weixinshare.view.MainActivity;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 
@@ -124,20 +125,23 @@ public class NetworkManager {
         TestService testService= retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
         params.put("userName", "devin");
-        params.put("nickName", "devin");
+        //params.put("nickName", "devin");
         params.put("userPwd", "123");
-        params.put("location", "beijing");
-        params.put("sex", "1");
-        params.put("birthday", "20011010");
-        Call<ResultBean> call=testService.register(params);
+        //params.put("location", "beijing");
+        //params.put("sex", "1");
+        //params.put("birthday", "20011010");
+        Call<ResultBean> call=testService.login(params);
         call.enqueue(callback);
     }
 
-    public void pullComment(Callback<ResultBean> callback,String token,String time){
+    public void pullComment(Callback<ResultBean> callback,String time){
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
+
         Map<String, Object> params = new HashMap<>();
-        params.put("token",token);
-        params.put("dateTime",time);
+        //params.put("token", MainActivity.TOKEN);
+        params.put("dateTime",1);
+        params.put("pageNum",0);
+        params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);
         call.enqueue(callback);
     }

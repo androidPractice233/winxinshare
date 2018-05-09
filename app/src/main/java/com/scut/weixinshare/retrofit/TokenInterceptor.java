@@ -2,6 +2,7 @@ package com.scut.weixinshare.retrofit;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.scut.weixinshare.MyApplication;
 
@@ -23,10 +24,14 @@ public class TokenInterceptor implements Interceptor {
 
         Response originalResponse = chain.proceed(chain.request());
         if(token!=null) {
+            Log.d("checkToken",token);
             return originalResponse.newBuilder()
-                    .header("token", token)
+                    .header("Auth-Token", token)
                     .build();
         }
-        else return originalResponse;
+        else {
+            Log.d("checkToken","is null");
+            return originalResponse;
+        }
     }
 }
