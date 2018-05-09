@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +44,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                             (List<MomentVersion>) resultBean.getData();
                     callback.onMomentVersionsLoaded(momentVersionList);
                 } else {
-                    callback.onDataNotAvailable(resultBean.getMsg());
+                    callback.onDataNotAvailable(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -86,7 +87,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                         callback.onDataNotAvailable("动态已被删除");
                     }
                 } else {
-                    callback.onDataNotAvailable(resultBean.getMsg());
+                    callback.onDataNotAvailable(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -124,7 +125,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                     }
                     callback.onMomentsLoaded(momentsFromRemote);
                 } else {
-                    callback.onDataNotAvailable(resultBean.getMsg());
+                    callback.onDataNotAvailable(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -136,7 +137,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
     }
 
     @Override
-    public void createMoment(Location location, String text, final List<File> imageFiles,
+    public void createMoment(String userId, Location location, String text, final List<File> imageFiles,
                              final CreateMomentCallback callback) {
         NetworkManager.getInstance().createMoment(new Callback<ResultBean>() {
             @Override
@@ -144,7 +145,8 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                 ResultBean resultBean = response.body();
                 //检查请求是否成功
                 if(resultBean.getCode() == 200) {
-                    final String momentId = (String) resultBean.getData();
+                    Map map=(Map) resultBean.getData();
+                    final String momentId = (String) map.get("momentId");
                     if (imageFiles != null) {
                         //创建的动态包含图片，则另外上传图片
                         //若图片上传失败，由于文字动态已创建，返回动态创建成功
@@ -170,7 +172,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                         callback.onSuccess();
                     }
                 } else {
-                    callback.onFailure(resultBean.getMsg());
+                    callback.onFailure(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -178,11 +180,11 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             public void onFailure(Call<ResultBean> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
-        }, text, location);
+        }, userId, text, location);
     }
 
     @Override
-    public void createComment(final String text, final String momentId, final String receiverId,
+    public void createComment(String text, String momentId, String receiverId, String sendId,
                               final CreateCommentCallback callback) {
         NetworkManager.getInstance().createComment(new Callback<ResultBean>() {
             @Override
@@ -193,7 +195,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                     String commentId = (String) resultBean.getData();
                     callback.onSuccess();
                 } else {
-                    callback.onFailure(resultBean.getMsg());
+                    callback.onFailure(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -201,7 +203,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             public void onFailure(Call<ResultBean> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
-        }, momentId, receiverId, text);
+        }, momentId, sendId, receiverId, text);
     }
 
     @Override
@@ -216,7 +218,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                     callback.onMomentVersionsLoaded(momentVersionList);
                 }
                 else {
-                    callback.onDataNotAvailable(resultBean.getMsg());
+                    callback.onDataNotAvailable(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 
@@ -238,7 +240,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                     List<MomentUserData> userDataList = (List<MomentUserData>) resultBean.getData();
                     callback.onUserDataLoaded(userDataList);
                 } else {
-                    callback.onFailure(resultBean.getMsg());
+                    callback.onFailure(resultBean.getCode()+":"+resultBean.getMsg());
                 }
             }
 

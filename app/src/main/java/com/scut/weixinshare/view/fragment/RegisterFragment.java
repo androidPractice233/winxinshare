@@ -1,19 +1,21 @@
-package com.scut.weixinshare.view;
+package com.scut.weixinshare.view.fragment;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,12 +25,11 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.db.User;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
-import com.scut.weixinshare.model.User;
-import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.view.RegisterActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,28 +40,46 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RegisterActivity extends AppCompatActivity {
-    private static String img_url = null;
+public class RegisterFragment extends Fragment{
+
+    String TAG = "TAG";
+    Handler mHandler;
+    RegisterActivity registerActivity;
+    FragmentManager fm;
+    FragmentTransaction transaction;
+    private static String img_url= null;
     private ImageView img_upload;
-    private EditText nickname = null;
+    private EditText edt_account = null;
     private EditText edt_name = null;
     private EditText edt_pwd = null;
     private Button btn_register = null;
 
+    public RegisterFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_register);
-        img_upload = findViewById(R.id.profilePhoto);
-        edt_name = findViewById(R.id.userName);
-        nickname = findViewById(R.id.nickname);
-        edt_pwd = findViewById(R.id.password);
-        btn_register = findViewById(R.id.registerButton);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_register, container,
+                false);
+        img_upload = view.findViewById(R.id.profilePhoto);
+        edt_name = view.findViewById(R.id.userName);
+        edt_account = view.findViewById(R.id.account);
+        edt_pwd = view.findViewById(R.id.password);
+        btn_register = view.findViewById(R.id.registerButton);
 
         img_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureSelector.create(RegisterActivity.this)
+                PictureSelector.create(getActivity())
                         .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio(
                         .maxSelectNum(9)// 最大图片选择数量 int
                         .imageSpanCount(4)// 每行显示个数 int
@@ -78,93 +97,94 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 final String user_name = edt_name.getText().toString();//获取用户名
-                final String user_account = nickname.getText().toString();//获取账号
+                final String user_account = edt_account.getText().toString();//获取账号
                 final String user_pwd = edt_pwd.getText().toString();//获取密码
-                if (TextUtils.isEmpty(user_pwd)) {
-                    Toast.makeText(RegisterActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                if(TextUtils.isEmpty(user_account)){
+                    Toast.makeText(getContext(),"账号不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(user_name)) {
-                    Toast.makeText(RegisterActivity.this, "用户名不能为空", Toast.LENGTH_SHORT).show();
+                if(TextUtils.isEmpty(user_pwd)){
+                    Toast.makeText(getContext(),"密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (user_account.length() > 20) {
-                    Toast.makeText(RegisterActivity.this, "您输入的账号过长", Toast.LENGTH_SHORT).show();
+                if(TextUtils.isEmpty(user_name)){
+                    Toast.makeText(getContext(),"用户名不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (user_pwd.length() > 20) {
-                    Toast.makeText(RegisterActivity.this, "您输入的密码过长", Toast.LENGTH_SHORT).show();
+                if(user_account.length()>20){
+                    Toast.makeText(getContext(),"您输入的账号过长",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(user_pwd.length()>20){
+                    Toast.makeText(getContext(),"您输入的密码过长",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                User user = new User(user_account, user_name, null);
-                user.setUserPwd(user_pwd);
+                User user = new User(user_account,user_name,null);
+                user.setPassword(user_pwd);
 
                 //服务器进行用户注册
-                NetworkManager.getInstance().register(new BaseCallback() {
+                NetworkManager.getInstance().register(new Callback<ResultBean>() {
                     @Override
-                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                        ResultBean resultBean = getResultBean(response);
-                       if(checkResult(RegisterActivity.this,resultBean)) {
-                           //数据库进行用户注册
+                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response{
+                        ResultBean resultBean=  response.body();
+                        Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+                        //数据库进行用户注册
+                        DBOperator dbOperator = new DBOperator();
+                        User user = new User(null,user_account,user_name);
+                        user.setPortrait(img_url);
+                        dbOperator.insertUser(user);
+                        dbOperator.close();
+                        Intent intent  =new Intent();
 
-                          DBOperator dbOperator = new DBOperator();
-                           User user = new User(null, user_account, user_name);
-                           user.setPortrait(img_url);
-                           dbOperator.insertUser(user);
-                           dbOperator.close();
-                           Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                           startActivity(intent);
-                       }
                     }
-
-
                     @Override
                     public void onFailure(Call<ResultBean> call, Throwable t) {
-                        Log.e("register", t.getMessage());
+                        Log.e("register", t.getMessage()  );
                     }
-                }, user);
+                },user);
 
             }
         });
 
-
+        return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<File> fileList = new ArrayList<>();
+        List<File> fileList=new ArrayList<>();
         if (requestCode == PictureConfig.CHOOSE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
                 for (LocalMedia p : selectList) {
-                    fileList.add(new File(p.getPath()));
+                    fileList.add( new File(p.getPath()));
                 }
                 try {
                     Uri uri = data.getData();
                     img_url = uri.getPath();
-                    ContentResolver cr = RegisterActivity.this.getContentResolver();
+                    ContentResolver cr = getContext().getContentResolver();
                     Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-                    ImageView imageView = findViewById(R.id.profilePhoto);
+                    ImageView imageView = getView().findViewById(R.id.profilePhoto);
                     //将Bitmap设定到ImageView
                     imageView.setImageBitmap(bitmap);
                     NetworkManager.getInstance().MutiprtTest(new Callback<ResultBean>() {
                         @Override
                         public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                            ResultBean resultBean = response.body();
-                            Toast.makeText(RegisterActivity.this, (String) resultBean.getData(), Toast.LENGTH_SHORT).show();
+                            ResultBean resultBean=  response.body();
+                            Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(Call<ResultBean> call, Throwable t) {
-                            Log.e("MainActivity", t.getMessage());
+                            Log.e("MainActivity", t.getMessage()  );
                         }
-                    }, fileList);
+                    },fileList);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
+
+
 }
