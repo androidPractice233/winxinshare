@@ -208,9 +208,9 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
 
     @Override
     public void getSomebodyMoments(String personId,   int pageNum, int pageSize, final GetPersonMomentsCallback callback) {
-        NetworkManager.getInstance().requestPersonMoment(new Callback<ResultBean>() {
+        NetworkManager.getInstance().requestPersonMoment(new Callback<ResultBean<List<MomentVersion>>> () {
             @Override
-            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+            public void onResponse(Call<ResultBean<List<MomentVersion>>> call, Response<ResultBean<List<MomentVersion>>> response) {
                 ResultBean resultBean = response.body();
                 if(resultBean.getCode() == 200) {
                     final List<MomentVersion> momentVersionList =
@@ -223,7 +223,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             }
 
             @Override
-            public void onFailure(Call<ResultBean> call, Throwable t) {
+            public void onFailure(Call<ResultBean<List<MomentVersion>>>call, Throwable t) {
                 callback.onDataNotAvailable(t.getMessage());
             }
         }, personId, pageNum, pageSize);

@@ -47,4 +47,5 @@ public interface TestService {
     @POST("/user/search")
     Call<ResultBean> searchUser(@Body String userid);
 
+    Call<ResultBean<List<MomentVersion>>> requestPersonMoment(@Body Map params);
 }

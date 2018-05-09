@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
-
     }
 private Boolean checkLogin(){
 

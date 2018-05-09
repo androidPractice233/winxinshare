@@ -26,6 +26,7 @@ import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.DensityUtils;
 import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.BigPicActivity;
+import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
 import com.scut.weixinshare.view.UserActivity;
@@ -198,7 +199,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showLoginUI() {
-
+        LoginActivity.relogin(getActivity());
     }
 
     @Override
