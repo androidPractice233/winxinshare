@@ -39,6 +39,11 @@ public class UserPresenter implements UserContract.Presenter {
         this.user =user;
         view.setPresenter(this);
     }
+    public UserPresenter(UserContract.View view, String userid){
+        this.view=view;
+        setShowUser(userid);
+        view.setPresenter(this);
+    }
     @Override
     public void start() {
         view.showUserInfo(user);
@@ -47,24 +52,16 @@ public class UserPresenter implements UserContract.Presenter {
     @Override
     public void setShowUser(String userId) {
         if(!userId.equals(MyApplication.currentUser.getUserId())) {
-            NetworkManager.getInstance().getUser(new BaseCallback<ResultBean<LoginReceive>>() {
-
-
+            NetworkManager.getInstance().getUser(new Callback<ResultBean>() {
                 @Override
-                public void onResponse(Call<ResultBean<LoginReceive>> call, Response<ResultBean<LoginReceive>> response) {
-
-                    ResultBean resultBean=  getResultBean(response);
-
-                        LoginReceive loginReceive= (LoginReceive) resultBean.getData();
-
-                        user=loginReceive.getUser();
-
-
+                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                    ResultBean resultBean=response.body();
+                    Log.d(TAG, "onResponse: "+resultBean.toString());
                 }
 
                 @Override
-                public void onFailure(Call<ResultBean<LoginReceive>> call, Throwable t) {
-
+                public void onFailure(Call<ResultBean> call, Throwable t) {
+                    Log.e(TAG, "无此userId");
                 }
             },userId);
         }
@@ -79,6 +76,7 @@ public class UserPresenter implements UserContract.Presenter {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean=response.body();
+                Log.d(TAG, "onResponse: "+resultBean.toString());
                 if (resultBean.getCode()==200)
                     Log.d(TAG, "onResponse: 修改用户信息成功");
                 else
@@ -90,7 +88,7 @@ public class UserPresenter implements UserContract.Presenter {
                 Log.d(TAG, "网络通信失败");
 
             }
-        },user);
+        },MyApplication.currentUser);
 
     }
 

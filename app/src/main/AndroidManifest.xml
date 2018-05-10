@@ -58,9 +58,7 @@
         <activity
             android:name=".view.MainActivity"
             android:label="主界面"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.RegisterActivity"
             android:label="注册界面"

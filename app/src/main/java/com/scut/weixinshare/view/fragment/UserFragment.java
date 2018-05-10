@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
@@ -50,19 +52,16 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER = "userId";
-    private static final String ARG_PARAM2 = "param2";
+    private static final int MODE_INPUT = 1;
+    private static final int MODE_SHOW=0;
 
     // TODO: Rename and change types of parameters
     private String type;
     private String mParam2;
-    public User getShowUser() {
-        return presenter.getUser();
-    }
+
 
     private UserContract.Presenter presenter;
-    private FragmentManager fragmentManager;
     private Boolean isEdit;
-    private LinearLayout ll_username;
     private LinearLayout ll_location;
     private LinearLayout ll_nickname;
     private LinearLayout ll_sex;
@@ -75,9 +74,11 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private TextView text_sex;
     private TextView text_birthday;
     private TextView text_Location;
+    private RadioButton btn_male;
+    private RadioButton btn_female;
     private EditText editText;
     private ConstraintLayout layout_info;
-    private RelativeLayout layout_input;
+    private ConstraintLayout layout_input;
     private TextView personweb;
 private Button button;
     public UserFragment() {
@@ -103,7 +104,6 @@ private Button button;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager=getFragmentManager();
         assert getArguments() != null;
         presenter.setShowUser(getArguments().getString("userId"));
 
@@ -114,7 +114,6 @@ private Button button;
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_user, container, false);
-        ll_username=view.findViewById(R.id.ll_username);
         layout_info=view.findViewById(R.id.frame_info);
         layout_input=view.findViewById(R.id.content_input);
         ll_birthday=view.findViewById(R.id.ll_birthday);
@@ -132,6 +131,8 @@ private Button button;
         view.setOnClickListener(this);
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
+        btn_female=view.findViewById(R.id.btn_female);
+        btn_male=view.findViewById(R.id.btn_male);
 //        personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
         presenter.start();
@@ -144,7 +145,7 @@ private Button button;
             ll_location.setOnClickListener(this);
             editText.setOnClickListener(this);
             button.setOnClickListener(this);
-            personweb.setOnClickListener(this);
+            //personweb.setOnClickListener(this);
         }
 
         return view;
@@ -161,9 +162,9 @@ private Button button;
         text_userid.setText(currentUser.getUserId());
         text_username.setText(currentUser.getUserName());
         if(currentUser.getSex()==1)
-            text_sex.setText("女");
+            btn_female.setChecked(true);
         if(currentUser.getSex()==0)
-            text_sex.setText("男");
+            btn_male.setChecked(true);
         text_Location.setText(currentUser.getLocation());
         text_nickname.setText(currentUser.getNickName());
         text_birthday.setText(currentUser.getBirthday());
@@ -183,8 +184,10 @@ private Button button;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //presenter.updateUserInfo();保存
+        Log.d(TAG, "onDestroy: ");
+        presenter.updateUserInfo();
     }
+
 
     @Override
     public void onClick(View v) {
@@ -192,19 +195,19 @@ private Button button;
             case R.id.ll_nickname:
                 getActivity().setTitle("昵称");
                 type="昵称";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
                 break;
             case R.id.ll_birthday:
                 getActivity().setTitle("生日");
                 type="生日";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
 
                 break;
             case R.id.ll_sex:
                 getActivity().setTitle("性别");
                 type="性别";
-                changeVisibility(1);
-                editText.setVisibility(View.INVISIBLE);
+                changeVisibility(MODE_INPUT);
+                editText.setVisibility(View.GONE);
                 group.setVisibility(View.VISIBLE);
                 int selected=group.getCheckedRadioButtonId();
                 if (selected==R.id.btn_male)
@@ -216,7 +219,7 @@ private Button button;
             case R.id.ll_location:
                 getActivity().setTitle("城市");
                 type="城市";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
                 break;
             case R.id.iv_portrait:
                 PictureSelector.create(getActivity())
@@ -235,13 +238,18 @@ private Button button;
                 switch(type){
                     case "昵称":
                         currentUser.setNickName(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
                     case "城市":
                         currentUser.setLocation(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
                     case "生日":
                         currentUser.setBirthday(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
+                    case "性别":
+                        changeVisibility(MODE_SHOW);
 
                 }break;
 //            case R.id.personweb:
@@ -252,14 +260,16 @@ private Button button;
         }
     }
 
-    private void changeVisibility(int flag){
-        if (flag==0){
-            layout_info.setVisibility(View.VISIBLE);
-            layout_input.setVisibility(View.INVISIBLE);
+    private void changeVisibility(int mode){
+        if (mode==MODE_INPUT){
+            layout_info.setVisibility(View.GONE);
+            layout_input.setVisibility(View.VISIBLE);
+            group.setVisibility(View.GONE);
         }
         else {
-            layout_info.setVisibility(View.INVISIBLE);
-            layout_input.setVisibility(View.VISIBLE);
+             layout_info.setVisibility(View.VISIBLE);
+            layout_input.setVisibility(View.GONE);
+            showUserInfo(currentUser);
         }
 
     }

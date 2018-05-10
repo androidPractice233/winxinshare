@@ -32,7 +32,7 @@ public class UserActivity extends AppCompatActivity {
         userid=intent.getStringExtra("userId");
         setTitle("个人页面");
         fragment=UserFragment.newInstance(userid);
-        presenter=new UserPresenter(fragment,new User("","",""));
+        presenter=new UserPresenter(fragment,userid);
 
         android.support.v4.app.FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.content_user,fragment,"user");

@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -74,6 +76,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.scut.weixinshare.R.id.swipe_refresh;
 import static com.scut.weixinshare.R.id.view;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnPopPhoto;
     Button button;
     Button locationBtn;
+    Toolbar toolbar;
     FragmentPagerAdapter adapter;
     private List<Fragment> frag_list;// 声明一个list集合存放Fragment（数据源）
     String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -105,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
+        toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         initUI();
         this.setUpdateCommentNum();
 
@@ -176,6 +182,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+        case R.id.setting:
+            Intent intent=new Intent(this,UserActivity.class);
+            intent.putExtra("userId",MyApplication.currentUser.getUserId());
+            startActivity(intent);
+            break;
+        }
+            return true;
+    }
+
     //申请获取权限后回调
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -240,18 +264,8 @@ public class MainActivity extends AppCompatActivity {
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
 
-
-//        UserFragment userFragment = UserFragment.newInstance("n");
-
-//        if (MyApplication.currentUser!=null)
-//            new UserPresenter(userFragment, MyApplication.currentUser);
-//        else {
-//            User user = new User("", "", "", 0, "", "", "");
-//            new UserPresenter(userFragment, user);
-//        }
         PersonHomeFragment personHomeFragment= new PersonHomeFragment();
         new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
-        MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);

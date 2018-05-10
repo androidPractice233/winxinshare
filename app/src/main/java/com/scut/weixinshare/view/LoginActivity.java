@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         edt_pwd = findViewById(R.id.password);
         btn_login = findViewById(R.id.loginButton);
         register_button=findViewById(R.id.registerButton);
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +117,10 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        edt_name.setText("devin");
+        edt_pwd.setText("123");
+        btn_login.performClick();
     }
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);

@@ -7,8 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.UserFragment">
 
-    <RelativeLayout
-        android:id="@+id/content_input"
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/content_input"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -16,39 +16,62 @@
         android:visibility="invisible"
         >
 
-        <android.support.v7.widget.AppCompatEditText
-            android:layout_width="match_parent"
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/edit_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/radio_sex"
+        app:layout_constraintStart_toEndOf="@+id/radio_sex"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radio_sex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/btn_male"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_input"/>
-        <RadioGroup
-            android:id="@+id/radio_sex"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <RadioButton
-                android:id="@+id/btn_male"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="男"/>
-            <RadioButton
-                android:id="@+id/btn_female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="女"/>
+            android:text="男" />
 
-        </RadioGroup>
-        <Button
-            android:id="@+id/button"
-            android:layout_marginTop="20sp"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/btn_female"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="保存"
-            android:layout_below="@id/edit_input"
-            android:textSize="14sp"
-            android:background="@color/colorPrimaryDark"
-            android:layout_gravity="end"/>
+            android:text="女" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_input"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="保存"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
         android:id="@+id/frame_info"
         android:layout_width="match_parent"
