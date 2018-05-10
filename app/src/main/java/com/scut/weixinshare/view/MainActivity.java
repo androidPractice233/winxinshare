@@ -53,6 +53,7 @@ import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
+import com.scut.weixinshare.utils.ToastUtils;
 import com.tencent.wcdb.database.SQLiteDebug;
 
 import org.json.JSONArray;
@@ -65,6 +66,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -225,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     private void initUI() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
+        final ViewPager viewPager =  findViewById(R.id.vp_horizontal_ntb);
         HomeFragment homefragment = new HomeFragment();
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
@@ -326,9 +330,14 @@ public class MainActivity extends AppCompatActivity {
                 //getLastUpdateTime();
 
 
-                while(MainActivity.TOKEN==null){
+                while(MyApplication.getInstance().getToken()==null){
                     Log.d("getUpdateComment","token is null");
-                    Toast.makeText(MainActivity.this,"尚未登录",Toast.LENGTH_LONG).show();
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showToast(MainActivity.this, "尚未登录");
+                        }
+                    });
                     //
                 }
 
@@ -345,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     getUpdateComments();
                     updateNum(a++);
                     try {
-                        Thread.sleep(30000);
+                        Thread.sleep(300000);
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }

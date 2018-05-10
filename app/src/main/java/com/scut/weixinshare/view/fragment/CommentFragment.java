@@ -35,6 +35,9 @@ public class CommentFragment extends Fragment {
     private DBOperator dbOperator;
     private List<Comment> comments;
 
+    public final static int MARGIN_TOP_CARD = 8;
+    public final static int MARGIN_BOTTOM_CARD = 4;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +67,9 @@ public class CommentFragment extends Fragment {
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 outRect.top = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_TOP_CARD);
                 outRect.bottom = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_BOTTOM_CARD);
             }
         });
 

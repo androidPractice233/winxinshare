@@ -147,7 +147,7 @@ public class MomentsRepository implements MomentDataSource {
                 @Override
                 public void onMomentLoaded(Moment moment) {
                     momentMap.put(moment.getMomentId(), moment);     //缓存动态数据
-                    //localSource.createMoment(moment);                //本地存储动态数据
+                    localSource.createMoment(moment);                //本地存储动态数据
                     callback.onMomentLoaded(moment);
                 }
 
@@ -179,7 +179,7 @@ public class MomentsRepository implements MomentDataSource {
                             }
                             if(momentWithoutCache.size() > 0) {
                                 //从本地获取相同版本的动态
-                                /*localSource.getMoments(momentWithoutCache, new MomentLocalSource
+                                localSource.getMoments(momentWithoutCache, new MomentLocalSource
                                         .GetMomentsCallback() {
                                     @Override
                                     public void onMomentsLoaded(final List<MomentLocal> moments) {
@@ -300,25 +300,6 @@ public class MomentsRepository implements MomentDataSource {
                                                 callback.onMomentsLoaded(initMomentList(momentVersionList));
                                             }
                                         }
-                                    }
-                                });*/
-                                List<String> momentsNeedToRequest = new ArrayList<>();
-                                for(MomentVersion version : momentWithoutCache){
-                                    momentsNeedToRequest.add(version.getMomentId());
-                                }
-                                remoteSource.getMoments(momentsNeedToRequest, new MomentRemoteSource.GetMomentsCallback() {
-                                    @Override
-                                    public void onMomentsLoaded(List<Moment> momentList) {
-                                        //将请求到的动态信息加入缓存
-                                        for (Moment moment : momentList) {
-                                            momentMap.put(moment.getMomentId(), moment);
-                                        }
-                                        callback.onMomentsLoaded(initMomentList(momentVersionList));
-                                    }
-
-                                    @Override
-                                    public void onDataNotAvailable(String error) {
-                                        callback.onDataNotAvailable(error);
                                     }
                                 });
                             } else {

@@ -85,4 +85,12 @@ public class MomentUtils {
         return "" + 1 + "分钟前";
     }
 
+    public static String UriToString(Uri uri){
+        return uri.toString().substring(IConst.URL_BASE.length() - 1);
+    }
+
+    public static Uri StringToUri(String uri){
+        return Uri.parse(IConst.URL_BASE + uri.substring(1));
+    }
+
 }
