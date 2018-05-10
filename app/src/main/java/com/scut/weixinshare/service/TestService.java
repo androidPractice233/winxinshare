@@ -48,7 +48,7 @@ public interface TestService {
     Call<ResultBean> updateUser(@Body Map params);
 
     @POST("/user/search")
-    Call<ResultBean> searchUser(@Body String userid);
+    Call<ResultBean> searchUser(@Body Map params);
 
     @POST("user/login")
     Call<ResultBean> login(@Body Map praram);

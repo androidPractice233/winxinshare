@@ -255,11 +255,12 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void getUser(Callback<ResultBean>callback,String userid){
+    public void getUser(Callback<ResultBean>callback,String userId){
         TestService service=retrofit.create(TestService.class);
-        Call<ResultBean> call=service.searchUser(userid);
+        Map<String,Object> params=new HashMap<>();
+        params.put("userId", userId);
+        Call<ResultBean> call=service.searchUser(params);
         call.enqueue(callback);
-
     }
 
     public void pullComment(Callback<ResultBean> callback,String time){

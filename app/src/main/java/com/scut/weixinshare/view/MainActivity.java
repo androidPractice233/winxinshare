@@ -53,6 +53,7 @@ import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
+import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.fragment.CommentFragment;
 import com.tencent.wcdb.database.SQLiteDebug;
 
@@ -103,13 +104,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
         initUI();
-
-
-
-
-
-        new Test(this);
-
         this.setUpdateCommentNum();
 
 
@@ -239,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
     private void initUI() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
+        final ViewPager viewPager =  findViewById(R.id.vp_horizontal_ntb);
         HomeFragment homefragment = new HomeFragment();
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
@@ -314,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
                         .build()
         );
 
-
         navigationTabBar.setModels(models);
         navigationTabBar.setViewPager(viewPager, 0);
         navigationTabBar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -355,7 +348,12 @@ public class MainActivity extends AppCompatActivity {
 
                 while(MyApplication.getInstance().getToken()==null){
                     Log.d("getUpdateComment","token is null");
-                    Toast.makeText(MainActivity.this,"尚未登录",Toast.LENGTH_LONG).show();
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showToast(MainActivity.this, "尚未登录");
+                        }
+                    });
                     //
                 }
 
@@ -372,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                     getUpdateComments();
                     updateNum(a++);
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(10000);
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
