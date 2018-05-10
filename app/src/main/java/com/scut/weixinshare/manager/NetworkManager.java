@@ -252,9 +252,9 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void getUser(Callback<ResultBean>callback,String userid){
-        TestService service=retrofit.create(TestService.class);
-        Call<ResultBean> call=service.searchUser(userid);
+    public void getUser(BaseCallback callback,String userid){
+        RegisterService service=retrofit.create(RegisterService.class);
+        Call call=service.searchUser(userid);
         call.enqueue(callback);
 
     }

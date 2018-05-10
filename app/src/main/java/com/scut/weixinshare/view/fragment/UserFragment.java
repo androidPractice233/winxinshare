@@ -29,6 +29,7 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
@@ -55,9 +56,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     // TODO: Rename and change types of parameters
     private String type;
     private String mParam2;
-    public User getShowUser() {
-        return presenter.getUser();
-    }
+
 
     private UserContract.Presenter presenter;
     private FragmentManager fragmentManager;
@@ -105,7 +104,7 @@ private Button button;
         super.onCreate(savedInstanceState);
         fragmentManager=getFragmentManager();
         assert getArguments() != null;
-        presenter.setShowUser(getArguments().getString("userId"));
+        //presenter.setShowUser(getArguments().getString("userId"));
 
     }
 
@@ -133,19 +132,17 @@ private Button button;
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
         personweb=view.findViewById(R.id.personweb);
-        //初始化显示个人界面
-        presenter.start();
 
-        if(presenter.getUser().getUserId().equals(currentUser.getUserId())) {
-            ll_nickname.setOnClickListener(this);
-            iv_portrait.setOnClickListener(this);
-            ll_birthday.setOnClickListener(this);
-            ll_sex.setOnClickListener(this);
-            ll_location.setOnClickListener(this);
-            editText.setOnClickListener(this);
-            button.setOnClickListener(this);
-            personweb.setOnClickListener(this);
-        }
+//        if(presenter.getUser().getUserId().equals(currentUser.getUserId())) {
+//            ll_nickname.setOnClickListener(this);
+//            iv_portrait.setOnClickListener(this);
+//            ll_birthday.setOnClickListener(this);
+//            ll_sex.setOnClickListener(this);
+//            ll_location.setOnClickListener(this);
+//            editText.setOnClickListener(this);
+//            button.setOnClickListener(this);
+//            personweb.setOnClickListener(this);
+//        }
 
         return view;
     }
@@ -154,10 +151,19 @@ private Button button;
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
+        //初始化显示个人界面
+       showUserInfo(new User("","",""));
     }
 
     @Override
     public void showUserInfo(User currentUser) {
+        currentUser.setUserId("u001");
+        currentUser.setNickName("devin");
+        currentUser.setUserName("devin");
+        currentUser.setLocation("广州");
+        currentUser.setSex(0);
+        currentUser.setPortrait("");
+        currentUser.setBirthday("19900101");
         text_userid.setText(currentUser.getUserId());
         text_username.setText(currentUser.getUserName());
         if(currentUser.getSex()==1)

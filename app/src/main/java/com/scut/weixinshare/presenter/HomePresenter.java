@@ -262,45 +262,45 @@ public class HomePresenter implements HomeContract.Presenter {
     @Override
     public void releaseMoment(String text, Location location) {
         view.showReminderMessage("正在发送动态");
-        momentDataSource.createMoment(text, location,
-                new MomentDataSource.CreateMomentCallback() {
-                    @Override
-                    public void onSuccess() {
-                        view.showReminderMessage("动态发送成功");
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-                        if(NetworkUtils.isLoginFailed(error)){
-                            view.showReminderMessage("登录失效，请重新登录");
-                            view.showLoginUI();
-                        } else {
-                            view.showReminderMessage("动态发送失败，" + error);
-                        }
-                    }
-                });
+//        momentDataSource.createMoment(text, location,
+//                new MomentDataSource.CreateMomentCallback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        view.showReminderMessage("动态发送成功");
+//                    }
+//
+//                    @Override
+//                    public void onFailure(String error) {
+//                        if(NetworkUtils.isLoginFailed(error)){
+//                            view.showReminderMessage("登录失效，请重新登录");
+//                            view.showLoginUI();
+//                        } else {
+//                            view.showReminderMessage("动态发送失败，" + error);
+//                        }
+//                    }
+//                });
     }
 
     @Override
     public void releaseMoment(String text, Location location, List<File> images) {
         view.showReminderMessage("正在发送动态");
-        momentDataSource.createMoment(text, location, images,
-                new MomentDataSource.CreateMomentCallback() {
-                    @Override
-                    public void onSuccess() {
-                        view.showReminderMessage("动态发送成功");
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-                        if(NetworkUtils.isLoginFailed(error)){
-                            view.showReminderMessage("登录失效，请重新登录");
-                            view.showLoginUI();
-                        } else {
-                            view.showReminderMessage("动态发送失败，" + error);
-                        }
-                    }
-                });
+//        momentDataSource.createMoment(text, location, images,
+//                new MomentDataSource.CreateMomentCallback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        view.showReminderMessage("动态发送成功");
+//                    }
+//
+//                    @Override
+//                    public void onFailure(String error) {
+//                        if(NetworkUtils.isLoginFailed(error)){
+//                            view.showReminderMessage("登录失效，请重新登录");
+//                            view.showLoginUI();
+//                        } else {
+//                            view.showReminderMessage("动态发送失败，" + error);
+//                        }
+//                    }
+//                });
     }
 
     @Override

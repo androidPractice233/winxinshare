@@ -1,12 +1,19 @@
 package com.scut.weixinshare.presenter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.view.LoginActivity;
+import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,18 +47,26 @@ public class UserPresenter implements UserContract.Presenter {
     @Override
     public void setShowUser(String userId) {
         if(!userId.equals(MyApplication.currentUser.getUserId())) {
-            NetworkManager.getInstance().getUser(new Callback<ResultBean>() {
+            NetworkManager.getInstance().getUser(new BaseCallback<ResultBean<LoginReceive>>() {
+
+
                 @Override
-                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                    ResultBean resultBean = response.body();
-                    user = (User) resultBean.getData();
+                public void onResponse(Call<ResultBean<LoginReceive>> call, Response<ResultBean<LoginReceive>> response) {
+
+                    ResultBean resultBean=  getResultBean(response);
+
+                        LoginReceive loginReceive= (LoginReceive) resultBean.getData();
+
+                        user=loginReceive.getUser();
+
+
                 }
 
                 @Override
-                public void onFailure(Call<ResultBean> call, Throwable t) {
-                    Log.d(TAG, "onFailure: invalid userId");
+                public void onFailure(Call<ResultBean<LoginReceive>> call, Throwable t) {
+
                 }
-            }, userId);
+            },userId);
         }
         else
             user=MyApplication.currentUser;

@@ -30,11 +30,6 @@
             android:value="WEIBZ-BFY3Q-LRS5Y-GNCCT-5J5P2-UZFJ4" />
 
         <activity android:name=".view.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.HomeActivity"
@@ -59,14 +54,22 @@
         <activity
             android:name=".view.MainActivity"
             android:label="主界面"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
         <activity
             android:name=".view.RegisterActivity"
             android:label="注册界面"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.BigPicActivity" />
 
-        <activity android:name=".view.UserActivity"></activity>
+        <activity android:name=".view.UserActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

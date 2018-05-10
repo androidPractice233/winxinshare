@@ -13,4 +13,6 @@ public interface RegisterService {
     Call<ResultBean> register(@Body User user);
     @POST("/user/login")
     Call<ResultBean<LoginReceive>> login(@Body User user);
+    @POST("/user/search")
+    Call<ResultBean<LoginReceive>> searchUser(@Body String userid);
 }
