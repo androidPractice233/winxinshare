@@ -28,4 +28,8 @@ public class NetworkUtils {
         }
         return parts;
     }
+
+    public static boolean isLoginFailed(String error){
+        return error != null && error.contains("401");
+    }
 }

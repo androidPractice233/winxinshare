@@ -1,12 +1,15 @@
 package com.scut.weixinshare.contract;
 
-import android.os.Bundle;
+import android.content.Intent;
+import android.net.Uri;
 
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 //动态主页交互接口
@@ -32,21 +35,39 @@ public interface HomeContract {
         //设置主页动态尾部为加载状态
         void setListLoadingView();
 
+        //设置主页动态尾部为网络错误状态
+        void setListErrorView();
+
         //显示发布动态界面
         void showReleaseMomentUI(Location location);
 
         //显示动态详情界面（添加评论）
-        void showMomentDetailUI(Moment moment, boolean isToComment);
+        void showMomentDetailUI(String momentId, boolean isToComment);
+
+        //显示用户信息界面
+        void showUserDataUI(String momentId);
+
+        //显示登录界面
+        void showLoginUI();
+
+        //显示大图界面
+        void showBigPicUI(ArrayList<Uri> images);
 
         //显示应用提示信息
         void showReminderMessage(String text);
 
+        //显示动态列表
+        void showMomentList();
+
+        //隐藏动态列表
+        void hideMomentList();
+
+        //更新指定位置的动态信息
+        void updateMomentView(Moment moment, int position);
+
     }
 
     interface Presenter extends BasePresenter {
-
-        //获取用户当前位置
-        void getLocation();
 
         //向服务器请求新的动态
         void requestNewMoments();
@@ -54,14 +75,31 @@ public interface HomeContract {
         //向服务器请求后续动态
         void requestNextMoments();
 
-        //前往发布动态
-        void toReleaseMoment();
+        //前往编辑发布动态
+        void editReleaseMoment();
 
         //前往动态详情
-        void toMomentDetail(Moment moment);
+        void openMomentDetail(Moment moment, int position);
 
         //前往发布评论
-        void toReleaseComment(Moment moment);
+        void releaseComment(Moment moment, int position);
 
+        //发布动态
+        void releaseMoment(String text, Location location);
+
+        //发布动态
+        void releaseMoment(String text, Location location, List<File> images);
+
+        //设置后续动态请求为可加载状态
+        void breakErrorState();
+
+        //打开用户信息
+        void openUserData(Moment moment, int position);
+
+        //处理活动返回结果
+        void result(int requestCode, int resultCode, Intent data);
+
+        //打开大图
+        void openBigImages(List<Uri> uriList);
     }
 }

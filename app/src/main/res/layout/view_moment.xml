@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="16dp"
@@ -20,55 +22,55 @@
         android:id="@+id/nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="#000000"
+        android:layout_marginStart="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/portrait"
+        app:layout_constraintStart_toEndOf="@+id/portrait"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:textSize="13sp"
         android:textStyle="normal"
+        android:layout_marginStart="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/portrait"
-        app:layout_constraintTop_toBottomOf="@id/nickname" />
+        app:layout_constraintStart_toEndOf="@+id/portrait"
+        app:layout_constraintTop_toBottomOf="@+id/nickname" />
 
     <TextView
         android:id="@+id/content_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="normal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/portrait" />
+        app:layout_constraintTop_toBottomOf="@+id/location" />
 
     <com.scut.weixinshare.view.component.NineGridPatternView
         android:id="@+id/content_pics"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_text"/>
+        app:layout_constraintTop_toBottomOf="@+id/content_text" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="12dp"
         android:textSize="13sp"
         android:textStyle="normal"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toStartOf="@+id/add_comment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/content_pics" />
@@ -78,9 +80,9 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="2dp"
         android:background="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_comment_gray_24dp"
+        android:src="@drawable/ic_comment_gray_20dp"
         app:layout_constraintEnd_toStartOf="@+id/comment_count"
         app:layout_constraintTop_toBottomOf="@+id/content_pics" />
 
@@ -92,6 +94,6 @@
         android:textSize="13sp"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_pics"/>
+        app:layout_constraintTop_toBottomOf="@+id/content_pics" />
 
 </android.support.constraint.ConstraintLayout>

@@ -3,9 +3,10 @@ package com.scut.weixinshare.view.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,34 +24,46 @@ import com.scut.weixinshare.contract.HomeContract;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.DensityUtils;
+import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
-import com.scut.weixinshare.view.component.MomentView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-//动态主页fragment
-public class HomeActivityFragment extends Fragment implements HomeContract.View,
+public class HomeFragment extends Fragment implements HomeContract.View,
         MomentAdapter.MomentItemListener {
-    private RecyclerView recyclerView;
+    public final static int MARGIN_TOP_CARD = 8;
+    public final static int MARGIN_BOTTOM_CARD = 4;
+
     private HomeContract.Presenter presenter;
     private MomentAdapter momentAdapter;
     private PullUpRefreshAdapter pullUpRefreshAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private FloatingActionButton fab;
-    private int lastPosition = -1;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = view.findViewById(R.id.list_moments);
+        fab = view.findViewById(R.id.fab);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         momentAdapter = new MomentAdapter(new ArrayList<Moment>(), this);
-        pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter);
+        pullUpRefreshAdapter = new PullUpRefreshAdapter(momentAdapter,
+                new PullUpRefreshAdapter.NetworkErrorTextOnClickListener() {
+            @Override
+            public void onClick() {
+                presenter.breakErrorState();
+                presenter.requestNextMoments();
+            }
+        });
         recyclerView.setAdapter(pullUpRefreshAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());     //设置RecyclerView动画
         //设置Item间距，实现类卡片式Item效果
@@ -60,9 +73,9 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 outRect.top = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_TOP_CARD);
                 outRect.bottom = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        MARGIN_BOTTOM_CARD);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
@@ -104,11 +117,11 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
         //获取Activity中的fab
         Activity activity = getActivity();
         if(activity != null) {
-            fab = activity.findViewById(R.id.fab);
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.toReleaseMoment();
+                    presenter.editReleaseMoment();
                 }
             });
         }
@@ -117,19 +130,7 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case IConst.REQUEST_CODE_MOMENT_DETAIL:
-                if(resultCode == RESULT_OK){
-                    //获取动态正文页面返回的修改信息
-                    Bundle bundle = data.getExtras();
-                    if(bundle != null && bundle.getBoolean("isChanged")){
-                        Moment moment = bundle.getParcelable("moment");
-                        //更新显示数据
-                        momentAdapter.updateAdapterData(moment, lastPosition);
-                        pullUpRefreshAdapter.notifyItemChanged(lastPosition);
-                    }
-                }
-        }
+        presenter.result(requestCode, resultCode, data);
     }
 
     @Override
@@ -173,20 +174,54 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
-    public void showReleaseMomentUI(Location location) {
-        Intent intent = new Intent(this.getContext(), ReleaseMomentActivity.class);
-        intent.putExtra("location", location);     //向发布动态界面传递位置信息
-        startActivity(intent);
+    public void setListErrorView() {
+        pullUpRefreshAdapter.setNetworkErrorView();
     }
 
     @Override
-    public void showMomentDetailUI(Moment moment, boolean isToComment) {
-        MomentDetailActivity.activityStartForResult(this, moment, isToComment);
+    public void showReleaseMomentUI(Location location) {
+        ReleaseMomentActivity.activityStartForResult(this, location);
+    }
+
+    @Override
+    public void showMomentDetailUI(String momentId, boolean isToComment) {
+        MomentDetailActivity.activityStartForResult(this, momentId, isToComment);
+    }
+
+    @Override
+    public void showUserDataUI(String momentId) {
+
+    }
+
+    @Override
+    public void showLoginUI() {
+
+    }
+
+    @Override
+    public void showBigPicUI(ArrayList<Uri> images) {
+        BigPicActivity.activityStart(getContext(), images);
     }
 
     @Override
     public void showReminderMessage(String text) {
+        ToastUtils.showToast(getContext(), text);
+    }
 
+    @Override
+    public void showMomentList() {
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideMomentList() {
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void updateMomentView(Moment moment, int position) {
+        momentAdapter.updateAdapterData(moment, position);
+        pullUpRefreshAdapter.notifyItemChanged(position);
     }
 
     @Override
@@ -196,23 +231,26 @@ public class HomeActivityFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void onPortraitClick(Moment moment, int position) {
-
+        presenter.openUserData(moment, position);
     }
 
     @Override
     public void onNickNameClick(Moment moment, int position) {
-
+        presenter.openUserData(moment, position);
     }
 
     @Override
     public void onItemClick(Moment moment, int position) {
-        lastPosition = position;
-        presenter.toMomentDetail(moment);
+        presenter.openMomentDetail(moment, position);
     }
 
     @Override
     public void onAddCommentButtonClick(Moment moment, int position) {
-        lastPosition = position;
-        presenter.toReleaseComment(moment);
+        presenter.releaseComment(moment, position);
+    }
+
+    @Override
+    public void onImagesClick(List<Uri> images, int position) {
+        presenter.openBigImages(images);
     }
 }

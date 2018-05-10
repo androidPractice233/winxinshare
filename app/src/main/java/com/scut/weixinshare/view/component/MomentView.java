@@ -1,28 +1,19 @@
 package com.scut.weixinshare.view.component;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.GridLayout;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
-import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.GlideUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 
 import java.util.List;
 
@@ -35,10 +26,9 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
     private TextView time;                      //动态发布事件
     private TextView textContent;               //文本内容
     private NineGridPatternView picContent;     //图片内容
-    private ImageButton addComment;             //评论按钮
     private TextView commentCount;              //评论数目显示
-    //private LinearLayout comments;
     private MomentViewListener listener;
+    private Moment moment;
 
     public MomentView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,17 +42,27 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         time = findViewById(R.id.time);
         textContent = findViewById(R.id.content_text);
         picContent = findViewById(R.id.content_pics);
-        addComment = findViewById(R.id.add_comment);
+        picContent.setListener(new NineGridPatternView.NineGridPatternViewListener() {
+            @Override
+            public void onItemClick(List<Uri> uriList) {
+                if(listener != null){
+                    listener.onImagesClick(uriList);
+                }
+            }
+        });
+        ImageButton addComment = findViewById(R.id.add_comment);
         addComment.setOnClickListener(this);
         commentCount = findViewById(R.id.comment_count);
-        //comments = findViewById(R.id.comments);
     }
 
     public void setView(Moment moment){
-        GlideUtils.loadImageViewInCircleCrop(getContext(), moment.getPortrait(), portrait);
-        nickname.setText(moment.getNickname());
+        this.moment = moment;
+        if(moment.getPortrait() != null) {
+            GlideUtils.loadImageViewInCircleCrop(getContext(), moment.getPortrait(), portrait);
+        }
+        nickname.setText(moment.getNickName());
         location.setText(moment.getLocation());
-        time.setText(moment.getCreateTime().toString());
+        time.setText(MomentUtils.TimeToString(moment.getCreateTime()));
         textContent.setText(moment.getTextContent());
         List<Uri> picUris = moment.getPicContent();
         if(picUris != null && picUris.size() > 0){
@@ -71,17 +71,11 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         } else {
             picContent.setVisibility(View.GONE);
         }
-        commentCount.setText(String.valueOf(moment.getCommentList().size()));
-        /*comments.removeAllViews();
-        List<Comment> commentList = moment.getCommentList();
-        if(commentList != null && commentList.size() > 0){
-            comments.setVisibility(View.VISIBLE);
-            for(Comment comment : commentList){
-                comments.addView(initCommentView(comment));
-            }
+        if(moment.getCommentList() != null) {
+            commentCount.setText(String.valueOf(moment.getCommentList().size()));
         } else {
-            comments.setVisibility(View.GONE);
-        }*/
+            commentCount.setText("0");
+        }
     }
 
     public void setListener(MomentViewListener listener){
@@ -104,68 +98,38 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         if(listener != null){
             switch (view.getId()) {
                 case R.id.portrait:
-                    listener.onPortraitClick();
+                    listener.onPortraitClick(moment);
                     break;
                 case R.id.nickname:
-                    listener.onNickNameClick();
+                    listener.onNickNameClick(moment);
                     break;
                 case R.id.add_comment:
-                    listener.onAddCommentButtonClick();
+                    listener.onAddCommentButtonClick(moment);
                     break;
                 default:
-                    listener.onItemClick();
+                    listener.onItemClick(moment);
                     break;
             }
         }
     }
 
-    /*private TextView initCommentView(Comment comment){
-        TextView commentItem = new TextView(comments.getContext());
-        commentItem.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        commentItem.setTextColor(Color.BLACK);
-        commentItem.setPadding(2, 2, 2, 2);
-        SpannableStringBuilder commentStr = new SpannableStringBuilder(comment.getSenderId());
-        commentStr.setSpan(new ForegroundColorSpan(getResources()
-                        .getColor(R.color.colorAccent)), 0,
-                commentStr.length(),
-                SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);
-        String recvId = comment.getRecvId();
-        if(recvId != null && !"".equals(recvId)){
-            int pos = commentStr.length();
-            commentStr.append("@");
-            commentStr.append(recvId);
-            commentStr.setSpan(new ForegroundColorSpan(getResources()
-                            .getColor(R.color.colorAccent)), pos + 1,
-                    commentStr.length(),
-                    SpannableStringBuilder.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        commentStr.append(": ");
-        commentStr.append(comment.getContent());
-
-        commentItem.setText(commentStr);
-        commentItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onCommentClick();
-            }
-        });
-        return commentItem;
-    }*/
-
     //动态视图监听器
-    public interface MomentViewListener{
+    public interface MomentViewListener {
 
         //头像点击事件监听
-        void onPortraitClick();
+        void onPortraitClick(Moment moment);
 
         //昵称点击事件监听
-        void onNickNameClick();
+        void onNickNameClick(Moment moment);
 
         //全视图点击事件监听
-        void onItemClick();
+        void onItemClick(Moment moment);
 
         //评论按钮点击事件监听
-        void onAddCommentButtonClick();
+        void onAddCommentButtonClick(Moment moment);
+
+        //动态图片点击事件监听
+        void onImagesClick(List<Uri> images);
 
     }
 }

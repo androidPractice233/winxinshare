@@ -21,8 +21,8 @@ public class TokenInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        SharedPreferences preferences = MyApplication.getInstance().getApplicationContext().getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
-        String token = preferences.getString("token",null);
+
+        String token =MyApplication.getInstance().getToken();
         Request originalrequest = chain.request();//原始request
         if(token!=null) {
             Headers headers = new Headers.Builder()

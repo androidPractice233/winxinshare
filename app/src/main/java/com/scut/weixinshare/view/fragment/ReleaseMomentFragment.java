@@ -23,8 +23,12 @@ import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.adapter.ImageAdapter;
 import com.scut.weixinshare.contract.ReleaseMomentContract;
+import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.PickLocationActivity;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +36,6 @@ import java.util.List;
 public class ReleaseMomentFragment extends Fragment implements ReleaseMomentContract.View,
         View.OnClickListener {
 
-    private ImageButton relocateButton;     //重定位按钮
-    private ImageButton addPicButton;       //添加图片按钮
-    private ImageButton publishButton;      //发布按钮
     private TextView locationStatus;        //显示位置信息
     private EditText text;                  //文字信息编辑
     private ProgressDialog dialog;          //加载中对话框
@@ -46,17 +47,12 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_release_moment, container,
                 false);
-        relocateButton = view.findViewById(R.id.relocate);
+        ImageButton relocateButton = view.findViewById(R.id.relocate);
         relocateButton.setOnClickListener(this);
-        addPicButton = view.findViewById(R.id.add_pics);
+        ImageButton addPicButton = view.findViewById(R.id.add_pics);
         addPicButton.setOnClickListener(this);
-        publishButton = view.findViewById(R.id.publish);
-        publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.publish();
-            }
-        });
+        ImageButton publishButton = view.findViewById(R.id.publish);
+        publishButton.setOnClickListener(this);
         locationStatus = view.findViewById(R.id.location);
         text = view.findViewById(R.id.text_resource);
         //RecyclerView用于显示已选择图片
@@ -83,17 +79,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case PictureConfig.CHOOSE_REQUEST:
-                if (resultCode == Activity.RESULT_OK) {
-                    //获取选择的图片
-                    presenter.addPics(PictureSelector.obtainMultipleResult(data));
-                }
-                break;
-            default:
-                break;
-        }
+        presenter.result(requestCode, resultCode, data);
     }
 
     @Override
@@ -136,7 +122,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
 
     @Override
     public void showPickLocationUI() {
-
+        PickLocationActivity.activityStartForResult(this);
     }
 
     @Override
@@ -154,6 +140,23 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
     }
 
     @Override
+    public void setResultAndFinish(String text, Location location, List<File> images) {
+        Intent intent = new Intent();
+        intent.putExtra("text", text);
+        intent.putExtra("location", location);
+        if(images == null){
+            intent.putExtra("isTextOnly", true);
+        } else {
+            intent.putExtra("isTextOnly", false);
+            intent.putExtra("images", images.toArray(new File[images.size()]));
+        }
+        if(getActivity() != null) {
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        }
+    }
+
+    @Override
     public void setPresenter(ReleaseMomentContract.Presenter presenter) {
         this.presenter = presenter;
     }
@@ -165,7 +168,10 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
                 presenter.getLocation();
                 break;
             case R.id.add_pics:
-                presenter.selectPic();
+                presenter.selectImages();
+                break;
+            case R.id.publish:
+                presenter.publish(text.getText().toString());
                 break;
             default:
                 break;

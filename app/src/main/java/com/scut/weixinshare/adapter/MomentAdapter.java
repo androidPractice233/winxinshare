@@ -1,5 +1,6 @@
 package com.scut.weixinshare.adapter;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +56,6 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
     public MomentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.item_moment, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
         return new ViewHolder(view);
     }
 
@@ -65,23 +65,28 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
         holder.item.setView(moment);
         holder.item.setListener(new MomentView.MomentViewListener() {
             @Override
-            public void onPortraitClick() {
+            public void onPortraitClick(Moment moment) {
                 listener.onPortraitClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onNickNameClick() {
+            public void onNickNameClick(Moment moment) {
                 listener.onNickNameClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onItemClick() {
+            public void onItemClick(Moment moment) {
                 listener.onItemClick(moment, holder.getAdapterPosition());
             }
 
             @Override
-            public void onAddCommentButtonClick() {
+            public void onAddCommentButtonClick(Moment moment) {
                 listener.onAddCommentButtonClick(moment, holder.getAdapterPosition());
+            }
+
+            @Override
+            public void onImagesClick(List<Uri> images) {
+                listener.onImagesClick(images, holder.getAdapterPosition());
             }
         });
     }
@@ -100,6 +105,8 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
         void onItemClick(Moment moment, int position);
 
         void onAddCommentButtonClick(Moment moment, int position);
+
+        void onImagesClick(List<Uri> images, int position);
     }
 
 }

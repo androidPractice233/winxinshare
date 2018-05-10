@@ -1,5 +1,7 @@
 package com.scut.weixinshare.service;
 
+import android.net.Uri;
+
 import com.scut.weixinshare.model.ResultBean;
 
 import java.util.List;
@@ -25,4 +27,10 @@ public interface MultipartService {
     @Multipart
     @POST("MultipartTest")
     Call<ResultBean> test(@Part("test") String test1, @Part List<MultipartBody.Part> file);
+
+    @Multipart
+    @POST("/moment/piccontent")
+    Call<ResultBean> uploadMomentImages(@Part("momentId") String momentId,
+                                                   @Part List<MultipartBody.Part> file);
+
 }

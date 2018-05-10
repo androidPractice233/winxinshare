@@ -1,11 +1,14 @@
 package com.scut.weixinshare.contract;
 
+import android.content.Intent;
 import android.net.Uri;
 
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.BasePresenter;
 import com.scut.weixinshare.BaseView;
+import com.scut.weixinshare.model.Location;
 
+import java.io.File;
 import java.util.List;
 
 //发布动态页面交互接口
@@ -36,6 +39,10 @@ public interface ReleaseMomentContract {
 
         //显示选择发布图片界面
         void showPictureSelectorUI(List<LocalMedia> selected);
+
+        //结束activity并返回发布动态的信息
+        void setResultAndFinish(String text, Location location, List<File> images);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -44,12 +51,13 @@ public interface ReleaseMomentContract {
         void getLocation();
 
         //选择要发布的图片
-        void selectPic();
+        void selectImages();
 
         //发布动态
-        void publish();
+        void publish(String text);
 
-        //添加已选择图片
-        void addPics(List<LocalMedia> selectList);
+        //处理活动返回信息
+        void result(int requestCode, int resultCode, Intent data);
+
     }
 }
