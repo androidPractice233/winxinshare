@@ -32,7 +32,6 @@
         <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -64,8 +63,8 @@
             android:name=".view.RegisterActivity"
             android:label="注册界面"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".view.BigPicActivity" />
-
+        <activity android:name=".view.BigPicActivity"></activity>
+        <activity android:name=".view.CommentActivity"/>
         <activity android:name=".view.UserActivity"></activity>
     </application>
 

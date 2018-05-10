@@ -2,6 +2,7 @@ package com.scut.weixinshare.model.source.remote;
 
 import android.net.Uri;
 
+import com.luck.picture.lib.tools.StringUtils;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.Comment;
@@ -315,7 +316,7 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                 (String) data.get("location"), (String) data.get("textContent"), null,
                 null, new Timestamp(Math.round((double) data.get("updateTime"))));
         if(data.get("portrait") != null){
-            moment.setPortrait(Uri.parse((String) data.get("portrait")));
+            moment.setPortrait(MomentUtils.StringToUri((String) data.get("portrait")));
         }
         String picContent = (String) data.get("picContent");
         if(picContent != null && !"".equals(picContent)){
@@ -331,14 +332,14 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                 null, (String) data.get("recvNickName"), (String) data.get("content"),
                 new Timestamp(Math.round((double) data.get("createTime"))));
         if(data.get("portrait") != null){
-            comment.setPortrait(Uri.parse((String) data.get("portrait")));
+            comment.setPortrait(MomentUtils.StringToUri((String) data.get("portrait")));
         }
         return comment;
     }
 
     private MomentUserData mapToMomentUserData(Map data){
         return new MomentUserData((String) data.get("userId"), (String) data.get("nickName"),
-                Uri.parse((String) data.get("portrait")));
+                MomentUtils.StringToUri((String) data.get("portrait")));
     }
 
 }

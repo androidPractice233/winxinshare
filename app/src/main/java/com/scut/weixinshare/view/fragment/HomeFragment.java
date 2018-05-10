@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import devlight.io.library.ntb.NavigationTabBar;
+
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment implements HomeContract.View,
@@ -44,12 +46,13 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     public final static int MARGIN_TOP_CARD = 8;
     public final static int MARGIN_BOTTOM_CARD = 4;
 
-    protected HomeContract.Presenter presenter;
-    protected MomentAdapter momentAdapter;
-    protected PullUpRefreshAdapter pullUpRefreshAdapter;
-    protected SwipeRefreshLayout swipeRefresh;
-    protected FloatingActionButton fab;
-    protected RecyclerView recyclerView;
+    private HomeContract.Presenter presenter;
+    private MomentAdapter momentAdapter;
+    private PullUpRefreshAdapter pullUpRefreshAdapter;
+    private SwipeRefreshLayout swipeRefresh;
+    private FloatingActionButton fab;
+    private RecyclerView recyclerView;
+    private NavigationTabBar navigationTabBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,14 +88,22 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                if(fab != null) {
                     //上拉隐藏fab，下拉显示fab
                     if (dy > 0) {
-                        fab.hide();
+                        if(fab != null) {
+                            fab.hide();
+                        }
+                        if(navigationTabBar != null){
+                            navigationTabBar.hide();
+                        }
                     } else if (dy < 0) {
-                        fab.show();
+                        if(fab != null) {
+                            fab.show();
+                        }
+                        if(navigationTabBar != null){
+                            navigationTabBar.show();
+                        }
                     }
-                }
             }
 
             @Override
@@ -127,6 +138,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
                     presenter.editReleaseMoment();
                 }
             });
+            navigationTabBar = activity.findViewById(R.id.ntb_horizontal);
         }
         return view;
     }

@@ -29,6 +29,7 @@ import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.PersonalMomentActivity;
 import com.scut.weixinshare.view.UserActivity;
 import com.scut.weixinshare.view.LoginActivity;
+
 import com.scut.weixinshare.view.component.CommentView;
 import com.scut.weixinshare.view.component.MomentView;
 
