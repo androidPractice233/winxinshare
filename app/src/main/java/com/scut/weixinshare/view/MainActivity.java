@@ -12,13 +12,26 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.model.source.LocationRepository;
+import com.scut.weixinshare.model.source.MomentDataSource;
 import com.scut.weixinshare.model.source.MomentsRepository;
 import com.scut.weixinshare.model.source.local.MomentDatabaseSource;
 import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
@@ -34,7 +47,7 @@ import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     Button btnPopPhoto;
     Button button;
@@ -53,8 +66,6 @@ public class MainActivity extends AppCompatActivity  {
                 && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             handleLocationPermi();
         }
-
-
 
 
 //        button= (Button) findViewById(R.id.testButton);
@@ -117,7 +128,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-
     //申请获取权限后回调
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -142,7 +152,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocationUtils.getInstance(this).removeLocationUpdatesListener();
+        //LocationUtils.getInstance(this).removeLocationUpdatesListener();
 
     }
 
@@ -175,26 +185,28 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void initUI() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
         HomeFragment homefragment = new HomeFragment();
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
 
 
-        UserFragment userFragment = UserFragment.newInstance("n");
+//        UserFragment userFragment = UserFragment.newInstance("n");
 
-        if (MyApplication.currentUser!=null)
-            new UserPresenter(userFragment, MyApplication.currentUser);
-        else {
-            User user = new User("", "", "", 0, "", "", "");
-            new UserPresenter(userFragment, user);
-        }
+//        if (MyApplication.currentUser!=null)
+//            new UserPresenter(userFragment, MyApplication.currentUser);
+//        else {
+//            User user = new User("", "", "", 0, "", "", "");
+//            new UserPresenter(userFragment, user);
+//        }
 
         MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
-        frag_list.add(userFragment);
+        frag_list.add(fragment2);
 
 
         // 设置适配器

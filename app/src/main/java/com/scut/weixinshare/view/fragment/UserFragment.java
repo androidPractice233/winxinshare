@@ -132,7 +132,7 @@ private Button button;
         view.setOnClickListener(this);
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
-        personweb=view.findViewById(R.id.personweb);
+//        personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
         presenter.start();
 
@@ -144,7 +144,7 @@ private Button button;
             ll_location.setOnClickListener(this);
             editText.setOnClickListener(this);
             button.setOnClickListener(this);
-            personweb.setOnClickListener(this);
+//            personweb.setOnClickListener(this);
         }
 
         return view;
@@ -244,11 +244,11 @@ private Button button;
                         break;
 
                 }break;
-            case R.id.personweb:
-                PersonalMomentActivity.actionStart(getActivity());
-                showUserInfo(currentUser);
-                changeVisibility(0);
-                break;
+//            case R.id.personweb:
+//                PersonalMomentActivity.actionStart(getActivity());
+//                showUserInfo(currentUser);
+//                changeVisibility(0);
+//                break;
         }
     }
 

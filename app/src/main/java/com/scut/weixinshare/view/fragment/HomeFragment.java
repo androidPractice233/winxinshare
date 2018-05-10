@@ -28,6 +28,7 @@ import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
+import com.scut.weixinshare.view.PersonalMomentActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
 import com.scut.weixinshare.view.UserActivity;
 
@@ -192,7 +193,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showUserDataUI(String momentId) {
-        Intent intent=new Intent(getContext(),UserActivity.class);
+        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
         intent.putExtra("userId",momentId);
         startActivity(intent);
     }

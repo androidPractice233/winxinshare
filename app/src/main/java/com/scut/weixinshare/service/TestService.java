@@ -1,6 +1,8 @@
 package com.scut.weixinshare.service;
 
+import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.source.MomentUserData;
 import com.scut.weixinshare.model.source.MomentVersion;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public interface TestService {
     Call<ResultBean> register(@Body Map praram);
 
     @POST("/moment/nearby")
-    Call<ResultBean<List<MomentVersion>>> requestNearbyMoment(@Body Map params);
+    Call<ResultBean> requestNearbyMoment(@Body Map params);
 
     @POST("/moment/detail")
     Call<ResultBean> requestMomentDetail(@Body Map params);
@@ -37,13 +39,15 @@ public interface TestService {
     Call<ResultBean> createComment(@Body Map params);
 
     @POST("/user/getnickpot")
+
     Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
+    @POST("/moment/personal")
+    Call<ResultBean> requestPersonMoment(@Body Map params);
 
     @POST("/user/update")
     Call<ResultBean> updateUser(@Body Map params);
 
     @POST("/user/search")
-    Call<ResultBean> searchUser(@Body String userid);
-    @POST("/moment/personal")
-    Call<ResultBean<List<MomentVersion>>> requestPersonMoment(@Body Map params);
+    Call<ResultBean> searchUser(@Body  Map params);
+
 }

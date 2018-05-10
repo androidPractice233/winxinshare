@@ -1,5 +1,6 @@
 package com.scut.weixinshare.manager;
 
+import android.net.Uri;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -9,9 +10,12 @@ import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.model.LoginReceive;
+import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.model.source.MomentUserData;
+import com.scut.weixinshare.model.source.MomentVersion;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
@@ -32,7 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -140,7 +147,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void requestNearbyMoment(Callback callBack, Location location, int pageNum,
+    public void requestNearbyMoment(Callback<ResultBean> callBack, Location location, int pageNum,
                                     int pageSize){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
@@ -148,18 +155,18 @@ public class NetworkManager {
         params.put("latitude", location.getLatitude());
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        Call call = service.requestNearbyMoment(params);
+        Call<ResultBean> call = service.requestNearbyMoment(params);
         call.enqueue(callBack);
     }
 
-    public void requestPersonMoment(Callback callBack, String personId, int pageNum,
+    public void requestPersonMoment(Callback<ResultBean> callBack, String personId, int pageNum,
                                     int pageSize){
         TestService service = retrofit.create(TestService.class);
         Map<String, Object> params = new HashMap<>();
         params.put("userId", personId);
         params.put("pageNum", pageNum);
         params.put("pageSize", pageSize);
-        Call call = service.requestPersonMoment(params);
+        Call<ResultBean> call = service.requestPersonMoment(params);
         call.enqueue(callBack);
     }
     public void requestMomentDetail(Callback<ResultBean> callback, List<String> momentIds){
@@ -189,10 +196,10 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void uploadMomentImages(Callback callback, String momentId,
+    public void uploadMomentImages(Callback<ResultBean> callback, String momentId,
                                    List<File> imageFileList) throws IOException{
         MultipartService service = multipartRetrofit.create(MultipartService.class);
-        Call call = service.uploadMomentImages(momentId, NetworkUtils
+        Call<ResultBean> call = service.uploadMomentImages(momentId, NetworkUtils
                 .filesToMultipartBodyParts(imageFileList, "picContent"));
         call.enqueue(callback);
     }
@@ -224,7 +231,7 @@ public class NetworkManager {
         Call<ResultBean> call = service.requestNicknameAndPortrait(params);
         call.enqueue(callback);
     }
-    public  void register(Callback<ResultBean> callback,User user){
+    public  void register(Callback callback,User user){
         RegisterService registerService= retrofit.create(RegisterService.class);
         Call<ResultBean> call=registerService.register(user);
         call.enqueue(callback);
@@ -236,6 +243,13 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
+    public  void uploadProtrait(BaseCallback callback, String  userId,File portrait){
+        MultipartService service = multipartRetrofit.create(MultipartService.class);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), portrait);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("portrait", portrait.getName(), requestBody);
+        Call<ResultBean> call = service.uploadUserPortrait(userId, part);
+        call.enqueue(callback);
+    }
 
     public void updateUserInfo(Callback<ResultBean>callback,User user){
         TestService service=retrofit.create(TestService.class);
@@ -254,7 +268,9 @@ public class NetworkManager {
 
     public void getUser(Callback<ResultBean>callback,String userid){
         TestService service=retrofit.create(TestService.class);
-        Call<ResultBean> call=service.searchUser(userid);
+        Map<String,Object> params=new HashMap<>();
+        params.put("userId:", userid);
+        Call<ResultBean> call=service.searchUser(params);
         call.enqueue(callback);
 
     }

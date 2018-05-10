@@ -50,6 +50,7 @@ public class MyApplication extends MultiDexApplication {
     private static Context context;
     public static User currentUser;
     private  String token;
+    private String userId;
 
     public  String getToken() {
         return token;
@@ -57,6 +58,14 @@ public class MyApplication extends MultiDexApplication {
 
     public  void setToken(String token) {
         this.token = token;
+    }
+
+    public void setUserId(String userId){
+        this.userId = userId;
+    }
+
+    public String getUserId(){
+        return userId;
     }
 
     @Override
