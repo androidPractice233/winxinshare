@@ -33,6 +33,7 @@ import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
@@ -174,6 +175,11 @@ private Button button;
     @Override
     public void showUserPhoto() {
 
+    }
+
+    @Override
+    public void showReminderMessage(String message) {
+        ToastUtils.showToast(getContext(), message);
     }
 
     @Override

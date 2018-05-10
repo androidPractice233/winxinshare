@@ -2,6 +2,7 @@ package com.scut.weixinshare.presenter;
 
 import android.util.Log;
 
+import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.manager.NetworkManager;
@@ -11,6 +12,7 @@ import com.scut.weixinshare.model.User;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -95,6 +97,9 @@ public class UserPresenter implements UserContract.Presenter {
                 @Override
                 public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                     ResultBean resultBean=  response.body();
+                    if(resultBean.getCode() == IConst.ERROR_CODE_SUCCESS){
+                        view.showReminderMessage("头像修改成功");
+                    }
                 }
 
                 @Override

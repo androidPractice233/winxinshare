@@ -1,6 +1,7 @@
 package com.scut.weixinshare.model.source.local;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
@@ -17,6 +18,7 @@ import java.util.Set;
 //实现从数据库获取本地动态数据
 public class MomentDatabaseSource implements MomentLocalSource {
 
+    private final static String TAG = "MomentDatabaseSource";
     private static MomentDatabaseSource INSTANCE = new MomentDatabaseSource();
 
     //单例，线程安全
@@ -82,24 +84,30 @@ public class MomentDatabaseSource implements MomentLocalSource {
                     List<String> commentIds = dbOperator
                             .selectCommentIdUnderMoment(moment.getMomentId());
                     if (commentIds != null && commentIds.size() > 0) {
-                        //数据库中存在对应动态的评论，则对比新版本动态的评论和数据库中的动态评论
-                        Set<String> commentIdSetLocal = new HashSet<>(commentIds);
-                        for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
-                            if (commentIdSetLocal.contains(comment.getCommentId())) {
-                                //如果评论id重复则不做处理
-                                commentIdSetLocal.remove(comment.getCommentId());
-                            } else {
-                                //如果新版本动态的评论id在数据库评论中不存在，则插入评论
-                                dbOperator.insertComment(new Comment(comment.getCommentId(),
-                                        moment.getMomentId(), comment.getSendId(), comment.getRecvId(),
-                                        comment.getCreateTime().toString(), comment.getContent()));
+                        if (moment.getCommentList() == null) {
+                            for (String commentId : commentIds) {
+                                dbOperator.deleteComment(commentId);
+                            }
+                        } else {
+                            //数据库中存在对应动态的评论，则对比新版本动态的评论和数据库中的动态评论
+                            Set<String> commentIdSetLocal = new HashSet<>(commentIds);
+                            for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
+                                if (commentIdSetLocal.contains(comment.getCommentId())) {
+                                    //如果评论id重复则不做处理
+                                    commentIdSetLocal.remove(comment.getCommentId());
+                                } else {
+                                    //如果新版本动态的评论id在数据库评论中不存在，则插入评论
+                                    dbOperator.insertComment(new Comment(comment.getCommentId(),
+                                            moment.getMomentId(), comment.getSendId(), comment.getRecvId(),
+                                            comment.getCreateTime().toString(), comment.getContent()));
+                                }
+                            }
+                            for (String commentId : commentIdSetLocal) {
+                                //如果数据库评论id在新版本动态中不存在，则删除评论
+                                dbOperator.deleteComment(commentId);
                             }
                         }
-                        for (String commentId : commentIdSetLocal) {
-                            //如果数据库评论id在新版本动态中不存在，则删除评论
-                            dbOperator.deleteComment(commentId);
-                        }
-                    } else {
+                    } else if(moment.getCommentList() != null) {
                         //数据库中不存在该动态的评论，则直接插入所有评论
                         for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
                             dbOperator.insertComment(new Comment(comment.getCommentId(),

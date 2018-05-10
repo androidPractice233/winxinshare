@@ -24,6 +24,8 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
 
     public NineGridPatternView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setColumnCount(3);
+        setRowCount(3);
         //setClickable(true);
         //setOnClickListener(this);
     }

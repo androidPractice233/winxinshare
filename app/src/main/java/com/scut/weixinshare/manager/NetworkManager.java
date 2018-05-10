@@ -32,6 +32,7 @@ import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 import java.io.File;
 import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,8 +225,7 @@ public class NetworkManager {
             stringBuilder.append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        params.put("userIds", stringBuilder.toString());
-        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
+        Call<ResultBean> call = service.requestNicknameAndPortrait(stringBuilder.toString());
         call.enqueue(callback);
     }
     public  void register(Callback<ResultBean> callback,User user){
@@ -266,10 +266,9 @@ public class NetworkManager {
     public void pullComment(Callback<ResultBean> callback,String time){
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
 
-        double dataTime = Double.parseDouble(time);
         Map<String, Object> params = new HashMap<>();
         params.put("userId",MyApplication.user.getUserId());
-        params.put("dateTime",dataTime);
+        params.put("dateTime", Timestamp.valueOf(time).getTime());
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

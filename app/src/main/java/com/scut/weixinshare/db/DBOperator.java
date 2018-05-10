@@ -393,7 +393,6 @@ public class DBOperator {
         List<Comment> comments = new ArrayList<>();
         Cursor cursor = database.rawQuery("select * from comment where momentId = ? order by createTime",
                 new String[]{momentId});
-        //Cursor cursor = database.rawQuery("select * from comment",null);
         Log.d("cursorSize",cursor.getCount()+"");
         if(cursor.moveToFirst()) {
             do{

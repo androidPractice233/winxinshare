@@ -15,6 +15,8 @@ public interface UserContract {
         //显示头像
         void showUserPhoto();
 
+        void showReminderMessage(String message);
+
     }
     interface Presenter extends BasePresenter {
         //获取个人信息
