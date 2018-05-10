@@ -285,9 +285,6 @@ public class NetworkManager {
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);
-        Map<String,Object> params=new HashMap<>();
-        params.put("userId:", userid);
-        Call<ResultBean> call=service.searchUser(params);
         call.enqueue(callback);
     }
 

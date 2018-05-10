@@ -46,12 +46,12 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     public final static int MARGIN_TOP_CARD = 8;
     public final static int MARGIN_BOTTOM_CARD = 4;
 
-    private HomeContract.Presenter presenter;
-    private MomentAdapter momentAdapter;
-    private PullUpRefreshAdapter pullUpRefreshAdapter;
-    private SwipeRefreshLayout swipeRefresh;
-    private FloatingActionButton fab;
-    private RecyclerView recyclerView;
+    protected HomeContract.Presenter presenter;
+    protected MomentAdapter momentAdapter;
+    protected PullUpRefreshAdapter pullUpRefreshAdapter;
+    protected SwipeRefreshLayout swipeRefresh;
+    protected FloatingActionButton fab;
+    protected RecyclerView recyclerView;
     private NavigationTabBar navigationTabBar;
 
     @Override

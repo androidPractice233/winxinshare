@@ -37,11 +37,14 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
+import com.scut.weixinshare.contract.HomeContract;
 import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.source.LocationDataSource;
+import com.scut.weixinshare.presenter.PersonHomePresenter;
 import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.model.User;
@@ -54,6 +57,7 @@ import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.fragment.PersonHomeFragment;
 import com.tencent.wcdb.database.SQLiteDebug;
 
 import org.json.JSONArray;
@@ -69,6 +73,8 @@ import devlight.io.library.ntb.NavigationTabBar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.scut.weixinshare.R.id.view;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -243,13 +249,13 @@ public class MainActivity extends AppCompatActivity {
 //            User user = new User("", "", "", 0, "", "", "");
 //            new UserPresenter(userFragment, user);
 //        }
-
+        PersonHomeFragment personHomeFragment= new PersonHomeFragment();
+        new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
         MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
-        frag_list.add(fragment2);
-
+        frag_list.add(personHomeFragment);
 
         // 设置适配器
          adapter = new FragmentPagerAdapter(

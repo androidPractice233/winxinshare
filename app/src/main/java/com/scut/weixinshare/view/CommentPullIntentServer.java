@@ -97,7 +97,7 @@ public class CommentPullIntentServer extends IntentService {
             lastUpdateTime = System.currentTimeMillis()+"";
         }
 
-        Callback<ResultBean> callback = new BaseCallback() {
+        Callback<ResultBean> callback = new BaseCallback<ResultBean>() {
 
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
