@@ -50,4 +50,7 @@ public interface TestService {
     @POST("/user/search")
     Call<ResultBean> searchUser(@Body Map params);
 
+    @POST("user/login")
+    Call<ResultBean> login(@Body Map praram);
+
 }

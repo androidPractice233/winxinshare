@@ -19,10 +19,12 @@ import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
 import com.scut.weixinshare.service.MultipartService;
 import com.scut.weixinshare.service.RegisterService;
+import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.service.TestService;
 import com.scut.weixinshare.utils.AES;
 import com.scut.weixinshare.utils.NetworkUtils;
 import com.scut.weixinshare.utils.RSA;
+import com.scut.weixinshare.view.MainActivity;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 
@@ -258,6 +260,18 @@ public class NetworkManager {
         Map<String,Object> params=new HashMap<>();
         params.put("userId", userId);
         Call<ResultBean> call=service.searchUser(params);
+        call.enqueue(callback);
+    }
+
+    public void pullComment(Callback<ResultBean> callback,String time){
+        PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId",MainActivity.USERID);
+        params.put("dateTime",0);
+        params.put("pageNum",0);
+        params.put("pageSize",20);
+        Call<ResultBean> call=pullCommentService.pullComment(params);
         call.enqueue(callback);
     }
 
