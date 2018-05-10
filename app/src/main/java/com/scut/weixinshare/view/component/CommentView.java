@@ -37,7 +37,9 @@ public class CommentView extends ConstraintLayout implements View.OnClickListene
 
     public void setView(Comment comment){
         this.comment = comment;
-        GlideUtils.loadImageViewInCircleCrop(getContext(), comment.getPortrait(), portrait);
+        if(comment.getPortrait() != null) {
+            GlideUtils.loadImageViewInCircleCrop(getContext(), comment.getPortrait(), portrait);
+        }
         nickname.setText(comment.getSendNickName());
         SpannableStringBuilder commentText = new SpannableStringBuilder();
         if(comment.getRecvId() != null){

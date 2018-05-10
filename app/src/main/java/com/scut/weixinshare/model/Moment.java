@@ -31,20 +31,6 @@ public class Moment implements Parcelable {
                 null, null);
     }
 
-    public Moment(String momentId, String userId, Timestamp createTime, String location,
-                  String textContent, Timestamp updateTime){
-        this(momentId, userId, null, null, createTime,
-                location, textContent, null, null,
-                updateTime);
-    }
-
-    public Moment(String momentId, String userId, Timestamp createTime, String location,
-                  String textContent, List<Uri> picContent, Timestamp updateTime){
-        this(momentId, userId, null, null, createTime,
-                location, textContent, picContent, null,
-                updateTime);
-    }
-
     public Moment(String momentId, String userId, String nickname, Uri portrait,
                   Timestamp createTime, String location, String textContent, List<Uri> picContent,
                   List<Comment> commentList, Timestamp updateTime){
@@ -107,6 +93,42 @@ public class Moment implements Parcelable {
 
     public Timestamp getUpdateTime() {
         return updateTime;
+    }
+
+    public void setMomentId(String momentId) {
+        this.momentId = momentId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void setPortrait(Uri portrait) {
+        this.portrait = portrait;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
+    public void setPicContent(List<Uri> picContent) {
+        this.picContent = picContent;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Override

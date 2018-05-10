@@ -1,29 +1,19 @@
 package com.scut.weixinshare.view.component;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.GridLayout;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
-import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.utils.GlideUtils;
-import com.scut.weixinshare.utils.StringUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 
 import java.util.List;
 
@@ -67,10 +57,12 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
 
     public void setView(Moment moment){
         this.moment = moment;
-        GlideUtils.loadImageViewInCircleCrop(getContext(), moment.getPortrait(), portrait);
+        if(moment.getPortrait() != null) {
+            GlideUtils.loadImageViewInCircleCrop(getContext(), moment.getPortrait(), portrait);
+        }
         nickname.setText(moment.getNickName());
         location.setText(moment.getLocation());
-        time.setText(StringUtils.TimeToString(moment.getCreateTime()));
+        time.setText(MomentUtils.TimeToString(moment.getCreateTime()));
         textContent.setText(moment.getTextContent());
         List<Uri> picUris = moment.getPicContent();
         if(picUris != null && picUris.size() > 0){
@@ -79,7 +71,11 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         } else {
             picContent.setVisibility(View.GONE);
         }
-        commentCount.setText(String.valueOf(moment.getCommentList().size()));
+        if(moment.getCommentList() != null) {
+            commentCount.setText(String.valueOf(moment.getCommentList().size()));
+        } else {
+            commentCount.setText("0");
+        }
     }
 
     public void setListener(MomentViewListener listener){

@@ -6,7 +6,7 @@ import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.source.MomentVersion;
-import com.scut.weixinshare.utils.StringUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class MomentDatabaseSource implements MomentLocalSource {
                     dbOperator.insertMoment(new com.scut.weixinshare.db.Moment(moment.getMomentId(),
                             moment.getUserId(), moment.getCreateTime().toString(),
                             moment.getUpdateTime().toString(), moment.getLocation(),
-                            StringUtils.imageUriListToString(moment.getPicContent()),
+                            MomentUtils.imageUriListToString(moment.getPicContent()),
                             moment.getTextContent()));
                 }
                 dbOperator.close();

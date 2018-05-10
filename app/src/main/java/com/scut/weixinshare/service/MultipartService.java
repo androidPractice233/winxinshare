@@ -30,7 +30,11 @@ public interface MultipartService {
 
     @Multipart
     @POST("/moment/piccontent")
-    Call<ResultBean<List<Uri>>> uploadMomentImages(@Part("momentId") String momentId,
+    Call<ResultBean> uploadMomentImages(@Part("momentId") String momentId,
                                                    @Part List<MultipartBody.Part> file);
+    @Multipart
+    @POST("/user/portrait")
+    Call<ResultBean> uploadUserPortrait(@Part("userId") String userId,
+                                        @Part MultipartBody.Part file);
 
 }

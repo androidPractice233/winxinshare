@@ -3,6 +3,7 @@ package com.scut.weixinshare.presenter;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.contract.MomentDetailContract;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Moment;
@@ -37,26 +38,26 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
                 null, "傻强", Uri.parse("https://img3.duitang.com/uploads/item/201604/01/20160401215443_tYJne.jpeg"),
                 null, text, new Timestamp(System.currentTimeMillis()));*/
         //向服务器上传评论
-//        momentDataSource.createComment(text, momentId, /*"大神",*/
-//                receiverId, new MomentDataSource.CreateCommentCallback() {
-//            @Override
-//            public void onSuccess() {
-//                //moment.getCommentList().add(comment);
-//                view.showReminderMessage("评论已发送");
-//                view.showRefreshing();
-//                refreshMomentDetail();
-//            }
-//
-//            @Override
-//            public void onFailure(String error) {
-//                if(NetworkUtils.isLoginFailed(error)){
-//                    view.showReminderMessage("登录失效，请重新登录");
-//                    view.showLoginUI();
-//                } else {
-//                    view.showReminderMessage("评论发送失败，" + error);
-//                }
-//            }
-//        });
+        momentDataSource.createComment(text, momentId, MyApplication.getInstance().getUserId(),
+                receiverId, new MomentDataSource.CreateCommentCallback() {
+            @Override
+            public void onSuccess() {
+                //moment.getCommentList().add(comment);
+                view.showReminderMessage("评论已发送");
+                view.showRefreshing();
+                refreshMomentDetail();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                if(NetworkUtils.isLoginFailed(error)){
+                    view.showReminderMessage("登录失效，请重新登录");
+                    view.showLoginUI();
+                } else {
+                    view.showReminderMessage("评论发送失败，" + error);
+                }
+            }
+        });
         //上传成功
         /*isDataChanged = true;
         moment.getCommentList().add(comment);

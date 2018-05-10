@@ -6,13 +6,18 @@ import java.sql.Timestamp;
 public class MomentVersion{
 
     String momentId;
-    Date updateTime;
+    Timestamp updateTime;
+
+    public MomentVersion(String momentId, Timestamp updateTime){
+        this.momentId = momentId;
+        this.updateTime = updateTime;
+    }
 
     public void setMomentId(String momentId) {
         this.momentId = momentId;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -20,7 +25,7 @@ public class MomentVersion{
         return momentId;
     }
 
-    public Date getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 }

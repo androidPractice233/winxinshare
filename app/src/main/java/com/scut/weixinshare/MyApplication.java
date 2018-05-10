@@ -3,6 +3,7 @@ package com.scut.weixinshare;
 import android.app.Application;
 import android.content.Context;
 
+import com.scut.weixinshare.db.MyDBHelper;
 import com.scut.weixinshare.model.User;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
@@ -50,6 +51,7 @@ public class MyApplication extends MultiDexApplication {
     private static Context context;
     public static User currentUser;
     private  String token;
+    private String userId;
 
     public  String getToken() {
         return token;
@@ -57,6 +59,14 @@ public class MyApplication extends MultiDexApplication {
 
     public  void setToken(String token) {
         this.token = token;
+    }
+
+    public void setUserId(String userId){
+        this.userId = userId;
+    }
+
+    public String getUserId(){
+        return userId;
     }
 
     @Override
@@ -69,6 +79,9 @@ public class MyApplication extends MultiDexApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        MyDBHelper.DB_NAME = "weixinshare";
+        MyDBHelper myDBHelper = new MyDBHelper(context, 1);
+        myDBHelper.close();
     }
 
     public static MyApplication getInstance(){
