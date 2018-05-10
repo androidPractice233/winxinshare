@@ -44,6 +44,10 @@ public class UserPresenter implements UserContract.Presenter {
                 @Override
                 public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                     ResultBean resultBean = response.body();
+                    if(resultBean==null){
+                        Log.d(TAG, "getUserInfo: invalid userId");
+                        return;
+                    }
                     user = (User) resultBean.getData();
                 }
 

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.db.MyDBHelper;
+import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
@@ -87,12 +90,41 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = preferences.edit();
                             Map resultmap = (Map) resultBean.getData();
                             editor.putString("token", (String) resultmap.get("token"));
-                            //初始化数据库
-                            //跳转至个人主页
+
                             editor.commit();
                             MyApplication.user=user;
+                            user.setUserId((String) ((Map) resultmap.get("user")).get("userId"));
+                            user.setNickName((String) ((Map) resultmap.get("user")).get("nickName"));
+                            //user.setSex(((Map) resultmap.get("user")).get("sex").toString());
+                            user.setSex(1);
+                            user.setLocation((String) ((Map) resultmap.get("user")).get("location"));
+                            user.setBirthday(((Map) resultmap.get("user")).get("birthday")+"");
+                            user.setPortrait((String) ((Map) resultmap.get("user")).get("portrait"));
+                            double d = (Double) ((Map) resultmap.get("user")).get("birthday");
+                            String ss = d+"";
+                            double dd = Double.parseDouble(ss);
+                            Long l = Math.round(dd);
+                            Log.d("testTimeFomat",l+"");
+
                             MyApplication.getInstance().setToken( (String) resultmap.get("token"));
                             MyApplication.getInstance().setUserId((String) ((Map) resultmap.get("user")).get("userId"));
+
+                            //初始化数据库
+                            //new Test(LoginActivity.this);
+                            MyDBHelper.DB_NAME = MyApplication.user.getUserId();
+                            if(MyDBHelper.DB_NAME==null){
+                                Toast.makeText(LoginActivity.this,"还没登录吧",Toast.LENGTH_LONG).show();
+                            }
+                            MyDBHelper myDBHelper = new MyDBHelper(LoginActivity.this,1);
+                            myDBHelper.close();
+
+                            //更新用户资料
+                            DBOperator dbOperator = new DBOperator();
+                            dbOperator.updateUser(user);
+                            dbOperator.close();
+
+
+                            //跳转至个人主页
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             ////

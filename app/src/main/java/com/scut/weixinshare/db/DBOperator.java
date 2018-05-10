@@ -354,7 +354,7 @@ public class DBOperator {
     public List<Comment> selectCommentByUser(String userId){
         List<Comment> comments = new ArrayList<>();
         Cursor cursor = database.rawQuery("select * from comment where receiverId = ?  or receiverId = ? order by createTime desc" ,
-                new String[]{userId,null});
+                new String[]{userId,""});
         //Cursor cursor = database.rawQuery("select * from comment",null);
         int t = cursor.getCount();
         Log.d("cursorSize",t+"");

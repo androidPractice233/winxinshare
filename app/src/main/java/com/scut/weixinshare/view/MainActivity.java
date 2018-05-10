@@ -53,6 +53,7 @@ import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
+import com.scut.weixinshare.view.fragment.CommentFragment;
 import com.tencent.wcdb.database.SQLiteDebug;
 
 import org.json.JSONArray;
@@ -61,10 +62,14 @@ import com.scut.weixinshare.view.fragment.HomeFragment;
 import com.scut.weixinshare.view.fragment.MainFragment;
 import com.scut.weixinshare.view.fragment.UserFragment;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,18 +82,20 @@ public class MainActivity extends AppCompatActivity {
 
     public static String TOKEN;
     public static String USERID;
+    public int newCommentNum;
     public Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATE_COMMENT_NUM:
+                    newCommentNum = msg.arg1;
                     //textView.setText(msg.arg1+"");
                     break;
                 default:
                     break;
             }
         }
-    };;
+    };
     public static final int UPDATE_COMMENT_NUM = 1;
 
     @Override
@@ -96,6 +103,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
         initUI();
+
+
+
+
+
+        new Test(this);
+
         this.setUpdateCommentNum();
 
 
@@ -232,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         UserFragment userFragment = UserFragment.newInstance("n");
+        CommentFragment commentFragment = new CommentFragment();
 
         if (MyApplication.user!=null)
             new UserPresenter(userFragment, MyApplication.user);
@@ -240,10 +255,12 @@ public class MainActivity extends AppCompatActivity {
             new UserPresenter(userFragment, user);
         }
 
+
         MainFragment fragment2 = new MainFragment();
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
+        frag_list.add(commentFragment);
         frag_list.add(userFragment);
 
 
@@ -280,6 +297,15 @@ public class MainActivity extends AppCompatActivity {
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.buybuybuy),
+                        Color.parseColor(colors[1]))
+//                        .selectedIcon(getResources().getDrawable(R.drawable.ic_eighth))
+                        .title("我的")
+//                        .badgeTitle("with")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
                         getResources().getDrawable(R.drawable.icons8_user_50),
                         Color.parseColor(colors[1]))
 //                        .selectedIcon(getResources().getDrawable(R.drawable.ic_eighth))
@@ -287,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
 //                        .badgeTitle("with")
                         .build()
         );
+
 
         navigationTabBar.setModels(models);
         navigationTabBar.setViewPager(viewPager, 0);
@@ -323,21 +350,21 @@ public class MainActivity extends AppCompatActivity {
                 //初始化时间
 
                 //测试阶段先不设
-                //getLastUpdateTime();
+                getLastUpdateTime();
 
 
-                while(MainActivity.TOKEN==null){
+                while(MyApplication.getInstance().getToken()==null){
                     Log.d("getUpdateComment","token is null");
                     Toast.makeText(MainActivity.this,"尚未登录",Toast.LENGTH_LONG).show();
                     //
                 }
 
-                SharedPreferences sharedPreferences = getSharedPreferences("weixinshare", Context.MODE_PRIVATE); //私有数据
-                String s = sharedPreferences.getString("token",null);
-                if(s==null)
-                    Log.d("getUpdateComment","sharePreference token is null");
-                else
-                    Log.d("getUpdateComment",s);
+//                SharedPreferences sharedPreferences = getSharedPreferences("weixinshare", Context.MODE_PRIVATE); //私有数据
+//                String s = sharedPreferences.getString("token",null);
+//                if(s==null)
+//                    Log.d("getUpdateComment","sharePreference token is null");
+//                else
+//                    Log.d("getUpdateComment",s);
 
 
                 int a = 0;
@@ -345,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
                     getUpdateComments();
                     updateNum(a++);
                     try {
-                        Thread.sleep(30000);
+                        Thread.sleep(5000);
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
@@ -415,6 +442,9 @@ public class MainActivity extends AppCompatActivity {
                                         (new Comment(commentId,momentId,sendId,recvId,createTime,content));
                             }
                             dbOperator.close();
+                            if(n!=0) {
+                                Toast.makeText(MainActivity.this, "Hay!你有" + n + "条新评论", Toast.LENGTH_SHORT).show();
+                            }
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -435,4 +465,3 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 }
-

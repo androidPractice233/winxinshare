@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
@@ -22,7 +23,10 @@ public class Test {
     public Test(Context context){
         this.context = context;
         //设置数据库名字
-        MyDBHelper.DB_NAME = "zhanepng";
+        MyDBHelper.DB_NAME = MyApplication.user.getUserId();
+        if(MyDBHelper.DB_NAME==null){
+            Toast.makeText(context,"还没登录吧",Toast.LENGTH_LONG).show();
+        }
         //初始化数据库
         MyDBHelper myDBHelper = new MyDBHelper(context,1);
         myDBHelper.close();

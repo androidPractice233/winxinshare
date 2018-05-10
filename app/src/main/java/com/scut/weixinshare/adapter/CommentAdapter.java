@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
@@ -17,6 +18,8 @@ import com.scut.weixinshare.view.MainActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
 import com.tencent.wcdb.database.SQLiteDebug;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 
@@ -31,8 +34,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public void updateComments(){
-        comments = dbOperator.selectCommentByUser("0001");
+        comments = dbOperator.selectCommentByUser(MyApplication.user.getUserId());
         this.notifyDataSetChanged();
+        if(comments.size()==0){
+
+        }
     }
 
     @Override
@@ -60,11 +66,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         Comment comment = comments.get(position);
         User user = dbOperator.selectUser(comment.getSenderId());
-        String string = user.getNickName()+" ：";
-        holder.timeText.setText(comment.getCreateTime());
+        String string;
+        if(user == null){
+            //本地数据库没有该用户
+            string = comment.getSenderId()+"提到了你：";
+        }
+        else {
+            string = user.getNickName()+"提到了你：";
+        }
+        double dTime = Double.parseDouble(comment.getCreateTime());
+        Timestamp timestamp = new Timestamp(Math.round(dTime));
+        //Date date = new Date(0);
+        holder.timeText.setText(timestamp.toString());
         holder.timeText.setGravity(Gravity.CENTER);
         holder.senderText.setText(string);
-        holder.commentText.setText(comments.get(position).getContent()+content+content);
+        holder.commentText.setText(comments.get(position).getContent());
     }
 
     @Override

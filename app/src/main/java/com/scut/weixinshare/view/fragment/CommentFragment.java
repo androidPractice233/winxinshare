@@ -64,9 +64,9 @@ public class CommentFragment extends Fragment {
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 outRect.top = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        8);
                 outRect.bottom = DensityUtils.dipToPx(MyApplication.getContext(),
-                        IConst.MARGIN_CARD);
+                        4);
             }
         });
 
