@@ -80,7 +80,7 @@ public class MyApplication extends MultiDexApplication {
             e.printStackTrace();
         }
         MyDBHelper.DB_NAME = "weixinshare";
-        MyDBHelper myDBHelper = new MyDBHelper(context, 9);
+        MyDBHelper myDBHelper = new MyDBHelper(context, 10);
         myDBHelper.close();
     }
 
