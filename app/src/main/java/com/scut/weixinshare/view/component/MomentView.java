@@ -44,9 +44,9 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         picContent = findViewById(R.id.content_pics);
         picContent.setListener(new NineGridPatternView.NineGridPatternViewListener() {
             @Override
-            public void onItemClick(List<Uri> uriList) {
+            public void onItemClick(List<Uri> uriList, int position) {
                 if(listener != null){
-                    listener.onImagesClick(uriList);
+                    listener.onImagesClick(uriList, position);
                 }
             }
         });
@@ -129,7 +129,7 @@ public class MomentView extends ConstraintLayout implements View.OnClickListener
         void onAddCommentButtonClick(Moment moment);
 
         //动态图片点击事件监听
-        void onImagesClick(List<Uri> images);
+        void onImagesClick(List<Uri> images, int position);
 
     }
 }

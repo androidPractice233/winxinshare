@@ -31,11 +31,14 @@ public class UserPresenter implements UserContract.Presenter {
 
     public UserPresenter(UserContract.View view, User user){
         this.view = view;
-        this.user =user;
+        this.user = user;
         view.setPresenter(this);
     }
     @Override
     public void start() {
+        if(user == null){
+            user = MyApplication.user;
+        }
         view.showUserInfo(user);
     }
 

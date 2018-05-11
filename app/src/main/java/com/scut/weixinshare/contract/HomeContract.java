@@ -100,6 +100,6 @@ public interface HomeContract {
         void result(int requestCode, int resultCode, Intent data);
 
         //打开大图
-        void openBigImages(List<Uri> uriList);
+        void openBigImages(List<Uri> uriList, int position);
     }
 }

@@ -41,7 +41,6 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
     private EditText text;                  //文字信息编辑
     private ProgressDialog dialog;          //加载中对话框
     private NineGridPatternView images;
-    private ImageAdapter adapter;
     private ReleaseMomentContract.Presenter presenter;
 
     @Override
