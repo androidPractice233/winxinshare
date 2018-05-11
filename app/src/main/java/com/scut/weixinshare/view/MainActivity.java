@@ -436,7 +436,8 @@ public class MainActivity extends AppCompatActivity {
                                 String sendId = jsonObject.getString("sendId");
                                 String recvId = jsonObject.getString("recvId");
                                 String content = jsonObject.getString("content");
-                                String createTime = jsonObject.getString("createTime");
+                                String createTime = String.valueOf(Math.round(jsonObject.getDouble("createTime")));
+                                Log.d("tag", createTime);
                                 dbOperator.insertComment
                                         (new Comment(commentId,momentId,sendId,recvId,createTime,content));
                             }
@@ -457,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
                 String time = dbOperator.getLastTime();
                 dbOperator.close();
                 if(time!=null){
-                    lastUpdateTime = String.valueOf(Timestamp.valueOf(time).getTime());
+                    lastUpdateTime = time;
                 }
             }
 

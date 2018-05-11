@@ -179,7 +179,7 @@ public class DBOperator {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         database.execSQL("insert into moment(momentId,userId,createTime,updateTime, insertTime,location,content,pictureUrl) values(?,?,?,?,?,?,?,?)",
-                new String[]{moment.getMomentId(),moment.getUserId(),moment.getCreateTime(),moment.getUpdateTime(), timestamp.toString(),moment.getLocation(),moment.getContent(),moment.getPictureUrl()});
+                new String[]{moment.getMomentId(),moment.getUserId(),moment.getCreateTime(),moment.getUpdateTime(), String.valueOf(timestamp.getTime()),moment.getLocation(),moment.getContent(),moment.getPictureUrl()});
         Log.d("insertMoment","insert moment success:"+moment.getContent());
         return true;
     }

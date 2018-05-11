@@ -92,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("token", (String) resultmap.get("token"));
 
                             editor.commit();
-                            MyApplication.user=user;
                             user.setUserId((String) ((Map) resultmap.get("user")).get("userId"));
                             user.setNickName((String) ((Map) resultmap.get("user")).get("nickName"));
                             //user.setSex(((Map) resultmap.get("user")).get("sex").toString());
@@ -100,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                             user.setLocation((String) ((Map) resultmap.get("user")).get("location"));
                             user.setBirthday(((Map) resultmap.get("user")).get("birthday")+"");
                             user.setPortrait((String) ((Map) resultmap.get("user")).get("portrait"));
+                            MyApplication.user=user;
                             double d = (Double) ((Map) resultmap.get("user")).get("birthday");
                             String ss = d+"";
                             double dd = Double.parseDouble(ss);

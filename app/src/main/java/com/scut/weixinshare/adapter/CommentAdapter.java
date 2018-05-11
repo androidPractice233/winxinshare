@@ -74,9 +74,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         else {
             string = user.getNickName()+"提到了你：";
         }
-        long time = Timestamp.valueOf(comment.getCreateTime()).getTime();
-        //double dTime = Double.parseDouble(comment.getCreateTime());
-        Timestamp timestamp = new Timestamp(Math.round(time));
+        Timestamp timestamp = new Timestamp(Long.parseLong(comment.getCreateTime()));
         //Date date = new Date(0);
         holder.timeText.setText(timestamp.toString());
         holder.timeText.setGravity(Gravity.CENTER);

@@ -137,9 +137,6 @@ private Button button;
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
 
-        //初始化显示个人界面
-        presenter.start();
-
         if(presenter.getUser().getUserId().equals(user.getUserId())) {
             ll_nickname.setOnClickListener(this);
             iv_portrait.setOnClickListener(this);
@@ -157,6 +154,8 @@ private Button button;
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
+        //初始化显示个人界面
+        presenter.start();
     }
 
     @Override

@@ -16,7 +16,7 @@ public class CommentLocal {
         this.commentId = comment.getCommentId();
         this.senderId = comment.getSenderId();
         this.receiverId = comment.getReceiverId();
-        this.createTime = Timestamp.valueOf(comment.getCreateTime());
+        this.createTime = new Timestamp(Long.parseLong(comment.getCreateTime()));
         this.content = comment.getContent();
     }
 

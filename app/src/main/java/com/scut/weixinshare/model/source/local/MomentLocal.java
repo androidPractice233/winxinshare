@@ -22,11 +22,11 @@ public class MomentLocal {
     public MomentLocal(Moment moment){
         this.momentId = moment.getMomentId();
         this.userId = moment.getUserId();
-        this.createTime = Timestamp.valueOf(moment.getCreateTime());
+        this.createTime = new Timestamp(Long.parseLong(moment.getCreateTime()));
         this.location = moment.getLocation();
         this.text = moment.getContent();
         this.picContent = MomentUtils.imageUriStringToList(moment.getPictureUrl());
-        this.updateTime = Timestamp.valueOf(moment.getUpdateTime());
+        this.updateTime = new Timestamp(Long.parseLong(moment.getUpdateTime()));
     }
 
     public void setCommentList(List<CommentLocal> commentList){
