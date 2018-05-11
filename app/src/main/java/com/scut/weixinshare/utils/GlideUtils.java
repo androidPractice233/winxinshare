@@ -14,14 +14,16 @@ public class GlideUtils {
 
     //普通地加载图片
     public static void loadImageView(Context context, Uri uri, ImageView imageView){
-        RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_image_gray_100dp);
+        RequestOptions options = new RequestOptions().placeholder(R.drawable.ic_image_gray_100dp)
+                .error(R.drawable.ic_broken_image_gray_100dp);
         Glide.with(context).load(uri).apply(options).into(imageView);
     }
 
     //加载圆形裁剪过的图片
     public static void loadImageViewInCircleCrop(Context context, Uri uri, ImageView imageView){
         RequestOptions options = new RequestOptions().circleCrop()
-                .placeholder(R.drawable.ic_image_gray_100dp);
+                .placeholder(R.drawable.ic_image_gray_100dp)
+                .error(R.drawable.ic_broken_image_gray_100dp);
         Glide.with(context).asBitmap().load(uri).apply(options).into(imageView);
     }
 

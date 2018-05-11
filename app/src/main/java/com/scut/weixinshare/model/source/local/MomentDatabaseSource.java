@@ -38,8 +38,8 @@ public class MomentDatabaseSource implements MomentLocalSource {
                     //获取动态内容
                     com.scut.weixinshare.db.Moment momentData = dbOperator
                             .selectMoment(momentVersion.getMomentId());
-                    if(momentData != null && Timestamp.valueOf(momentData.getUpdateTime())
-                            .equals(momentVersion.getUpdateTime())){
+                    if(momentData != null && momentData.getUpdateTime()
+                            .equals(String.valueOf(momentVersion.getUpdateTime().getTime()))){
                         //动态在本地数据库存在且更新时间与最新版本的更新时间一致，继续获取动态评论
                         List<Comment> commentData = dbOperator
                                 .selectCommentUnderMoment(momentVersion.getMomentId());
@@ -99,7 +99,7 @@ public class MomentDatabaseSource implements MomentLocalSource {
                                     //如果新版本动态的评论id在数据库评论中不存在，则插入评论
                                     dbOperator.insertComment(new Comment(comment.getCommentId(),
                                             moment.getMomentId(), comment.getSendId(), comment.getRecvId(),
-                                            comment.getCreateTime().toString(), comment.getContent()));
+                                            String.valueOf(comment.getCreateTime().getTime()), comment.getContent()));
                                 }
                             }
                             for (String commentId : commentIdSetLocal) {
@@ -112,13 +112,13 @@ public class MomentDatabaseSource implements MomentLocalSource {
                         for (com.scut.weixinshare.model.Comment comment : moment.getCommentList()) {
                             dbOperator.insertComment(new Comment(comment.getCommentId(),
                                     moment.getMomentId(), comment.getSendId(), comment.getRecvId(),
-                                    comment.getCreateTime().toString(), comment.getContent()));
+                                    String.valueOf(comment.getCreateTime().getTime()), comment.getContent()));
                         }
                     }
                     //插入新版本动态
                     dbOperator.insertMoment(new com.scut.weixinshare.db.Moment(moment.getMomentId(),
-                            moment.getUserId(), moment.getCreateTime().toString(),
-                            moment.getUpdateTime().toString(), moment.getLocation(),
+                            moment.getUserId(), String.valueOf(moment.getCreateTime().getTime()),
+                            String.valueOf(moment.getUpdateTime().getTime()), moment.getLocation(),
                             MomentUtils.imageUriListToString(moment.getPicContent()),
                             moment.getTextContent()));
                 }

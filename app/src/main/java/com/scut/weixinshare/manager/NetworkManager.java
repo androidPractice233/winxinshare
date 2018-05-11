@@ -276,6 +276,13 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
+    public void getUser(Callback<ResultBean>callback,String userId){
+        TestService service=retrofit.create(TestService.class);
+        Map<String,Object> params=new HashMap<>();
+        params.put("userId", userId);
+        Call<ResultBean> call=service.searchUser(params);
+        call.enqueue(callback);
+    }
 
     public void pullComment(Callback<ResultBean> callback,String time){
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);

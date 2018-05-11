@@ -39,7 +39,7 @@ public interface TestService {
     Call<ResultBean> createComment(@Body Map params);
 
     @POST("/user/getnickpot")
-    Call<ResultBean> requestNicknameAndPortrait(@Body String userIds);
+    Call<ResultBean> requestNicknameAndPortrait(@Body Map params);
 
     @POST("/moment/personal")
     Call<ResultBean> requestPersonMoment(@Body Map params);
@@ -50,5 +50,7 @@ public interface TestService {
     @POST("/user/search")
     Call<ResultBean> searchUser(@Body Map params);
 
+    @POST("user/login")
+    Call<ResultBean> login(@Body Map praram);
 
 }
