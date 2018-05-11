@@ -5,6 +5,7 @@ import com.scut.weixinshare.BaseView;
 import com.scut.weixinshare.model.User;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface UserContract {
@@ -13,7 +14,7 @@ public interface UserContract {
         void showUserInfo(User user);
 
         //显示头像
-        void showUserPhoto();
+        void showUserPhoto(User user) throws FileNotFoundException;
 
     }
     interface Presenter extends BasePresenter {
@@ -24,7 +25,7 @@ public interface UserContract {
         void updateUserInfo();
 
         //获取头像
-        void getUserPhoto();
+        void getUserPhoto(User user);
 
         //上传新头像
         void updateUserPhoto(List<File> fileList);

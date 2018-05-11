@@ -23,14 +23,18 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
+import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.presenter.UserPresenter;
+import com.scut.weixinshare.utils.GlideUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
@@ -40,6 +44,7 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static com.scut.weixinshare.MyApplication.currentUser;
+import static com.scut.weixinshare.MyApplication.getContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,8 +79,6 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private TextView text_sex;
     private TextView text_birthday;
     private TextView text_Location;
-    private RadioButton btn_male;
-    private RadioButton btn_female;
     private EditText editText;
     private ConstraintLayout layout_info;
     private ConstraintLayout layout_input;
@@ -131,8 +134,6 @@ private Button button;
         view.setOnClickListener(this);
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
-        btn_female=view.findViewById(R.id.btn_female);
-        btn_male=view.findViewById(R.id.btn_male);
 //        personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
         presenter.start();
@@ -162,17 +163,23 @@ private Button button;
         text_userid.setText(currentUser.getUserId());
         text_username.setText(currentUser.getUserName());
         if(currentUser.getSex()==1)
-            btn_female.setChecked(true);
+            text_sex.setText("女");
         if(currentUser.getSex()==0)
-            btn_male.setChecked(true);
+           text_sex.setText("男");
         text_Location.setText(currentUser.getLocation());
         text_nickname.setText(currentUser.getNickName());
         text_birthday.setText(currentUser.getBirthday());
+        Uri uri= MomentUtils.StringToUri(currentUser.getPortrait());
+        GlideUtils.loadImageViewInCircleCrop(getContext(), uri, iv_portrait);
     }
 
     @Override
-    public void showUserPhoto() {
+    public void showUserPhoto(User user) throws FileNotFoundException {
+        ContentResolver cr = getContext().getContentResolver();
+        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(Uri.parse(user.getPortrait())));
 
+        //将Bitmap设定到ImageView
+        iv_portrait.setImageBitmap(bitmap);
 
     }
 
@@ -277,6 +284,7 @@ private Button button;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: ");
         List<File> fileList = new ArrayList<>();
         if (requestCode == PictureConfig.CHOOSE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
@@ -284,20 +292,12 @@ private Button button;
                 for (LocalMedia p : selectList) {
                     fileList.add(new File(p.getPath()));
                 }
-                try {
                     Uri uri = data.getData();
-                    String img_url = uri.getPath();
-                    currentUser.setPortrait(img_url);
-                    ContentResolver cr = getContext().getContentResolver();
-                    Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                    Log.d(TAG, "onActivityResult: "+uri.toString());
+                    if(fileList.size()>0) {
+                        Glide.with(this).load(fileList.get(0)).into(iv_portrait);
+                    }
 
-                    //将Bitmap设定到ImageView
-                    iv_portrait.setImageBitmap(bitmap);
-                    presenter.updateUserPhoto(fileList);
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
             }
 
         }

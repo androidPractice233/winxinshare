@@ -259,6 +259,7 @@ public class NetworkManager {
         SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
                 .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
         params.put("token",preferences.getString("token",""));
+        params.put("userId",user.getUserId());
         params.put("userName", user.getUserName());
         params.put("nickName", user.getNickName());
         params.put("location", user.getLocation());

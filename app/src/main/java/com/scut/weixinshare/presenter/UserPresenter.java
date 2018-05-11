@@ -3,27 +3,35 @@ package com.scut.weixinshare.presenter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
+import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.model.source.MomentUserData;
 import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.utils.GlideUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
+import static com.scut.weixinshare.MyApplication.getContext;
 
 public class UserPresenter implements UserContract.Presenter {
 
@@ -93,9 +101,10 @@ public class UserPresenter implements UserContract.Presenter {
     }
 
     @Override
-    public void getUserPhoto() {
+    public void getUserPhoto(User user) {
 
     }
+
 
     @Override
     public void updateUserPhoto(List<File> fileList) {
