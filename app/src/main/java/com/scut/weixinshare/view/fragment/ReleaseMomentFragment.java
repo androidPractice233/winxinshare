@@ -26,6 +26,7 @@ import com.scut.weixinshare.contract.ReleaseMomentContract;
 import com.scut.weixinshare.model.Location;
 import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.PickLocationActivity;
+import com.scut.weixinshare.view.component.NineGridPatternView;
 
 import java.io.File;
 import java.io.Serializable;
@@ -39,7 +40,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
     private TextView locationStatus;        //显示位置信息
     private EditText text;                  //文字信息编辑
     private ProgressDialog dialog;          //加载中对话框
-    private ImageAdapter adapter;
+    private NineGridPatternView images;
     private ReleaseMomentContract.Presenter presenter;
 
     @Override
@@ -55,17 +56,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
         publishButton.setOnClickListener(this);
         locationStatus = view.findViewById(R.id.location);
         text = view.findViewById(R.id.text_resource);
-        //RecyclerView用于显示已选择图片
-        final RecyclerView images = view.findViewById(R.id.pics_resource);
-        //禁止RecyclerView滑动，防止与外层ScrollView发生滑动冲突
-        images.setLayoutManager(new GridLayoutManager(getContext(), 3){
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        });
-        adapter = new ImageAdapter(new ArrayList<Uri>());
-        images.setAdapter(adapter);
+        images = view.findViewById(R.id.pics_resource);
         return view;
     }
 
@@ -106,8 +97,7 @@ public class ReleaseMomentFragment extends Fragment implements ReleaseMomentCont
 
     @Override
     public void showAddedPics(List<Uri> pics) {
-        adapter.setAdapterData(pics);
-        adapter.notifyDataSetChanged();
+        images.setView(pics);
     }
 
     @Override

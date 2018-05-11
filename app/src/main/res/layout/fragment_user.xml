@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.UserFragment">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/content_input"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,46 +17,70 @@
         >
 
         <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/edit_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_input"/>
+            android:layout_margin="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/radio_sex"
+            app:layout_constraintStart_toEndOf="@+id/radio_sex"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <RadioGroup
             android:id="@+id/radio_sex"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <RadioButton
                 android:id="@+id/btn_male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="男"/>
+                android:text="男" />
+
             <RadioButton
                 android:id="@+id/btn_female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="女"/>
+                android:text="女" />
 
         </RadioGroup>
+
         <Button
             android:id="@+id/button"
-            android:layout_marginTop="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="保存"
             android:layout_below="@id/edit_input"
-            android:textSize="14sp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="64dp"
             android:background="@color/colorPrimaryDark"
-            android:layout_gravity="end"/>
+            android:text="保存"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
         android:id="@+id/frame_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/ll_userid"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
@@ -78,17 +102,21 @@
 
             <TextView
                 android:id="@+id/textID"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:ems="10"
-                android:textSize="18sp"
                 android:text="id"
-                android:textAlignment="viewEnd" />
+                android:textAlignment="viewEnd"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_portrait"
+                app:layout_constraintStart_toEndOf="@+id/textView4" />
 
             <ImageView
                 android:id="@+id/iv_portrait"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/textID" />
@@ -124,10 +152,12 @@
                 android:layout_width="0dp"
                 android:layout_height="49dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="@dimen/default_gap"
+
                 android:ems="10"
                 android:text=""
-                android:textSize="18sp"
                 android:textAlignment="viewEnd"
+                android:textSize="18sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
                 app:layout_constraintEnd_toEndOf="parent" />
         </LinearLayout>
@@ -160,6 +190,7 @@
                 android:layout_width="0dp"
                 android:layout_height="49dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="@dimen/default_gap"
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text=""
@@ -171,7 +202,7 @@
 
         <LinearLayout
             android:id="@+id/ll_birthday"
-            android:layout_width="352dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
@@ -199,6 +230,7 @@
                 android:ems="10"
                 android:inputType="text|date"
                 android:text=""
+                android:layout_marginEnd="@dimen/default_gap"
                 android:textSize="18sp"
                 android:textAlignment="viewEnd"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView14"
@@ -207,7 +239,7 @@
 
         <LinearLayout
             android:id="@+id/ll_sex"
-            android:layout_width="352dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
@@ -231,18 +263,19 @@
                 android:id="@+id/textSex"
                 android:layout_width="0dp"
                 android:layout_height="49dp"
+                android:layout_marginEnd="@dimen/default_gap"
                 android:layout_weight="1"
                 android:ems="10"
                 android:text=""
-                android:textSize="18sp"
                 android:textAlignment="viewEnd"
+                android:textSize="18sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView11"
                 app:layout_constraintEnd_toEndOf="parent" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_location"
-            android:layout_width="360dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
@@ -266,6 +299,7 @@
             <TextView
                 android:id="@+id/textLocation"
                 android:layout_width="0dp"
+                android:layout_marginEnd="@dimen/default_gap"
                 android:layout_height="49dp"
                 android:layout_weight="1"
                 android:ems="10"

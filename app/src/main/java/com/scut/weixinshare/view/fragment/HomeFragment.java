@@ -140,6 +140,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
             });
             navigationTabBar = activity.findViewById(R.id.ntb_horizontal);
         }
+        presenter.requestNewMoments();
         return view;
     }
 
@@ -267,7 +268,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     }
 
     @Override
-    public void onImagesClick(List<Uri> images, int position) {
-        presenter.openBigImages(images);
+    public void onImagesClick(List<Uri> images, int position, int imagePosition) {
+        presenter.openBigImages(images, imagePosition);
     }
 }

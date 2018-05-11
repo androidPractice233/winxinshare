@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -57,6 +59,7 @@ import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
 import com.scut.weixinshare.utils.ToastUtils;
+import com.scut.weixinshare.view.fragment.CommentFragment;
 import com.scut.weixinshare.view.fragment.PersonHomeFragment;
 import com.tencent.wcdb.database.SQLiteDebug;
 
@@ -74,6 +77,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.scut.weixinshare.R.id.swipe_refresh;
 import static com.scut.weixinshare.R.id.view;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,30 +85,35 @@ public class MainActivity extends AppCompatActivity {
     Button btnPopPhoto;
     Button button;
     Button locationBtn;
+    Toolbar toolbar;
     FragmentPagerAdapter adapter;
     private List<Fragment> frag_list;// 声明一个list集合存放Fragment（数据源）
     String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
 
     public static String TOKEN;
     public static String USERID;
+    public int newCommentNum;
     public Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATE_COMMENT_NUM:
+                    newCommentNum = msg.arg1;
                     //textView.setText(msg.arg1+"");
                     break;
                 default:
                     break;
             }
         }
-    };;
+    };
     public static final int UPDATE_COMMENT_NUM = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
+        toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         initUI();
         this.setUpdateCommentNum();
 
@@ -176,6 +185,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+        case R.id.setting:
+            Intent intent=new Intent(this,UserActivity.class);
+            intent.putExtra("userId",MyApplication.currentUser.getUserId());
+            startActivity(intent);
+            break;
+        }
+            return true;
+    }
+
     //申请获取权限后回调
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -241,21 +268,29 @@ public class MainActivity extends AppCompatActivity {
                 LocationRepository.getInstance());
 
 
-//        UserFragment userFragment = UserFragment.newInstance("n");
+        UserFragment userFragment = UserFragment.newInstance("n");
+        CommentFragment commentFragment = new CommentFragment();
 
-//        if (MyApplication.currentUser!=null)
-//            new UserPresenter(userFragment, MyApplication.currentUser);
-//        else {
-//            User user = new User("", "", "", 0, "", "", "");
-//            new UserPresenter(userFragment, user);
-//        }
-        PersonHomeFragment personHomeFragment= new PersonHomeFragment();
-        new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
+        if (MyApplication.currentUser!=null)
+            new UserPresenter(userFragment, MyApplication.currentUser);
+        else {
+            User user = new User("", "", "", 0, "", "", "");
+            new UserPresenter(userFragment, user);
+        }
+        PersonHomeFragment personHomeFragment=new PersonHomeFragment();
+        new PersonHomePresenter(personHomeFragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
+                LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
         MainFragment fragment2 = new MainFragment();
+
+//        PersonHomeFragment personHomeFragment= new PersonHomeFragment();
+//        new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
+
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
+        frag_list.add(commentFragment);
         frag_list.add(personHomeFragment);
+
 
         // 设置适配器
          adapter = new FragmentPagerAdapter(
@@ -286,6 +321,15 @@ public class MainActivity extends AppCompatActivity {
 //                        .selectedIcon(getResources().getDrawable(R.drawable.ic_sixth))
                         .title("周围动态")
 //                        .badgeTitle("NTB")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_third),
+                        Color.parseColor(colors[1]))
+//                        .selectedIcon(getResources().getDrawable(R.drawable.ic_eighth))
+                        .title("评论")
+//                        .badgeTitle("with")
                         .build()
         );
         models.add(
@@ -325,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpdateCommentNum(){
         new Thread(new Runnable() {
             //初始时间最小
-            private String lastUpdateTime = "1";
+            private String lastUpdateTime =null;
 
             @Override
             public void run() {
@@ -333,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
                 //初始化时间
 
                 //测试阶段先不设
-                //getLastUpdateTime();
+                getLastUpdateTime();
 
 
                 while(MyApplication.getInstance().getToken()==null){
@@ -347,12 +391,12 @@ public class MainActivity extends AppCompatActivity {
                     //
                 }
 
-                SharedPreferences sharedPreferences = getSharedPreferences("weixinshare", Context.MODE_PRIVATE); //私有数据
-                String s = sharedPreferences.getString("token",null);
-                if(s==null)
-                    Log.d("getUpdateComment","sharePreference token is null");
-                else
-                    Log.d("getUpdateComment",s);
+//                SharedPreferences sharedPreferences = getSharedPreferences("weixinshare", Context.MODE_PRIVATE); //私有数据
+//                String s = sharedPreferences.getString("token",null);
+//                if(s==null)
+//                    Log.d("getUpdateComment","sharePreference token is null");
+//                else
+//                    Log.d("getUpdateComment",s);
 
 
                 int a = 0;
@@ -399,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                             if(resultBean.getCode()==200){
                                 String dataString = resultBean.getData().toString();
                                 Log.d("getUpdateComment",dataString);
-                                processData(dataString);
+//                                processData(dataString);
                                 getLastUpdateTime();
                             }
 
@@ -417,19 +461,24 @@ public class MainActivity extends AppCompatActivity {
                         try{
                             JSONArray jsonArray = new JSONArray(jsonData);
                             int n = jsonArray.length();
-                            DBOperator dbOperator = new DBOperator();
-                            for(int i=0;i<n;i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String commentId = jsonObject.getString("commentId");
-                                String momentId = jsonObject.getString("momentId");
-                                String sendId = jsonObject.getString("sendId");
-                                String recvId = jsonObject.getString("recvId");
-                                String content = jsonObject.getString("content");
-                                String createTime = jsonObject.getString("createTime");
-                                dbOperator.insertComment
-                                        (new Comment(commentId,momentId,sendId,recvId,createTime,content));
+//                            DBOperator dbOperator = new DBOperator();
+//                            for(int i=0;i<n;i++){
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                String commentId = jsonObject.getString("commentId");
+//                                String momentId = jsonObject.getString("momentId");
+//                                String sendId = jsonObject.getString("sendId");
+//                                String recvId = jsonObject.getString("recvId");
+//                                String content = jsonObject.getString("content");
+//
+//                                long createTime = jsonObject.getLong("createTime");
+//
+//                                dbOperator.insertComment
+//                                        (new Comment(commentId,momentId,sendId,recvId,createTimeStr,content));
+//                            }
+//                            dbOperator.close();
+                            if(n!=0) {
+                                Toast.makeText(MainActivity.this, "Hay!你有" + n + "条新评论", Toast.LENGTH_SHORT).show();
                             }
-                            dbOperator.close();
                         }catch (Exception e){
                             e.printStackTrace();
                         }

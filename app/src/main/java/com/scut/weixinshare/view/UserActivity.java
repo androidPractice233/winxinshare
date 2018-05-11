@@ -23,15 +23,17 @@ public class UserActivity extends AppCompatActivity {
     User currentUser;
     UserFragment fragment;
     String userid;
+    UserPresenter presenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         Intent intent=getIntent();
         userid=intent.getStringExtra("userId");
+        setTitle("个人页面");
         fragment=UserFragment.newInstance(userid);
+        presenter=new UserPresenter(fragment,userid);
+
         android.support.v4.app.FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.content_user,fragment,"user");
         transaction.commit();

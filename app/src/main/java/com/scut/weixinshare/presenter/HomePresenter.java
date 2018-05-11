@@ -287,8 +287,15 @@ public class HomePresenter implements HomeContract.Presenter {
     }
 
     @Override
-    public void openBigImages(List<Uri> uriList) {
-        view.showBigPicUI(new ArrayList<>(uriList));
+    public void openBigImages(List<Uri> uriList, int position) {
+        ArrayList<Uri> list = new ArrayList<>();
+        for(int i = position; i < uriList.size(); ++i){
+            list.add(uriList.get(i));
+        }
+        for(int i = 0; i < position; ++i){
+            list.add(uriList.get(i));
+        }
+        view.showBigPicUI(list);
     }
 
     @Override
@@ -297,7 +304,6 @@ public class HomePresenter implements HomeContract.Presenter {
             view.hideMomentList();
             view.showRefreshing();
             requestNewMoments();
-            //isFirst = false;
         }
     }
 

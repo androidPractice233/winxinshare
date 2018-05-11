@@ -185,8 +185,8 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
     }
 
     @Override
-    public void onImagesClick(List<Uri> images) {
-        presenter.openBigImage(images);
+    public void onImagesClick(List<Uri> images, int position) {
+        presenter.openBigImage(images, position);
     }
 
     @Override

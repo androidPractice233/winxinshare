@@ -89,6 +89,7 @@ public class PersonHomeFragment extends HomeFragment {
                 presenter.requestNewMoments();
             }
         });
+        presenter.requestNewMoments();
         return view;
     }
 }

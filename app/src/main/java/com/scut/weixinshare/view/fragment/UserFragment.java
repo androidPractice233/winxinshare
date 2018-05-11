@@ -18,17 +18,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
+import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.presenter.UserPresenter;
+import com.scut.weixinshare.utils.GlideUtils;
+import com.scut.weixinshare.utils.MomentUtils;
 import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
@@ -38,6 +44,7 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static com.scut.weixinshare.MyApplication.currentUser;
+import static com.scut.weixinshare.MyApplication.getContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,19 +57,16 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER = "userId";
-    private static final String ARG_PARAM2 = "param2";
+    private static final int MODE_INPUT = 1;
+    private static final int MODE_SHOW=0;
 
     // TODO: Rename and change types of parameters
     private String type;
     private String mParam2;
-    public User getShowUser() {
-        return presenter.getUser();
-    }
+
 
     private UserContract.Presenter presenter;
-    private FragmentManager fragmentManager;
     private Boolean isEdit;
-    private LinearLayout ll_username;
     private LinearLayout ll_location;
     private LinearLayout ll_nickname;
     private LinearLayout ll_sex;
@@ -77,9 +81,9 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private TextView text_Location;
     private EditText editText;
     private ConstraintLayout layout_info;
-    private RelativeLayout layout_input;
+    private ConstraintLayout layout_input;
     private TextView personweb;
-private Button button;
+    private Button button;
     public UserFragment() {
         // Required empty public constructor
     }
@@ -103,7 +107,6 @@ private Button button;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager=getFragmentManager();
         assert getArguments() != null;
         presenter.setShowUser(getArguments().getString("userId"));
 
@@ -114,7 +117,6 @@ private Button button;
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_user, container, false);
-        ll_username=view.findViewById(R.id.ll_username);
         layout_info=view.findViewById(R.id.frame_info);
         layout_input=view.findViewById(R.id.content_input);
         ll_birthday=view.findViewById(R.id.ll_birthday);
@@ -126,7 +128,7 @@ private Button button;
         text_nickname=view.findViewById(R.id.textNickName);
         text_Location=view.findViewById(R.id.textLocation);
         text_sex=view.findViewById(R.id.textSex);
-         group=view.findViewById(R.id.radio_sex);
+        group=view.findViewById(R.id.radio_sex);
         text_username=view.findViewById(R.id.textUserName);
         text_userid=view.findViewById(R.id.textID);
         view.setOnClickListener(this);
@@ -144,7 +146,7 @@ private Button button;
             ll_location.setOnClickListener(this);
             editText.setOnClickListener(this);
             button.setOnClickListener(this);
-//            personweb.setOnClickListener(this);
+            //personweb.setOnClickListener(this);
         }
 
         return view;
@@ -167,11 +169,17 @@ private Button button;
         text_Location.setText(currentUser.getLocation());
         text_nickname.setText(currentUser.getNickName());
         text_birthday.setText(currentUser.getBirthday());
+        Uri uri= MomentUtils.StringToUri(currentUser.getPortrait());
+        GlideUtils.loadImageViewInCircleCrop(getContext(), uri, iv_portrait);
     }
 
     @Override
-    public void showUserPhoto() {
+    public void showUserPhoto(User user) throws FileNotFoundException {
+        ContentResolver cr = getContext().getContentResolver();
+        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(Uri.parse(user.getPortrait())));
 
+        //将Bitmap设定到ImageView
+        iv_portrait.setImageBitmap(bitmap);
 
     }
 
@@ -183,8 +191,10 @@ private Button button;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //presenter.updateUserInfo();保存
+        Log.d(TAG, "onDestroy: ");
+        presenter.updateUserInfo();
     }
+
 
     @Override
     public void onClick(View v) {
@@ -192,19 +202,19 @@ private Button button;
             case R.id.ll_nickname:
                 getActivity().setTitle("昵称");
                 type="昵称";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
                 break;
             case R.id.ll_birthday:
                 getActivity().setTitle("生日");
                 type="生日";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
 
                 break;
             case R.id.ll_sex:
                 getActivity().setTitle("性别");
                 type="性别";
-                changeVisibility(1);
-                editText.setVisibility(View.INVISIBLE);
+                changeVisibility(MODE_INPUT);
+                editText.setVisibility(View.GONE);
                 group.setVisibility(View.VISIBLE);
                 int selected=group.getCheckedRadioButtonId();
                 if (selected==R.id.btn_male)
@@ -216,7 +226,7 @@ private Button button;
             case R.id.ll_location:
                 getActivity().setTitle("城市");
                 type="城市";
-                changeVisibility(1);
+                changeVisibility(MODE_INPUT);
                 break;
             case R.id.iv_portrait:
                 PictureSelector.create(getActivity())
@@ -235,13 +245,18 @@ private Button button;
                 switch(type){
                     case "昵称":
                         currentUser.setNickName(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
                     case "城市":
                         currentUser.setLocation(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
                     case "生日":
                         currentUser.setBirthday(editText.getText().toString());
+                        changeVisibility(MODE_SHOW);
                         break;
+                    case "性别":
+                        changeVisibility(MODE_SHOW);
 
                 }break;
 //            case R.id.personweb:
@@ -252,14 +267,16 @@ private Button button;
         }
     }
 
-    private void changeVisibility(int flag){
-        if (flag==0){
-            layout_info.setVisibility(View.VISIBLE);
-            layout_input.setVisibility(View.INVISIBLE);
+    private void changeVisibility(int mode){
+        if (mode==MODE_INPUT){
+            layout_info.setVisibility(View.GONE);
+            layout_input.setVisibility(View.VISIBLE);
+            group.setVisibility(View.GONE);
         }
         else {
-            layout_info.setVisibility(View.INVISIBLE);
-            layout_input.setVisibility(View.VISIBLE);
+            layout_info.setVisibility(View.VISIBLE);
+            layout_input.setVisibility(View.GONE);
+            showUserInfo(currentUser);
         }
 
     }
@@ -267,6 +284,7 @@ private Button button;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: ");
         List<File> fileList = new ArrayList<>();
         if (requestCode == PictureConfig.CHOOSE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
@@ -274,20 +292,12 @@ private Button button;
                 for (LocalMedia p : selectList) {
                     fileList.add(new File(p.getPath()));
                 }
-                try {
-                    Uri uri = data.getData();
-                    String img_url = uri.getPath();
-                    currentUser.setPortrait(img_url);
-                    ContentResolver cr = getContext().getContentResolver();
-                    Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-
-                    //将Bitmap设定到ImageView
-                    iv_portrait.setImageBitmap(bitmap);
-                    presenter.updateUserPhoto(fileList);
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                Uri uri = data.getData();
+                Log.d(TAG, "onActivityResult: "+uri.toString());
+                if(fileList.size()>0) {
+                    Glide.with(this).load(fileList.get(0)).into(iv_portrait);
                 }
+
             }
 
         }

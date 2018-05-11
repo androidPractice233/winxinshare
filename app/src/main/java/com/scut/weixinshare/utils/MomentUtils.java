@@ -47,7 +47,7 @@ public class MomentUtils {
     }
 
     public static String imageUriListToString(List<Uri> uriList){
-        if(uriList == null && uriList.size() == 0){
+        if(uriList == null || uriList.size() == 0){
             return null;
         } else {
             StringBuilder stringBuilder = new StringBuilder();

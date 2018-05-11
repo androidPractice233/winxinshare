@@ -85,8 +85,8 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
             }
 
             @Override
-            public void onImagesClick(List<Uri> images) {
-                listener.onImagesClick(images, holder.getAdapterPosition());
+            public void onImagesClick(List<Uri> images, int position) {
+                listener.onImagesClick(images, holder.getAdapterPosition(), position);
             }
         });
     }
@@ -106,7 +106,7 @@ public class MomentAdapter extends RecyclerView.Adapter<MomentAdapter.ViewHolder
 
         void onAddCommentButtonClick(Moment moment, int position);
 
-        void onImagesClick(List<Uri> images, int position);
+        void onImagesClick(List<Uri> images, int position, int imagePosition);
     }
 
 }

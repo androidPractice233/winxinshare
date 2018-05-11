@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
+import com.scut.weixinshare.db.MyDBHelper;
+import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
@@ -45,12 +48,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_pwd = null;
     private Button btn_login = null;
     private TextView register_button = null;
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        // Inflate the layout for this fragment
+        // Inflate the layout for this userFragment
         setContentView(R.layout.fragment_login);
 
         img_upload = findViewById(R.id.profilePhoto);
@@ -58,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         edt_pwd = findViewById(R.id.password);
         btn_login = findViewById(R.id.loginButton);
         register_button=findViewById(R.id.registerButton);
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,14 +79,12 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                User user =new User();
+                user =new User();
                 user.setUserPwd(user_pwd);
                 user.setUserName(user_name);
-                NetworkManager.getInstance().login(new BaseCallback<ResultBean<LoginReceive>>() {
-
-
+                NetworkManager.getInstance().login(new BaseCallback<ResultBean>() {
                     @Override
-                    public void onResponse(Call<ResultBean<LoginReceive>> call, Response<ResultBean<LoginReceive>> response) {
+                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
 
                         ResultBean resultBean=  getResultBean(response);
                         if(checkResult(LoginActivity.this,resultBean)) {
@@ -90,11 +93,25 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = preferences.edit();
                             LoginReceive loginReceive= (LoginReceive) resultBean.getData();
                             editor.putString("token",loginReceive.getToken() );
-                            //初始化数据库
-                            //跳转至个人主页
                             editor.commit();
                             MyApplication.currentUser=loginReceive.getUser();
                             MyApplication.getInstance().setToken(  loginReceive.getToken());
+                            //初始化数据库
+                            //new Test(LoginActivity.this);
+//                            MyDBHelper.DB_NAME = MyApplication.currentUser.getUserId();
+//                            if(MyDBHelper.DB_NAME==null){
+//                                Toast.makeText(LoginActivity.this,"还没登录吧",Toast.LENGTH_LONG).show();
+//                            }
+//                            MyDBHelper myDBHelper = new MyDBHelper(LoginActivity.this,1);
+//                            myDBHelper.close();
+
+                            //更新用户资料
+                            DBOperator dbOperator = new DBOperator();
+                            dbOperator.updateUser(user);
+                            dbOperator.close();
+
+
+                            //跳转至个人主页
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             ////
@@ -102,10 +119,12 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ResultBean<LoginReceive>> call, Throwable t) {
+                    public void onFailure(Call<ResultBean> call, Throwable t) {
 
                     }
                 },user);
+
+
             }
         });
 
@@ -116,10 +135,15 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+//        edt_name.setText("devin");
+//        edt_pwd.setText("123");
+//        btn_login.performClick();
     }
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
+
     }
     private Boolean checkLogin(){
 

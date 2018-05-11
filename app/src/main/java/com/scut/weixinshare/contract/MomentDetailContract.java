@@ -62,7 +62,7 @@ public interface MomentDetailContract {
         void changeCommentUser(Comment comment);
 
         //打开大图
-        void openBigImage(List<Uri> uriList);
+        void openBigImage(List<Uri> uriList, int position);
 
     }
 

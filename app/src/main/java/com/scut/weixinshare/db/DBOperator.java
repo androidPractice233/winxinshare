@@ -354,7 +354,7 @@ public class DBOperator {
     public List<Comment> selectCommentByUser(String userId){
         List<Comment> comments = new ArrayList<>();
         Cursor cursor = database.rawQuery("select * from comment where receiverId = ?  or receiverId = ? order by createTime desc" ,
-                new String[]{userId,null});
+                new String[]{userId,""});
         //Cursor cursor = database.rawQuery("select * from comment",null);
         int t = cursor.getCount();
         Log.d("cursorSize",t+"");
@@ -393,7 +393,6 @@ public class DBOperator {
         List<Comment> comments = new ArrayList<>();
         Cursor cursor = database.rawQuery("select * from comment where momentId = ? order by createTime",
                 new String[]{momentId});
-        //Cursor cursor = database.rawQuery("select * from comment",null);
         Log.d("cursorSize",cursor.getCount()+"");
         if(cursor.moveToFirst()) {
             do{

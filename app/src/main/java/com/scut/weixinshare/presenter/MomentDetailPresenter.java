@@ -117,8 +117,15 @@ public class MomentDetailPresenter implements MomentDetailContract.Presenter {
     }
 
     @Override
-    public void openBigImage(List<Uri> uriList) {
-        view.showBigPicUI(new ArrayList<>(uriList));
+    public void openBigImage(List<Uri> uriList, int position) {
+        ArrayList<Uri> list = new ArrayList<>();
+        for(int i = position; i < uriList.size(); ++i){
+            list.add(uriList.get(i));
+        }
+        for(int i = 0; i < position; ++i){
+            list.add(uriList.get(i));
+        }
+        view.showBigPicUI(list);
     }
 
     @Override

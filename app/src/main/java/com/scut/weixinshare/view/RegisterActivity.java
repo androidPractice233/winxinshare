@@ -124,21 +124,17 @@ public class RegisterActivity extends AppCompatActivity {
                         if (checkResult(RegisterActivity.this, resultBean)) {
                             if(protrait!=null) {
                                 NetworkManager.getInstance().uploadProtrait(new BaseCallback<ResultBean>() {
-                                                                                @Override
-                                                                                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                                                                                    Toast.makeText(RegisterActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
-                                                                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                                                                    startActivity(intent);
-                                                                                }
-
-                                                                                @Override
-                                                                                public void onFailure(Call<ResultBean> call, Throwable t) {
-                                                                                    t.printStackTrace();
-                                                                                }
-
-
-                                                                            }
-                                        , userid, protrait);
+                                    @Override
+                                    public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                                        Toast.makeText(RegisterActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        }
+                                        @Override
+                                        public void onFailure(Call<ResultBean> call, Throwable t) {
+                                        t.printStackTrace();
+                                        }
+                                        }, userid, protrait);
                             }
                             //没有上传图片，正确注册
                             else {

@@ -331,8 +331,8 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
                 (String) data.get("recvId"), (String) data.get("sendNickName"),
                 null, (String) data.get("recvNickName"), (String) data.get("content"),
                 new Timestamp(Math.round((double) data.get("createTime"))));
-        if(data.get("portrait") != null){
-            comment.setPortrait(MomentUtils.StringToUri((String) data.get("portrait")));
+        if(data.get("sendPortrait") != null){
+            comment.setPortrait(MomentUtils.StringToUri((String) data.get("sendPortrait")));
         }
         return comment;
     }

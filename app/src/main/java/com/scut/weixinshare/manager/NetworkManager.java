@@ -34,6 +34,7 @@ import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 import java.io.File;
 import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,8 +230,7 @@ public class NetworkManager {
             stringBuilder.append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        params.put("userIds", stringBuilder.toString());
-        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
+        Call<ResultBean> call = service.requestNicknameAndPortrait(stringBuilder.toString());
         call.enqueue(callback);
     }
     public  void register(Callback callback,User user){
@@ -259,6 +259,7 @@ public class NetworkManager {
         SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
                 .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
         params.put("token",preferences.getString("token",""));
+        params.put("userId",user.getUserId());
         params.put("userName", user.getUserName());
         params.put("nickName", user.getNickName());
         params.put("location", user.getLocation());
@@ -280,8 +281,11 @@ public class NetworkManager {
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("userId",MainActivity.USERID);
-        params.put("dateTime",0);
+        params.put("userId",MyApplication.currentUser.getUserId());
+        if(time!=null)
+        params.put("dateTime", Timestamp.valueOf(time).getTime());
+        else
+            params.put("dateTime", 0);
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

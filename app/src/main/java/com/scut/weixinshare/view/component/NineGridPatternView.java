@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //实现九宫格图片显示，xml文件中layout_width必须为固定宽度或者match_parent
-public class NineGridPatternView extends GridLayout implements View.OnClickListener {
+public class NineGridPatternView extends GridLayout {
 
     //保存已创建的ImageView，避免重复删除添加ImageView，减少卡顿
     private List<ImageView> imageViews = new ArrayList<>();
@@ -24,8 +24,8 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
 
     public NineGridPatternView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //setClickable(true);
-        //setOnClickListener(this);
+        setColumnCount(3);
+        setRowCount(3);
     }
 
     //设置图片间距
@@ -79,9 +79,16 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
     //添加ImageView
     private void addImageView(int num){
         for(int i = 0; i < num; ++i){
-            SquareImageView imageView = new SquareImageView(MyApplication.getContext());
+            final SquareImageView imageView = new SquareImageView(MyApplication.getContext());
             imageView.setClickable(true);
-            imageView.setOnClickListener(this);
+            imageView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null) {
+                        listener.onItemClick(uriList, imageViews.indexOf(imageView));
+                    }
+                }
+            });
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             //设置ImageView在Layout中的位置
             GridLayout.Spec rowSpec = GridLayout.spec(imageViews.size() / 3);
@@ -98,20 +105,9 @@ public class NineGridPatternView extends GridLayout implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if(listener != null) {
-            switch (view.getId()) {
-                default:
-                    listener.onItemClick(uriList);
-                    break;
-            }
-        }
-    }
-
     interface NineGridPatternViewListener{
 
-        void onItemClick(List<Uri> uriList);
+        void onItemClick(List<Uri> uriList, int position);
     }
 
 }

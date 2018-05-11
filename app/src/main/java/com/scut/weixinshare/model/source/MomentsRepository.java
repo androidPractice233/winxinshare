@@ -1,5 +1,7 @@
 package com.scut.weixinshare.model.source;
 
+import android.util.Log;
+
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.model.Comment;
 import com.scut.weixinshare.model.Location;
@@ -21,6 +23,7 @@ import java.util.Set;
 //实现动态数据仓库
 public class MomentsRepository implements MomentDataSource {
 
+    private final static String TAG = "MomentRepository";
     private static MomentsRepository INSTANCE;
 
     private Map<String, Moment> momentMap;               //动态数据缓存
@@ -273,6 +276,7 @@ public class MomentsRepository implements MomentDataSource {
                                 }
                             }
                             if(momentWithoutCache.size() > 0) {
+                                Log.d(TAG, String.valueOf(momentWithoutCache.size()));
                                 //从本地获取相同版本的动态
                                 localSource.getMoments(momentWithoutCache, new MomentLocalSource
                                         .GetMomentsCallback() {
@@ -310,6 +314,8 @@ public class MomentsRepository implements MomentDataSource {
                                             remoteSource.getMoments(momentsNeedToRequest, new MomentRemoteSource.GetMomentsCallback() {
                                                 @Override
                                                 public void onMomentsLoaded(List<Moment> momentList) {
+                                                    //将请求到的动态信息加入本地缓存
+                                                    localSource.createMoments(momentList);
                                                     //将请求到的动态信息加入缓存
                                                     for (Moment moment : momentList) {
                                                         momentMap.put(moment.getMomentId(), moment);

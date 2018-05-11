@@ -85,6 +85,7 @@
             android:layout_marginBottom="4dp"
             android:inputType="textMultiLine"
             android:textSize="15sp"
+            android:textColor="@color/primaryText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/release_comment"
             app:layout_constraintStart_toStartOf="parent"
