@@ -9,13 +9,12 @@ import android.util.Log;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
-import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
-import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.model.source.MomentUserData;
 import com.scut.weixinshare.model.source.MomentVersion;
+import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
 import com.scut.weixinshare.retrofit.TokenInterceptor;
 import com.scut.weixinshare.service.KeyInitService;
@@ -229,8 +228,10 @@ public class NetworkManager {
             stringBuilder.append(id);
             stringBuilder.append(",");
         }
+        if(stringBuilder.length()>0)
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        Call<ResultBean> call = service.requestNicknameAndPortrait(stringBuilder.toString());
+        params.put("userIds", stringBuilder.toString());
+        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
         call.enqueue(callback);
     }
     public  void register(Callback callback,User user){
@@ -245,7 +246,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public  void uploadProtrait(BaseCallback callback, String  userId,File portrait){
+    public  void uploadProtrait(BaseCallback callback, String  userId, File portrait){
         MultipartService service = multipartRetrofit.create(MultipartService.class);
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), portrait);
         MultipartBody.Part part = MultipartBody.Part.createFormData("portrait", portrait.getName(), requestBody);
@@ -282,10 +283,7 @@ public class NetworkManager {
 
         Map<String, Object> params = new HashMap<>();
         params.put("userId",MyApplication.currentUser.getUserId());
-        if(time!=null)
-        params.put("dateTime", Timestamp.valueOf(time).getTime());
-        else
-            params.put("dateTime", 0);
+        params.put("dateTime", time);
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

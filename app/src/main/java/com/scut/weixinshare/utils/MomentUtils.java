@@ -90,7 +90,9 @@ public class MomentUtils {
     }
 
     public static Uri StringToUri(String uri){
+    if(uri!=null)
         return Uri.parse(IConst.URL_BASE + uri.substring(1));
+    else return null;
     }
 
 }
