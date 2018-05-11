@@ -268,7 +268,7 @@ public class NetworkManager {
 
         Map<String, Object> params = new HashMap<>();
         params.put("userId",MyApplication.user.getUserId());
-        params.put("dateTime", Timestamp.valueOf(time).getTime());
+        params.put("dateTime", time);
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

@@ -64,6 +64,7 @@ import com.scut.weixinshare.view.fragment.MainFragment;
 import com.scut.weixinshare.view.fragment.UserFragment;
 
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -456,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
                 String time = dbOperator.getLastTime();
                 dbOperator.close();
                 if(time!=null){
-                    lastUpdateTime = time;
+                    lastUpdateTime = String.valueOf(Timestamp.valueOf(time).getTime());
                 }
             }
 
