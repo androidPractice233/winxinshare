@@ -206,9 +206,10 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showUserDataUI(String momentId) {
-        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
-        intent.putExtra("userId",momentId);
-        startActivity(intent);
+//        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
+//        intent.putExtra("userId",momentId);
+//        startActivity(intent);
+        UserActivity.actionStart(getContext(),momentId);
     }
 
     @Override

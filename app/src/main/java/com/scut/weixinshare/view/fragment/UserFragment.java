@@ -39,6 +39,7 @@ import com.scut.weixinshare.view.PersonalMomentActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,7 +137,6 @@ private Button button;
         button=view.findViewById(R.id.button);
 //        personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
-        presenter.start();
 
         if(presenter.getUser().getUserId().equals(currentUser.getUserId())) {
             ll_nickname.setOnClickListener(this);
@@ -155,33 +155,30 @@ private Button button;
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
+        presenter.start();
     }
 
     @Override
-    public void showUserInfo(User currentUser) {
-        text_userid.setText(currentUser.getUserId());
-        text_username.setText(currentUser.getUserName());
-        if(currentUser.getSex()==1)
+    public void setPortrait(File portrait){
+        Glide.with(this).load(portrait).into(iv_portrait);
+    }
+    @Override
+    public void showUserInfo(User user) {
+        text_userid.setText(user.getUserId());
+        text_username.setText(user.getUserName());
+        if(user.getSex()==1)
             text_sex.setText("女");
-        if(currentUser.getSex()==0)
+        if(user.getSex()==0)
            text_sex.setText("男");
-        text_Location.setText(currentUser.getLocation());
-        text_nickname.setText(currentUser.getNickName());
-        text_birthday.setText(currentUser.getBirthday());
-        Uri uri= MomentUtils.StringToUri(currentUser.getPortrait());
-        GlideUtils.loadImageViewInCircleCrop(getContext(), uri, iv_portrait);
+        text_Location.setText(user.getLocation());
+        text_nickname.setText(user.getNickName());
+        text_birthday.setText(user.getBirthday());
+        if(user.getPortrait()!=null) {
+            Uri uri = Uri.parse(user.getPortrait());
+            GlideUtils.loadImageViewInCircleCrop(getContext(), uri, iv_portrait);
+        }
     }
 
-    @Override
-    public void showUserPhoto(User user) throws FileNotFoundException {
-        ContentResolver cr = getContext().getContentResolver();
-        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(Uri.parse(user.getPortrait())));
-
-        //将Bitmap设定到ImageView
-        iv_portrait.setImageBitmap(bitmap);
-
-    }
 
     @Override
     public void setPresenter(UserContract.Presenter presenter) {
@@ -281,25 +278,5 @@ private Button button;
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: ");
-        List<File> fileList = new ArrayList<>();
-        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-                for (LocalMedia p : selectList) {
-                    fileList.add(new File(p.getPath()));
-                }
-                    Uri uri = data.getData();
-                    Log.d(TAG, "onActivityResult: "+uri.toString());
-                    if(fileList.size()>0) {
-                        Glide.with(this).load(fileList.get(0)).into(iv_portrait);
-                    }
 
-            }
-
-        }
-    }
 }
