@@ -293,6 +293,7 @@ public class MomentsRepository implements MomentDataSource {
                                                                         for (Comment comment : moment.getCommentList()) {
                                                                             comment.setSenderData(userDataMap.get(comment.getSendId()));
                                                                             if(comment.getRecvId() != null) {
+                                                                                Log.d("TAG", String.valueOf(comment.getRecvId().length()));
                                                                                 comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
                                                                             }
                                                                         }

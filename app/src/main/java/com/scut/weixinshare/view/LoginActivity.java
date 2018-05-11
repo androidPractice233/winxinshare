@@ -1,10 +1,18 @@
 package com.scut.weixinshare.view;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -17,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
@@ -148,7 +157,45 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        handleLocationPermi();
     }
+
+    //申请获取权限后回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case IConst.REQUEST_LOCATION:{
+                //允许获取地理位置权限
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                }
+                else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("需要定位权限")
+                            .setMessage("应用需要获取您的位置信息，请前往设置界面手动开启定位权限")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            }).show();
+
+                }
+
+            }
+        }
+    }
+
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
@@ -169,5 +216,31 @@ private Boolean checkLogin(){
         editor.commit();
         Intent intent=new Intent(context,LoginActivity.class);
         context.startActivity(intent);
+    }
+
+    private void handleLocationPermi(){
+        //当用户拒绝掉权限时.
+        if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)||
+                ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("需要定位权限")
+                    .setMessage("应用需要获取您的位置信息，请在接下来的对话框中选择“允许”")
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ActivityCompat.requestPermissions(LoginActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            IConst.REQUEST_LOCATION);
+                }
+            }).show();
+
+        } else {
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    IConst.REQUEST_LOCATION);
+        }
     }
 }

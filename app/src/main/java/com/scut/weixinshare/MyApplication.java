@@ -79,9 +79,6 @@ public class MyApplication extends MultiDexApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        MyDBHelper.DB_NAME = "weixinshare";
-        MyDBHelper myDBHelper = new MyDBHelper(context, 2);
-        myDBHelper.close();
     }
 
     public static MyApplication getInstance(){

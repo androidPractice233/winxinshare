@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
     Button locationBtn;
     FragmentPagerAdapter adapter;
     private List<Fragment> frag_list;// 声明一个list集合存放Fragment（数据源）
-    String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
 
     public static String TOKEN;
     public static String USERID;
@@ -106,13 +105,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_horizontal_ntb);
         initUI();
         this.setUpdateCommentNum();
-
-
-        //启动时检查权限
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            handleLocationPermi();
-        }
 
 
 //        button= (Button) findViewById(R.id.testButton);
@@ -175,60 +167,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //申请获取权限后回调
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
-            case IConst.REQUEST_LOCATION:{
-                //允许获取地理位置权限
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                }
-                else {
-                    AlertDialog dialog = new AlertDialog.Builder(this).setTitle("还可以手动开启权限").setMessage("可以前往设置->app->myapp->permission打开").setPositiveButton("确定!", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    }).show();
-
-                }
-
-            }
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //LocationUtils.getInstance(this).removeLocationUpdatesListener();
 
-    }
-
-
-    private void handleLocationPermi(){
-        //当用户拒绝掉权限时.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                permission[0])||ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                permission[1])) {
-
-            AlertDialog dialog = new AlertDialog.Builder(this).setTitle("需要开启定位权限才能正常使用").setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            permission,
-                            IConst.REQUEST_LOCATION);
-                }
-            }).setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            }).show();
-
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, permission, IConst.REQUEST_LOCATION);
-
-
-        }
     }
 
     private void initUI() {
