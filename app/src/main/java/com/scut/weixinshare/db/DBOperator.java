@@ -420,11 +420,6 @@ public class DBOperator {
         if(cursor.moveToFirst()) {
             do{
                 String commentId = cursor.getString(cursor.getColumnIndex("commentId"));
-                //String senderId = cursor.getString(cursor.getColumnIndex("senderId"));
-                //String receiverId = cursor.getString(cursor.getColumnIndex("receiverId"));
-                //String createTime = cursor.getString(cursor.getColumnIndex("createTime"));
-                //String content = cursor.getString(cursor.getColumnIndex("content"));
-                //comments.add(new Comment(commentId,momentId,senderId,receiverId,createTime,content));
                 commentIds.add(commentId);
             }while (cursor.moveToNext());
         }

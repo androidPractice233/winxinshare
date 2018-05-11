@@ -105,7 +105,9 @@ public class MomentsRepository implements MomentDataSource {
                                                                 if(moment.getCommentList() != null){
                                                                     for(Comment comment : moment.getCommentList()){
                                                                         comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                        comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                        if(comment.getRecvId() != null) {
+                                                                            comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                        }
                                                                     }
                                                                 }
                                                                 momentMap.put(moment.getMomentId(), moment);
@@ -244,7 +246,9 @@ public class MomentsRepository implements MomentDataSource {
                                                                             if (moment.getCommentList() != null) {
                                                                                 for (Comment comment : moment.getCommentList()) {
                                                                                     comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                                    comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                                    if(comment.getRecvId() != null) {
+                                                                                        comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                                    }
                                                                                 }
                                                                             }
                                                                             momentMap.put(moment.getMomentId(), moment);
@@ -288,7 +292,9 @@ public class MomentsRepository implements MomentDataSource {
                                                                     if (moment.getCommentList() != null) {
                                                                         for (Comment comment : moment.getCommentList()) {
                                                                             comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                            comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                            if(comment.getRecvId() != null) {
+                                                                                comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                            }
                                                                         }
                                                                     }
                                                                     momentMap.put(moment.getMomentId(), moment);

@@ -225,7 +225,8 @@ public class NetworkManager {
             stringBuilder.append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        Call<ResultBean> call = service.requestNicknameAndPortrait(stringBuilder.toString());
+        params.put("userIds", stringBuilder.toString());
+        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
         call.enqueue(callback);
     }
     public  void register(Callback<ResultBean> callback,User user){
