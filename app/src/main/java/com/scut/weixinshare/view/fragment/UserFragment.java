@@ -83,7 +83,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private ConstraintLayout layout_info;
     private ConstraintLayout layout_input;
     private TextView personweb;
-    private Button button;
+private Button button;
     public UserFragment() {
         // Required empty public constructor
     }
@@ -128,7 +128,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
         text_nickname=view.findViewById(R.id.textNickName);
         text_Location=view.findViewById(R.id.textLocation);
         text_sex=view.findViewById(R.id.textSex);
-        group=view.findViewById(R.id.radio_sex);
+         group=view.findViewById(R.id.radio_sex);
         text_username=view.findViewById(R.id.textUserName);
         text_userid=view.findViewById(R.id.textID);
         view.setOnClickListener(this);
@@ -165,7 +165,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
         if(currentUser.getSex()==1)
             text_sex.setText("女");
         if(currentUser.getSex()==0)
-            text_sex.setText("男");
+           text_sex.setText("男");
         text_Location.setText(currentUser.getLocation());
         text_nickname.setText(currentUser.getNickName());
         text_birthday.setText(currentUser.getBirthday());
@@ -274,7 +274,7 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
             group.setVisibility(View.GONE);
         }
         else {
-            layout_info.setVisibility(View.VISIBLE);
+             layout_info.setVisibility(View.VISIBLE);
             layout_input.setVisibility(View.GONE);
             showUserInfo(currentUser);
         }
@@ -292,11 +292,11 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
                 for (LocalMedia p : selectList) {
                     fileList.add(new File(p.getPath()));
                 }
-                Uri uri = data.getData();
-                Log.d(TAG, "onActivityResult: "+uri.toString());
-                if(fileList.size()>0) {
-                    Glide.with(this).load(fileList.get(0)).into(iv_portrait);
-                }
+                    Uri uri = data.getData();
+                    Log.d(TAG, "onActivityResult: "+uri.toString());
+                    if(fileList.size()>0) {
+                        Glide.with(this).load(fileList.get(0)).into(iv_portrait);
+                    }
 
             }
 
