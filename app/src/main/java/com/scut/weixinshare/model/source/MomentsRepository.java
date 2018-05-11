@@ -266,8 +266,6 @@ public class MomentsRepository implements MomentDataSource {
                         if(momentVersionList != null && momentVersionList.size() > 0) {
                             //检查动态是否已缓存
                             final List<MomentVersion> momentWithoutCache = new ArrayList<>();
-                            //这里有bug
-
                             for(MomentVersion moment : momentVersionList){
                                 if(!momentMap.containsKey(moment.getMomentId()) ||
                                         !momentMap.get(moment.getMomentId()).getUpdateTime()
@@ -383,7 +381,9 @@ public class MomentsRepository implements MomentDataSource {
                                                                     if (moment.getCommentList() != null) {
                                                                         for (Comment comment : moment.getCommentList()) {
                                                                             comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                            comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                            MomentUserData person=userDataMap.get(comment.getRecvId());
+                                                                            if(person!=null)
+                                                                            comment.setRecvNickName(person.getNickName());
                                                                         }
                                                                     }
                                                                     momentMap.put(moment.getMomentId(), moment);
