@@ -90,41 +90,36 @@ public class MomentsRepository implements MomentDataSource {
                                             for(Moment moment : momentList){
                                                 momentMap.put(moment.getMomentId(), moment);
                                             }
-                                            if (usersWithoutPortrait.size() > 0) {
-                                                final List<String> userList = new ArrayList<>(usersWithoutPortrait);
-                                                remoteSource.getMomentUserData(userList,
-                                                        new MomentRemoteSource.GetMomentUserDataCallback() {
-                                                            @Override
-                                                            public void onUserDataLoaded(List<MomentUserData> userDataList) {
-                                                                for (int i = 0; i < userDataList.size(); ++i) {
-                                                                    userDataMap.put(userList.get(i), userDataList.get(i));
-                                                                }
-                                                                for (MomentLocal momentLocal : moments) {
-                                                                    Moment moment = MomentUtils.momentLocalToMoment(momentLocal);
-                                                                    MomentUserData userData = userDataMap.get(moment.getUserId());
-                                                                    moment.setUserData(userData.getNickName(), userData.getPortrait());
-                                                                    if (moment.getCommentList() != null) {
-                                                                        for (Comment comment : moment.getCommentList()) {
-                                                                            comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                            if (comment.getRecvId() != null) {
-                                                                                comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
-                                                                            }
+                                            final List<String> userList = new ArrayList<>(usersWithoutPortrait);
+                                            remoteSource.getMomentUserData(userList,
+                                                    new MomentRemoteSource.GetMomentUserDataCallback() {
+                                                        @Override
+                                                        public void onUserDataLoaded(List<MomentUserData> userDataList) {
+                                                            for(int i = 0; i < userDataList.size(); ++i){
+                                                                userDataMap.put(userList.get(i), userDataList.get(i));
+                                                            }
+                                                            for(MomentLocal momentLocal : moments){
+                                                                Moment moment = MomentUtils.momentLocalToMoment(momentLocal);
+                                                                MomentUserData  userData = userDataMap.get(moment.getUserId());
+                                                                moment.setUserData(userData.getNickName(), userData.getPortrait());
+                                                                if(moment.getCommentList() != null){
+                                                                    for(Comment comment : moment.getCommentList()){
+                                                                        comment.setSenderData(userDataMap.get(comment.getSendId()));
+                                                                        if(comment.getRecvId() != null) {
+                                                                            comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
                                                                         }
                                                                     }
-                                                                    momentMap.put(moment.getMomentId(), moment);
                                                                 }
-                                                                callback.onMomentsLoaded(initMomentList(momentVersionList));
+                                                                momentMap.put(moment.getMomentId(), moment);
                                                             }
+                                                            callback.onMomentsLoaded(initMomentList(momentVersionList));
+                                                        }
 
-                                                            @Override
-                                                            public void onFailure(String error) {
-                                                                callback.onDataNotAvailable(error);
-                                                            }
-                                                        });
-                                            }
-                                            else {
-                                                callback.onMomentsLoaded(initMomentList(momentVersionList));
-                                            }
+                                                        @Override
+                                                        public void onFailure(String error) {
+                                                            callback.onDataNotAvailable(error);
+                                                        }
+                                                    });
                                         }
 
                                         @Override
@@ -297,9 +292,10 @@ public class MomentsRepository implements MomentDataSource {
                                                                     if (moment.getCommentList() != null) {
                                                                         for (Comment comment : moment.getCommentList()) {
                                                                             comment.setSenderData(userDataMap.get(comment.getSendId()));
-                                                                            MomentUserData person=userDataMap.get(comment.getRecvId());
-                                                                            if(person!=null)
-                                                                            comment.setRecvNickName(person.getNickName());
+                                                                            if(comment.getRecvId() != null) {
+                                                                                Log.d("TAG", String.valueOf(comment.getRecvId().length()));
+                                                                                comment.setRecvNickName(userDataMap.get(comment.getRecvId()).getNickName());
+                                                                            }
                                                                         }
                                                                     }
                                                                     momentMap.put(moment.getMomentId(), moment);
