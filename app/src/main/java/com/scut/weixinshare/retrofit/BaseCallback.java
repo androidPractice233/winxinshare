@@ -12,6 +12,7 @@ import com.scut.weixinshare.view.LoginActivity;
 
 import java.io.IOException;
 
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -21,7 +22,7 @@ import static android.R.attr.type;
  * Created by skyluo on 2018/4/15.
  */
 
-public abstract class BaseCallback implements Callback<ResultBean> {
+public abstract class BaseCallback<T> implements Callback<T> {
     /**
      * 检验各种错误情况,200为true，其他情况返回false
      *
@@ -43,7 +44,8 @@ public abstract class BaseCallback implements Callback<ResultBean> {
         }
     }
 
-    protected ResultBean getResultBean(Response<ResultBean> response) {
+
+    protected ResultBean getResultBean(Response<T> response) {
         ResultBean resultBean = new ResultBean();
         if (response.code() != 200) {
             resultBean = new ResultBean();
@@ -55,7 +57,7 @@ public abstract class BaseCallback implements Callback<ResultBean> {
             }
             return resultBean;
         }
-        else return response.body();
+        else return (ResultBean) response.body();
     }
 
     }

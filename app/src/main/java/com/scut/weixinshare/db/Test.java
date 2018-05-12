@@ -23,7 +23,7 @@ public class Test {
     public Test(Context context){
         this.context = context;
         //设置数据库名字
-        MyDBHelper.DB_NAME = MyApplication.user.getUserId();
+        MyDBHelper.DB_NAME = MyApplication.currentUser.getUserId();
         if(MyDBHelper.DB_NAME==null){
             Toast.makeText(context,"还没登录吧",Toast.LENGTH_LONG).show();
         }

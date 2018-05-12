@@ -239,7 +239,7 @@ public class HomePresenter implements HomeContract.Presenter {
 
     @Override
     public void openUserData(Moment moment, int position) {
-        view.showUserDataUI(moment.getMomentId());
+        view.showUserDataUI(moment.getUserId());
     }
 
     @Override

@@ -30,6 +30,6 @@ public class NetworkUtils {
     }
 
     public static boolean isLoginFailed(String error){
-        return error != null && error.contains("401");
+        return error != null && error.contains("401:");
     }
 }

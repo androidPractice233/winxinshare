@@ -1,5 +1,6 @@
 package com.scut.weixinshare.service;
 
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 
@@ -11,5 +12,7 @@ public interface RegisterService {
     @POST("/user/register")
     Call<ResultBean> register(@Body User user);
     @POST("/user/login")
-    Call<ResultBean> login(@Body User user);
+    Call<ResultBean<LoginReceive>> login(@Body User user);
+    @POST("/user/search")
+    Call<ResultBean<LoginReceive>> searchUser(@Body String userid);
 }

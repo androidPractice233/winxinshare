@@ -65,7 +65,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.BigPicActivity"></activity>
         <activity android:name=".view.CommentActivity"/>
-
+        <activity android:name=".view.UserActivity"></activity>
     </application>
 
 </manifest>

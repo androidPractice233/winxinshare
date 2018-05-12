@@ -15,6 +15,7 @@ import com.scut.weixinshare.model.source.remote.MomentRemoteServerSource;
 import com.scut.weixinshare.presenter.HomePresenter;
 import com.scut.weixinshare.presenter.PersonHomePresenter;
 import com.scut.weixinshare.view.fragment.HomeFragment;
+import com.scut.weixinshare.view.fragment.PersonHomeFragment;
 
 /**
  * Created by skyluo on 2018/5/8.
@@ -24,23 +25,23 @@ public class PersonalMomentActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_person_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent intent=getIntent();
-        String userid=intent.getStringExtra("userId");
-        if(savedInstanceState == null) {
-            HomeFragment fragment = new HomeFragment();
+        Intent intent = getIntent();
+        String userid = intent.getStringExtra("userId");
+            PersonHomeFragment fragment = new PersonHomeFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.content_home, fragment, PictureConfig.FC_TAG);
+            transaction.add(R.id.content_home, fragment);
             transaction.commit();
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance(),userid);
-        } else {
-            HomeFragment fragment = (HomeFragment)getSupportFragmentManager()
-                    .findFragmentByTag(PictureConfig.FC_TAG);
-            new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
-                    LocationRepository.getInstance(),userid);
-        }
+                    LocationRepository.getInstance(), userid);
     }
-}
+    public static void actionStart(android.content.Context context,String id) {
+        Intent intent = new Intent(context, PersonalMomentActivity.class);
+        intent.putExtra("userId",id);
+        context.startActivity(intent);
+    }
+
+    }
+

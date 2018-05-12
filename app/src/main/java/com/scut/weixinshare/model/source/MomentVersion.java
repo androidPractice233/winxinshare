@@ -1,5 +1,6 @@
 package com.scut.weixinshare.model.source;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class MomentVersion{

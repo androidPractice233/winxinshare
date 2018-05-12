@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,11 +39,14 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
+import com.scut.weixinshare.contract.HomeContract;
 import com.scut.weixinshare.db.Comment;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.source.LocationDataSource;
+import com.scut.weixinshare.presenter.PersonHomePresenter;
 import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.service.PullCommentService;
 import com.scut.weixinshare.model.User;
@@ -55,6 +60,7 @@ import com.scut.weixinshare.presenter.UserPresenter;
 import com.scut.weixinshare.utils.LocationUtils;
 import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.fragment.CommentFragment;
+import com.scut.weixinshare.view.fragment.PersonHomeFragment;
 import com.tencent.wcdb.database.SQLiteDebug;
 
 import org.json.JSONArray;
@@ -63,8 +69,6 @@ import com.scut.weixinshare.view.fragment.HomeFragment;
 import com.scut.weixinshare.view.fragment.MainFragment;
 import com.scut.weixinshare.view.fragment.UserFragment;
 
-
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,13 +77,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.scut.weixinshare.R.id.swipe_refresh;
+import static com.scut.weixinshare.R.id.view;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btnPopPhoto;
     Button button;
     Button locationBtn;
+    Toolbar toolbar;
     FragmentPagerAdapter adapter;
     private List<Fragment> frag_list;// 声明一个list集合存放Fragment（数据源）
+    String[] permission={Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
 
     public static String TOKEN;
     public static String USERID;
@@ -103,8 +112,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
+        toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         initUI();
         this.setUpdateCommentNum();
+
+
+        //启动时检查权限
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            handleLocationPermi();
+        }
 
 
 //        button= (Button) findViewById(R.id.testButton);
@@ -168,10 +186,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+        case R.id.setting:
+
+           UserActivity.actionStart(MainActivity.this,MyApplication.currentUser.getUserId());
+            break;
+        }
+            return true;
+    }
+
+    //申请获取权限后回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case IConst.REQUEST_LOCATION:{
+                //允许获取地理位置权限
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }
+                else {
+                    AlertDialog dialog = new AlertDialog.Builder(this).setTitle("还可以手动开启权限").setMessage("可以前往设置->app->myapp->permission打开").setPositiveButton("确定!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).show();
+
+                }
+
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         //LocationUtils.getInstance(this).removeLocationUpdatesListener();
 
+    }
+
+
+    private void handleLocationPermi(){
+        //当用户拒绝掉权限时.
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                permission[0])||ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                permission[1])) {
+
+            AlertDialog dialog = new AlertDialog.Builder(this).setTitle("需要开启定位权限才能正常使用").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            permission,
+                            IConst.REQUEST_LOCATION);
+                }
+            }).setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).show();
+
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, permission, IConst.REQUEST_LOCATION);
+
+
+        }
     }
 
     private void initUI() {
@@ -182,24 +266,23 @@ public class MainActivity extends AppCompatActivity {
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
 
-
-        UserFragment userFragment = UserFragment.newInstance("n");
         CommentFragment commentFragment = new CommentFragment();
 
-        if (MyApplication.user!=null)
-            new UserPresenter(userFragment, MyApplication.user);
-        else {
-            User user = new User("", "", "", 0, "", "", "");
-            new UserPresenter(userFragment, user);
-        }
 
+        PersonHomeFragment personHomeFragment=new PersonHomeFragment();
+        new PersonHomePresenter(personHomeFragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
+                LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
+//        MainFragment fragment2 = new MainFragment();
 
-        MainFragment fragment2 = new MainFragment();
+//        PersonHomeFragment personHomeFragment= new PersonHomeFragment();
+//        new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
+//        UserFragment  userfragment=UserFragment.newInstance(MyApplication.currentUser.getUserId());
+//        new UserPresenter(userfragment,MyApplication.currentUser.getUserId());
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);
         frag_list.add(commentFragment);
-        frag_list.add(userFragment);
+        frag_list.add(personHomeFragment);
 
 
         // 设置适配器
@@ -235,10 +318,10 @@ public class MainActivity extends AppCompatActivity {
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.buybuybuy),
+                        getResources().getDrawable(R.drawable.ic_third),
                         Color.parseColor(colors[1]))
 //                        .selectedIcon(getResources().getDrawable(R.drawable.ic_eighth))
-                        .title("我的")
+                        .title("评论")
 //                        .badgeTitle("with")
                         .build()
         );
@@ -279,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpdateCommentNum(){
         new Thread(new Runnable() {
             //初始时间最小
-            private String lastUpdateTime = "1";
+            private String lastUpdateTime =null;
 
             @Override
             public void run() {
@@ -353,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                             if(resultBean.getCode()==200){
                                 String dataString = resultBean.getData().toString();
                                 Log.d("getUpdateComment",dataString);
-                                processData(dataString);
+//                                processData(dataString);
                                 getLastUpdateTime();
                             }
 
@@ -371,20 +454,21 @@ public class MainActivity extends AppCompatActivity {
                         try{
                             JSONArray jsonArray = new JSONArray(jsonData);
                             int n = jsonArray.length();
-                            DBOperator dbOperator = new DBOperator();
-                            for(int i=0;i<n;i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String commentId = jsonObject.getString("commentId");
-                                String momentId = jsonObject.getString("momentId");
-                                String sendId = jsonObject.getString("sendId");
-                                String recvId = jsonObject.getString("recvId");
-                                String content = jsonObject.getString("content");
-                                String createTime = String.valueOf(Math.round(jsonObject.getDouble("createTime")));
-                                Log.d("tag", createTime);
-                                dbOperator.insertComment
-                                        (new Comment(commentId,momentId,sendId,recvId,createTime,content));
-                            }
-                            dbOperator.close();
+//                            DBOperator dbOperator = new DBOperator();
+//                            for(int i=0;i<n;i++){
+//                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                                String commentId = jsonObject.getString("commentId");
+//                                String momentId = jsonObject.getString("momentId");
+//                                String sendId = jsonObject.getString("sendId");
+//                                String recvId = jsonObject.getString("recvId");
+//                                String content = jsonObject.getString("content");
+//
+//                                long createTime = jsonObject.getLong("createTime");
+//
+//                                dbOperator.insertComment
+//                                        (new Comment(commentId,momentId,sendId,recvId,createTimeStr,content));
+//                            }
+//                            dbOperator.close();
                             if(n!=0) {
                                 Toast.makeText(MainActivity.this, "Hay!你有" + n + "条新评论", Toast.LENGTH_SHORT).show();
                             }
@@ -408,3 +492,4 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 }
+

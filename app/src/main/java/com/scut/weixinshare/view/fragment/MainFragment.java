@@ -20,8 +20,11 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.BaseCallback;
+import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MainActivity;
 
 import java.io.File;
@@ -48,7 +51,8 @@ public class MainFragment  extends Fragment{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkManager.getInstance().test(new BaseCallback() {
+                NetworkManager.getInstance().test(new BaseCallback<ResultBean>() {
+
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                        ResultBean resultBean=getResultBean(response);
@@ -88,38 +92,43 @@ public class MainFragment  extends Fragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        List<File> fileList=new ArrayList<>();
-        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-//                StringBuilder sb = new StringBuilder();
+//        super.onActivityResult(requestCode, resultCode, data);
+//        List<File> fileList=new ArrayList<>();
+//        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+////                StringBuilder sb = new StringBuilder();
+//
+//                for (LocalMedia p : selectList) {
+////                    sb.append(p);
+////                    sb.append("\n");
+//                    fileList.add( new File(p.getPath()));
+//                }
+//                try {
+//                        NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
+//                            @Override
+//                            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+//                                ResultBean resultBean=  response.body();
+//                                Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<ResultBean> call, Throwable t) {
+//                                Log.e("MainActivity", t.getMessage()  );
+//                            }
+//                        },"f892c315e2174ef7ba5d057606ee008e",fileList);
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                //yjPublishEdit.setText(sb.toString());
+//            }
+//        }
 
-                for (LocalMedia p : selectList) {
-//                    sb.append(p);
-//                    sb.append("\n");
-                    fileList.add( new File(p.getPath()));
-                }
-                try {
-                        NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
-                            @Override
-                            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                                ResultBean resultBean=  response.body();
-                                Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
-                            }
 
-                            @Override
-                            public void onFailure(Call<ResultBean> call, Throwable t) {
-                                Log.e("MainActivity", t.getMessage()  );
-                            }
-                        },"f892c315e2174ef7ba5d057606ee008e",fileList);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                //yjPublishEdit.setText(sb.toString());
+            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+                super.onActivityResult(requestCode, resultCode, data);
             }
-        }
     }
 
 }

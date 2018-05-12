@@ -1,18 +1,10 @@
 package com.scut.weixinshare.view;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -23,15 +15,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.R;
 import com.scut.weixinshare.db.DBOperator;
 import com.scut.weixinshare.db.MyDBHelper;
 import com.scut.weixinshare.db.Test;
 import com.scut.weixinshare.manager.NetworkManager;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.retrofit.BaseCallback;
@@ -54,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edt_name = null;
     private EditText edt_pwd = null;
     private Button btn_login = null;
-    private Button register_button = null;
+    private TextView register_button = null;
     private User user;
 
     @Override
@@ -69,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         edt_pwd = findViewById(R.id.password);
         btn_login = findViewById(R.id.loginButton);
         register_button=findViewById(R.id.registerButton);
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                 user =new User();
                 user.setUserPwd(user_pwd);
                 user.setUserName(user_name);
-                NetworkManager.getInstance().login(new BaseCallback() {
+                NetworkManager.getInstance().login(new BaseCallback<ResultBean>() {
                     @Override
                     public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
 
@@ -97,35 +91,19 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences preferences = MyApplication.getInstance().getApplicationContext()
                                     .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
-                            Map resultmap = (Map) resultBean.getData();
-                            editor.putString("token", (String) resultmap.get("token"));
-
+                            LoginReceive loginReceive= (LoginReceive) resultBean.getData();
+                            editor.putString("token",loginReceive.getToken() );
                             editor.commit();
-                            user.setUserId((String) ((Map) resultmap.get("user")).get("userId"));
-                            user.setNickName((String) ((Map) resultmap.get("user")).get("nickName"));
-                            //user.setSex(((Map) resultmap.get("user")).get("sex").toString());
-                            user.setSex(1);
-                            user.setLocation((String) ((Map) resultmap.get("user")).get("location"));
-                            user.setBirthday(((Map) resultmap.get("user")).get("birthday")+"");
-                            user.setPortrait((String) ((Map) resultmap.get("user")).get("portrait"));
-                            MyApplication.user=user;
-                            double d = (Double) ((Map) resultmap.get("user")).get("birthday");
-                            String ss = d+"";
-                            double dd = Double.parseDouble(ss);
-                            Long l = Math.round(dd);
-                            Log.d("testTimeFomat",l+"");
-
-                            MyApplication.getInstance().setToken( (String) resultmap.get("token"));
-                            MyApplication.getInstance().setUserId((String) ((Map) resultmap.get("user")).get("userId"));
-
+                            MyApplication.currentUser=loginReceive.getUser();
+                            MyApplication.getInstance().setToken(  loginReceive.getToken());
                             //初始化数据库
                             //new Test(LoginActivity.this);
-                            MyDBHelper.DB_NAME = MyApplication.user.getUserId();
-                            if(MyDBHelper.DB_NAME==null){
-                                Toast.makeText(LoginActivity.this,"还没登录吧",Toast.LENGTH_LONG).show();
-                            }
-                            MyDBHelper myDBHelper = new MyDBHelper(LoginActivity.this,1);
-                            myDBHelper.close();
+//                            MyDBHelper.DB_NAME = MyApplication.currentUser.getUserId();
+//                            if(MyDBHelper.DB_NAME==null){
+//                                Toast.makeText(LoginActivity.this,"还没登录吧",Toast.LENGTH_LONG).show();
+//                            }
+//                            MyDBHelper myDBHelper = new MyDBHelper(LoginActivity.this,1);
+//                            myDBHelper.close();
 
                             //更新用户资料
                             DBOperator dbOperator = new DBOperator();
@@ -158,56 +136,22 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        handleLocationPermi();
+//        edt_name.setText("devin");
+//        edt_pwd.setText("123");
+//        btn_login.performClick();
     }
-
-    //申请获取权限后回调
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
-            case IConst.REQUEST_LOCATION:{
-                //允许获取地理位置权限
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                }
-                else {
-                    AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("需要定位权限")
-                            .setMessage("应用需要获取您的位置信息，请前往设置界面手动开启定位权限")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        }
-                    }).setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    finish();
-                                }
-                            }).show();
-
-                }
-
-            }
-        }
-    }
-
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
 
     }
-private Boolean checkLogin(){
+    private Boolean checkLogin(){
 
-    SharedPreferences preferences = MyApplication.getInstance().getApplicationContext().getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
-    String token = preferences.getString("token",null);
-    if(token==null) return false;
-    else return true;
-}
+        SharedPreferences preferences = MyApplication.getInstance().getApplicationContext().getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
+        String token = preferences.getString("token",null);
+        if(token==null) return false;
+        else return true;
+    }
     public static void relogin(Context context){
         MyApplication.getInstance().setToken(null);
         SharedPreferences preferences = MyApplication.getInstance().getApplicationContext().getSharedPreferences("weixinshare",Context.MODE_PRIVATE);
@@ -216,31 +160,5 @@ private Boolean checkLogin(){
         editor.commit();
         Intent intent=new Intent(context,LoginActivity.class);
         context.startActivity(intent);
-    }
-
-    private void handleLocationPermi(){
-        //当用户拒绝掉权限时.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION)||
-                ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("需要定位权限")
-                    .setMessage("应用需要获取您的位置信息，请在接下来的对话框中选择“允许”")
-                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions(LoginActivity.this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            IConst.REQUEST_LOCATION);
-                }
-            }).show();
-
-        } else {
-            ActivityCompat.requestPermissions(LoginActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    IConst.REQUEST_LOCATION);
-        }
     }
 }

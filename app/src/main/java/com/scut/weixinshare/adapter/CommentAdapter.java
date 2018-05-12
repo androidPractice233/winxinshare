@@ -34,7 +34,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public void updateComments(){
-        comments = dbOperator.selectCommentByUser(MyApplication.user.getUserId());
+        comments = dbOperator.selectCommentByUser(MyApplication.currentUser.getUserId());
         this.notifyDataSetChanged();
         if(comments.size()==0){
 

@@ -245,14 +245,20 @@ public class MomentRemoteServerSource implements MomentRemoteSource {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                 ResultBean resultBean = response.body();
+                //检查请求是否成功
                 if(resultBean != null) {
                     if (resultBean.getCode() == IConst.ERROR_CODE_SUCCESS) {
-                        List<Map> data = (List<Map>) resultBean.getData();
+                        //final List<MomentVersion> momentVersionList =
+                        //        (List<MomentVersion>) resultBean.getData();
                         List<MomentVersion> momentVersionList = new ArrayList<>();
+                        List<Map> data = (List<Map>) resultBean.getData();
                         for (Map momentVersion : data) {
                             momentVersionList.add(mapToMomentVersion(momentVersion));
                         }
                         callback.onMomentVersionsLoaded(momentVersionList);
+                    } else if(resultBean.getCode() == IConst.ERROR_CODE_EMPTY_MOMENT){
+                        //没有更新动态，则返回空列表
+                        callback.onMomentVersionsLoaded(new ArrayList<MomentVersion>());
                     } else {
                         callback.onDataNotAvailable(resultBean.getCode() + ":" + resultBean.getMsg());
                     }

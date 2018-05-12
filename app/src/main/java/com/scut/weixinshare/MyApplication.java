@@ -49,7 +49,7 @@ public class MyApplication extends MultiDexApplication {
 
     private static MyApplication instance;
     private static Context context;
-    public static User user;
+    public static User currentUser;
     private  String token;
     private String userId;
 
@@ -79,6 +79,9 @@ public class MyApplication extends MultiDexApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        MyDBHelper.DB_NAME = "weixinshare";
+        MyDBHelper myDBHelper = new MyDBHelper(context, 11);
+        myDBHelper.close();
     }
 
     public static MyApplication getInstance(){

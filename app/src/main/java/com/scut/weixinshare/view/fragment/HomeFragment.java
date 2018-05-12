@@ -28,7 +28,9 @@ import com.scut.weixinshare.utils.ToastUtils;
 import com.scut.weixinshare.view.BigPicActivity;
 import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MomentDetailActivity;
+import com.scut.weixinshare.view.PersonalMomentActivity;
 import com.scut.weixinshare.view.ReleaseMomentActivity;
+import com.scut.weixinshare.view.UserActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,12 +46,12 @@ public class HomeFragment extends Fragment implements HomeContract.View,
     public final static int MARGIN_TOP_CARD = 8;
     public final static int MARGIN_BOTTOM_CARD = 4;
 
-    private HomeContract.Presenter presenter;
-    private MomentAdapter momentAdapter;
-    private PullUpRefreshAdapter pullUpRefreshAdapter;
-    private SwipeRefreshLayout swipeRefresh;
-    private FloatingActionButton fab;
-    private RecyclerView recyclerView;
+    protected HomeContract.Presenter presenter;
+    protected MomentAdapter momentAdapter;
+    protected PullUpRefreshAdapter pullUpRefreshAdapter;
+    protected SwipeRefreshLayout swipeRefresh;
+    protected FloatingActionButton fab;
+    protected RecyclerView recyclerView;
     private NavigationTabBar navigationTabBar;
 
     @Override
@@ -138,6 +140,7 @@ public class HomeFragment extends Fragment implements HomeContract.View,
             });
             navigationTabBar = activity.findViewById(R.id.ntb_horizontal);
         }
+        presenter.requestNewMoments();
         return view;
     }
 
@@ -203,12 +206,15 @@ public class HomeFragment extends Fragment implements HomeContract.View,
 
     @Override
     public void showUserDataUI(String momentId) {
-
+//        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
+//        intent.putExtra("userId",momentId);
+//        startActivity(intent);
+        UserActivity.actionStart(getContext(),momentId);
     }
 
     @Override
     public void showLoginUI() {
-        LoginActivity.actionStart(getContext());
+        LoginActivity.relogin(getActivity());
     }
 
     @Override

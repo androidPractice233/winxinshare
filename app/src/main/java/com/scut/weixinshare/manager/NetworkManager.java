@@ -9,9 +9,11 @@ import android.util.Log;
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
 import com.scut.weixinshare.model.Location;
+import com.scut.weixinshare.model.LoginReceive;
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
 import com.scut.weixinshare.model.User;
+import com.scut.weixinshare.retrofit.BaseCallback;
 import com.scut.weixinshare.model.source.MomentUserData;
 import com.scut.weixinshare.model.source.MomentVersion;
 import com.scut.weixinshare.retrofit.EncryptConverterFactory;
@@ -37,7 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -229,38 +234,49 @@ public class NetworkManager {
         Call<ResultBean> call = service.requestNicknameAndPortrait(params);
         call.enqueue(callback);
     }
-    public  void register(Callback<ResultBean> callback,User user){
+    public  void register(Callback callback,User user){
         RegisterService registerService= retrofit.create(RegisterService.class);
         Call<ResultBean> call=registerService.register(user);
         call.enqueue(callback);
     }
 
-    public  void login(Callback<ResultBean> callback,User user){
+    public  void login(BaseCallback callback, User user){
         RegisterService registerService= retrofit.create(RegisterService.class);
-        Call<ResultBean> call=registerService.login(user);
+        Call call=registerService.login(user);
         call.enqueue(callback);
     }
 
-    public void updateUserInfo(Callback<ResultBean>callback,User user){
+
+
+    public  void uploadProtrait(BaseCallback callback, String  userId,File portrait){
+        MultipartService service = multipartRetrofit.create(MultipartService.class);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), portrait);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("portrait", portrait.getName(), requestBody);
+        Call<ResultBean> call = service.uploadUserPortrait(userId, part);
+        call.enqueue(callback);
+    }
+
+    public void updateUserInfo(Callback callback,User user){
         TestService service=retrofit.create(TestService.class);
         Map<String,Object> params=new HashMap<>();
         SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
                 .getSharedPreferences("weixinshare", Context.MODE_PRIVATE);
         params.put("token",preferences.getString("token",""));
+        params.put("userId",user.getUserId());
         params.put("userName", user.getUserName());
         params.put("nickName", user.getNickName());
         params.put("location", user.getLocation());
         params.put("sex",user.getSex());
         params.put("birthday", user.getBirthday());
-        Call<ResultBean> call=service.updateUser(params);
+        Call call=service.updateUser(params);
         call.enqueue(callback);
     }
 
-    public void getUser(Callback<ResultBean>callback,String userId){
+    public void getUser(BaseCallback callback,String userId){
         TestService service=retrofit.create(TestService.class);
         Map<String,Object> params=new HashMap<>();
         params.put("userId", userId);
-        Call<ResultBean> call=service.searchUser(params);
+        Call call=service.searchUser(params);
         call.enqueue(callback);
     }
 
@@ -268,8 +284,11 @@ public class NetworkManager {
         PullCommentService pullCommentService = retrofit.create(PullCommentService.class);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("userId",MyApplication.user.getUserId());
+        params.put("userId",MyApplication.currentUser.getUserId());
+        if(time!=null)
         params.put("dateTime", time);
+        else
+            params.put("dateTime", 0);
         params.put("pageNum",0);
         params.put("pageSize",20);
         Call<ResultBean> call=pullCommentService.pullComment(params);

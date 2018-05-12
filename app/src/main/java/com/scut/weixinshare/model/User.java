@@ -1,5 +1,6 @@
 package com.scut.weixinshare.model;
 
+
 public class User {
     private String userId="";
     private String userName="";
@@ -7,7 +8,10 @@ public class User {
     private int sex=1;
     private String birthday="";
     private String location="";
-    private String portrait="";
+
+
+
+    private String portrait;
     private String userPwd="";
     //构造器参数之外的属性可以为空
     public User(String userId,String userName,String nickName){
@@ -61,12 +65,8 @@ public class User {
     public void setLocation(String location) {
         this.location = location;
     }
-    public String getPortrait() {
-        return portrait;
-    }
-    public void setPortrait(String portrait) {
-        this.portrait = portrait;
-    }
+    public String getPortrait() { return portrait; }
+    public void setPortrait(String portrait) { this.portrait = portrait; }
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
     }
@@ -74,7 +74,7 @@ public class User {
         return userPwd;
     }
     public void setUserId(String userId){this.userId=userId;};
-
+    public void setPassword(String password){this.userPwd=password;}
     public void setUserName(String userName) {
         this.userName = userName;
     }
