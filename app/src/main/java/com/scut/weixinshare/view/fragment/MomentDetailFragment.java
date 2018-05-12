@@ -134,9 +134,10 @@ public class MomentDetailFragment extends Fragment implements MomentDetailContra
 
     @Override
     public void showUserDataUI(String userId) {
-        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
-        intent.putExtra("userId",userId);
-        startActivity(intent);
+//        Intent intent=new Intent(getContext(),PersonalMomentActivity.class);
+//        intent.putExtra("userId",userId);
+//        startActivity(intent);
+        UserActivity.actionStart(getContext(),userId);
     }
 
     @Override

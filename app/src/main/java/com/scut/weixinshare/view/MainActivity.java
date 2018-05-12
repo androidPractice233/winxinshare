@@ -195,9 +195,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
         case R.id.setting:
-            Intent intent=new Intent(this,UserActivity.class);
-            intent.putExtra("userId",MyApplication.currentUser.getUserId());
-            startActivity(intent);
+           UserActivity.actionStart(getApplicationContext(),MyApplication.currentUser.getUserId());
             break;
         }
             return true;
@@ -267,16 +265,9 @@ public class MainActivity extends AppCompatActivity {
         new HomePresenter(homefragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance());
 
-
-        UserFragment userFragment = UserFragment.newInstance("n");
         CommentFragment commentFragment = new CommentFragment();
 
-        if (MyApplication.currentUser!=null)
-            new UserPresenter(userFragment, MyApplication.currentUser);
-        else {
-            User user = new User("", "", "", 0, "", "", "");
-            new UserPresenter(userFragment, user);
-        }
+
         PersonHomeFragment personHomeFragment=new PersonHomeFragment();
         new PersonHomePresenter(personHomeFragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance(),MyApplication.currentUser.getUserId());

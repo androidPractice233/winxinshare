@@ -37,4 +37,6 @@ public interface MultipartService {
     Call<ResultBean> uploadUserPortrait(@Part("userId") String userId,
                                         @Part MultipartBody.Part file);
 
+
+
 }

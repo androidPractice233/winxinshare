@@ -1,13 +1,19 @@
 package com.scut.weixinshare.presenter;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.scut.weixinshare.IConst;
 import com.scut.weixinshare.MyApplication;
+import com.scut.weixinshare.R;
 import com.scut.weixinshare.contract.UserContract;
 import com.scut.weixinshare.manager.NetworkManager;
 import com.scut.weixinshare.model.LoginReceive;
@@ -19,8 +25,10 @@ import com.scut.weixinshare.utils.GlideUtils;
 import com.scut.weixinshare.utils.MomentUtils;
 import com.scut.weixinshare.view.LoginActivity;
 import com.scut.weixinshare.view.MainActivity;
+import com.scut.weixinshare.view.RegisterActivity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,18 +66,37 @@ public class UserPresenter implements UserContract.Presenter {
     }
 
     @Override
+    public void updatePortrait(File portrait) throws IOException {
+        view.setPortrait(portrait);
+        NetworkManager.getInstance().uploadProtrait(new BaseCallback<ResultBean>() {
+            @Override
+            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+                Log.d(TAG, "上传头像成功 ");
+            }
+            @Override
+            public void onFailure(Call<ResultBean> call, Throwable t) {
+                t.printStackTrace();
+            }
+        }, user.getUserId(),portrait);
+
+    }
+
+    @Override
     public void setShowUser(String userId) {
         if(!userId.equals(MyApplication.currentUser.getUserId())) {
-            NetworkManager.getInstance().getUser(new Callback<ResultBean>() {
+            NetworkManager.getInstance().getUser(new BaseCallback<ResultBean>() {
                 @Override
                 public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                    ResultBean resultBean=response.body();
-                    Log.d(TAG, "onResponse: "+resultBean.toString());
+                    ResultBean resultBean=  getResultBean(response);
+                    if(checkResult(getContext(),resultBean)){
+                        LoginReceive loginReceive= (LoginReceive) resultBean.getData();
+                        user=loginReceive.getUser();
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<ResultBean> call, Throwable t) {
-                    Log.e(TAG, "无此userId");
+                public void onFailure(Call call, Throwable t) {
+
                 }
             },userId);
         }
@@ -100,30 +127,6 @@ public class UserPresenter implements UserContract.Presenter {
 
     }
 
-    @Override
-    public void getUserPhoto(User user) {
-
-    }
-
-
-    @Override
-    public void updateUserPhoto(List<File> fileList) {
-        try {
-            NetworkManager.getInstance().MutiprtTest(new Callback<ResultBean>() {
-                @Override
-                public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                    ResultBean resultBean=  response.body();
-                }
-
-                @Override
-                public void onFailure(Call<ResultBean> call, Throwable t) {
-                    Log.e("updateUserPhoto", t.getMessage()  );
-                }
-            },fileList);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 }
