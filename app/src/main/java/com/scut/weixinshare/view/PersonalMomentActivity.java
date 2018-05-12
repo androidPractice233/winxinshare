@@ -37,8 +37,9 @@ public class PersonalMomentActivity  extends AppCompatActivity {
             new PersonHomePresenter(fragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                     LocationRepository.getInstance(), userid);
     }
-    public static void actionStart(android.content.Context context) {
+    public static void actionStart(android.content.Context context,String id) {
         Intent intent = new Intent(context, PersonalMomentActivity.class);
+        intent.putExtra("userId",id);
         context.startActivity(intent);
     }
 

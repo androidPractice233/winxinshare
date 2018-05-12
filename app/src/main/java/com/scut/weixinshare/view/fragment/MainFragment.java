@@ -92,38 +92,43 @@ public class MainFragment  extends Fragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        List<File> fileList=new ArrayList<>();
-        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-//                StringBuilder sb = new StringBuilder();
+//        super.onActivityResult(requestCode, resultCode, data);
+//        List<File> fileList=new ArrayList<>();
+//        if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+////                StringBuilder sb = new StringBuilder();
+//
+//                for (LocalMedia p : selectList) {
+////                    sb.append(p);
+////                    sb.append("\n");
+//                    fileList.add( new File(p.getPath()));
+//                }
+//                try {
+//                        NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
+//                            @Override
+//                            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
+//                                ResultBean resultBean=  response.body();
+//                                Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<ResultBean> call, Throwable t) {
+//                                Log.e("MainActivity", t.getMessage()  );
+//                            }
+//                        },"f892c315e2174ef7ba5d057606ee008e",fileList);
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                //yjPublishEdit.setText(sb.toString());
+//            }
+//        }
 
-                for (LocalMedia p : selectList) {
-//                    sb.append(p);
-//                    sb.append("\n");
-                    fileList.add( new File(p.getPath()));
-                }
-                try {
-                        NetworkManager.getInstance().uploadMomentImages(new Callback<ResultBean>() {
-                            @Override
-                            public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                                ResultBean resultBean=  response.body();
-                                Toast.makeText(getContext(),(String)resultBean.getData(),Toast.LENGTH_SHORT).show();
-                            }
 
-                            @Override
-                            public void onFailure(Call<ResultBean> call, Throwable t) {
-                                Log.e("MainActivity", t.getMessage()  );
-                            }
-                        },"f892c315e2174ef7ba5d057606ee008e",fileList);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                //yjPublishEdit.setText(sb.toString());
+            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
+                super.onActivityResult(requestCode, resultCode, data);
             }
-        }
     }
 
 }

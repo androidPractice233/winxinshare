@@ -230,7 +230,8 @@ public class NetworkManager {
             stringBuilder.append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        Call<ResultBean> call = service.requestNicknameAndPortrait(stringBuilder.toString());
+        params.put("userIds", stringBuilder.toString());
+        Call<ResultBean> call = service.requestNicknameAndPortrait(params);
         call.enqueue(callback);
     }
     public  void register(Callback callback,User user){
@@ -245,11 +246,6 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void getUser(BaseCallback callback,String userId){
-        RegisterService registerService= retrofit.create(RegisterService.class);
-        Call call=registerService.searchUser(userId);
-        call.enqueue(callback);
-    }
 
 
     public  void uploadProtrait(BaseCallback callback, String  userId,File portrait){
@@ -260,7 +256,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void updateUserInfo(Callback<ResultBean>callback,User user){
+    public void updateUserInfo(Callback callback,User user){
         TestService service=retrofit.create(TestService.class);
         Map<String,Object> params=new HashMap<>();
         SharedPreferences preferences=MyApplication.getInstance().getApplicationContext()
@@ -272,15 +268,15 @@ public class NetworkManager {
         params.put("location", user.getLocation());
         params.put("sex",user.getSex());
         params.put("birthday", user.getBirthday());
-        Call<ResultBean> call=service.updateUser(params);
+        Call call=service.updateUser(params);
         call.enqueue(callback);
     }
 
-    public void getUser(Callback<ResultBean>callback,String userId){
+    public void getUser(BaseCallback callback,String userId){
         TestService service=retrofit.create(TestService.class);
         Map<String,Object> params=new HashMap<>();
         params.put("userId", userId);
-        Call<ResultBean> call=service.searchUser(params);
+        Call call=service.searchUser(params);
         call.enqueue(callback);
     }
 
@@ -290,7 +286,7 @@ public class NetworkManager {
         Map<String, Object> params = new HashMap<>();
         params.put("userId",MyApplication.currentUser.getUserId());
         if(time!=null)
-        params.put("dateTime", Timestamp.valueOf(time).getTime());
+        params.put("dateTime", time);
         else
             params.put("dateTime", 0);
         params.put("pageNum",0);

@@ -2,6 +2,7 @@ package com.scut.weixinshare.service;
 
 import com.scut.weixinshare.model.Moment;
 import com.scut.weixinshare.model.ResultBean;
+import com.scut.weixinshare.model.User;
 import com.scut.weixinshare.model.source.MomentUserData;
 import com.scut.weixinshare.model.source.MomentVersion;
 
@@ -45,10 +46,10 @@ public interface TestService {
     Call<ResultBean> requestPersonMoment(@Body Map params);
 
     @POST("/user/update")
-    Call<ResultBean> updateUser(@Body Map params);
+    Call<ResultBean<User>> updateUser(@Body Map params);
 
     @POST("/user/search")
-    Call<ResultBean> searchUser(@Body Map params);
+    Call<ResultBean<User>> searchUser(@Body Map params);
 
     @POST("user/login")
     Call<ResultBean> login(@Body Map praram);

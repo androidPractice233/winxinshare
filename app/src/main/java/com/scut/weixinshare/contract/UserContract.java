@@ -19,7 +19,8 @@ public interface UserContract {
 
         //显示头像
         void setPortrait(File portrait);
-
+        //设置头像byuri
+        void setPortrait(String  uri);
     }
     interface Presenter extends BasePresenter {
 

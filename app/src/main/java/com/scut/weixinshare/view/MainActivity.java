@@ -195,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
         case R.id.setting:
-           UserActivity.actionStart(getApplicationContext(),MyApplication.currentUser.getUserId());
+
+           UserActivity.actionStart(MainActivity.this,MyApplication.currentUser.getUserId());
             break;
         }
             return true;
@@ -271,11 +272,12 @@ public class MainActivity extends AppCompatActivity {
         PersonHomeFragment personHomeFragment=new PersonHomeFragment();
         new PersonHomePresenter(personHomeFragment, MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),
                 LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
-        MainFragment fragment2 = new MainFragment();
+//        MainFragment fragment2 = new MainFragment();
 
 //        PersonHomeFragment personHomeFragment= new PersonHomeFragment();
 //        new PersonHomePresenter(personHomeFragment,MomentsRepository.getInstance(MomentDatabaseSource.getInstance(), MomentRemoteServerSource.getInstance()),  LocationRepository.getInstance(),MyApplication.currentUser.getUserId());
-
+//        UserFragment  userfragment=UserFragment.newInstance(MyApplication.currentUser.getUserId());
+//        new UserPresenter(userfragment,MyApplication.currentUser.getUserId());
         // 实例化对象
         frag_list = new ArrayList<Fragment>();
         frag_list.add(homefragment);

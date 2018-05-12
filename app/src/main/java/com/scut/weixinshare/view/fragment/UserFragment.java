@@ -76,15 +76,15 @@ public class UserFragment extends Fragment implements UserContract.View ,View.On
     private ImageView iv_portrait;
     private TextView text_nickname;
     private TextView text_username;
-    private TextView text_userid;
     private TextView text_sex;
     private TextView text_birthday;
     private TextView text_Location;
     private EditText editText;
     private ConstraintLayout layout_info;
     private ConstraintLayout layout_input;
-    private TextView personweb;
-private Button button;
+    private Button personweb;
+    private Button button;
+
     public UserFragment() {
         // Required empty public constructor
     }
@@ -131,11 +131,10 @@ private Button button;
         text_sex=view.findViewById(R.id.textSex);
          group=view.findViewById(R.id.radio_sex);
         text_username=view.findViewById(R.id.textUserName);
-        text_userid=view.findViewById(R.id.textID);
         view.setOnClickListener(this);
         editText=view.findViewById(R.id.edit_input);
         button=view.findViewById(R.id.button);
-//        personweb=view.findViewById(R.id.personweb);
+         personweb=view.findViewById(R.id.personweb);
         //初始化显示个人界面
 
         if(presenter.getUser().getUserId().equals(currentUser.getUserId())) {
@@ -146,7 +145,7 @@ private Button button;
             ll_location.setOnClickListener(this);
             editText.setOnClickListener(this);
             button.setOnClickListener(this);
-            //personweb.setOnClickListener(this);
+            personweb.setOnClickListener(this);
         }
 
         return view;
@@ -163,8 +162,11 @@ private Button button;
         Glide.with(this).load(portrait).into(iv_portrait);
     }
     @Override
+    public void setPortrait(String  uri){
+        GlideUtils.loadImageViewInCircleCrop(getContext(),MomentUtils.StringToUri(uri),iv_portrait);
+    }
+    @Override
     public void showUserInfo(User user) {
-        text_userid.setText(user.getUserId());
         text_username.setText(user.getUserName());
         if(user.getSex()==1)
             text_sex.setText("女");
@@ -174,8 +176,7 @@ private Button button;
         text_nickname.setText(user.getNickName());
         text_birthday.setText(user.getBirthday());
         if(user.getPortrait()!=null) {
-            Uri uri = Uri.parse(user.getPortrait());
-            GlideUtils.loadImageViewInCircleCrop(getContext(), uri, iv_portrait);
+            GlideUtils.loadImageViewInCircleCrop(getContext(), MomentUtils.StringToUri(user.getPortrait()), iv_portrait);
         }
     }
 
@@ -256,11 +257,10 @@ private Button button;
                         changeVisibility(MODE_SHOW);
 
                 }break;
-//            case R.id.personweb:
-//                PersonalMomentActivity.actionStart(getActivity());
-//                showUserInfo(currentUser);
-//                changeVisibility(0);
-//                break;
+            case R.id.personweb:
+
+                PersonalMomentActivity.actionStart(getActivity(),currentUser.getUserId());
+                break;
         }
     }
 

@@ -71,7 +71,14 @@ public class UserPresenter implements UserContract.Presenter {
         NetworkManager.getInstance().uploadProtrait(new BaseCallback<ResultBean>() {
             @Override
             public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
-                Log.d(TAG, "上传头像成功 ");
+
+               if(response.body()!=null&response.body().getCode()==200){
+                   Log.d(TAG, "上传头像成功 ");
+                   Map map= (Map) response.body().getData();
+                   String portrait= (String) map.get("portrait");
+                 view.setPortrait(portrait);
+
+               }
             }
             @Override
             public void onFailure(Call<ResultBean> call, Throwable t) {
@@ -89,8 +96,7 @@ public class UserPresenter implements UserContract.Presenter {
                 public void onResponse(Call<ResultBean> call, Response<ResultBean> response) {
                     ResultBean resultBean=  getResultBean(response);
                     if(checkResult(getContext(),resultBean)){
-                        LoginReceive loginReceive= (LoginReceive) resultBean.getData();
-                        user=loginReceive.getUser();
+                       user= (User) resultBean.getData();
                     }
                 }
 
